@@ -126,9 +126,29 @@
 <section>
   <h2>Galería de Fotos</h2>
   <div class="galeria">
-    <img src="images/exterior.jpg" alt="Exterior de las cabañas en Riópar">
-    <img src="images/interior.jpg" alt="Interior acogedor de cabaña rural">
-    <img src="images/entorno.jpg" alt="Entorno natural del Río Mundo">
+    <img src="100150795.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150768.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150758.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150764.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150768.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150788.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150795.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150800.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150807.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150816.jpg" alt="Exterior de las cabañas en Riópar">
+    <img src="100150760.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150775.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150776.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150779.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150780.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150783.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150787.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150793.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150801.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150802.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="100150806.jpg" alt="Interior acogedor de cabaña rural">
+    <img src="10150757.jpg" alt="Entorno natural del Río Mundo">
+    <img src="10150761.jpg" alt="Entorno natural del Río Mundo">
   </div>
 </section>
 
@@ -165,3 +185,4 @@
 
 </body>
 </html>
+
