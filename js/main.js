@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Carrusel
   initCarousel();
+  // Calendarios informativos
+  initCalendars();
   
   // Agregar meta viewport para mobile
   if (!document.querySelector('meta[name="viewport"]')) {
@@ -134,4 +136,71 @@ function initHamburger() {
 document.addEventListener('DOMContentLoaded', function() {
   initHamburger();
 });
+
+// Calendarios informativos simples
+function initCalendars() {
+  const calEls = document.querySelectorAll('.simple-calendar');
+  if (!calEls || calEls.length === 0) return;
+
+  const monthNames = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  calEls.forEach(el => {
+    const now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth();
+
+    function render() {
+      el.innerHTML = '';
+
+      const header = document.createElement('div');
+      header.className = 'calendar-header';
+      const title = document.createElement('div');
+      title.className = 'calendar-month';
+      title.textContent = monthNames[month] + ' ' + year;
+      header.appendChild(title);
+      el.appendChild(header);
+
+      const weekdays = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+      const gridHead = document.createElement('div');
+      gridHead.className = 'calendar-grid';
+      weekdays.forEach(d => {
+        const w = document.createElement('div');
+        w.className = 'calendar-weekday';
+        w.textContent = d;
+        gridHead.appendChild(w);
+      });
+      el.appendChild(gridHead);
+
+      const grid = document.createElement('div');
+      grid.className = 'calendar-grid';
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      // leading blanks
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        grid.appendChild(empty);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-day';
+        cell.textContent = d;
+        // por defecto disponible
+        cell.dataset.status = 'available';
+        grid.appendChild(cell);
+      }
+
+      el.appendChild(grid);
+
+      const legend = document.createElement('p');
+      legend.className = 'calendar-legend';
+      legend.innerHTML = '<span class="dot available"></span> Disponible &nbsp;&nbsp; <span class="dot occupied"></span> Ocupado';
+      el.appendChild(legend);
+    }
+
+    render();
+  });
+}
 
