@@ -14,6 +14,7 @@
   
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/cabanas.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
@@ -70,10 +71,27 @@
 
 <section>
   <h2>Galería de Fotos</h2>
-  <div class="galeria">
-    <img src="images/1000150807.jpg" alt="Exterior Cabaña El Tejo">
-    <img src="images/1000150775.jpg" alt="Interior Cabaña El Tejo">
-    <img src="images/1000150779.jpg" alt="Salón Cabaña El Tejo">
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-slide active">
+        <img src="images/1000150807.jpg" alt="Exterior Cabaña El Tejo">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150775.jpg" alt="Interior Cabaña El Tejo">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150779.jpg" alt="Salón Cabaña El Tejo">
+      </div>
+    </div>
+
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+    </div>
   </div>
 </section>
 
