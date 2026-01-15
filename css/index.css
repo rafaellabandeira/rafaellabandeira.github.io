@@ -185,6 +185,22 @@ section {
   transform: scale(1.02);
 }
 
+/* Imagen de la sección Piscina: evita overflow en móvil y fija ancho máximo */
+.fixed-img {
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .fixed-img {
+    max-width: 800px;
+  }
+}
+
 /* Tablet */
 @media (min-width: 768px) {
   header {
