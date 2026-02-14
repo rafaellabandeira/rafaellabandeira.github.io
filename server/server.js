@@ -13,6 +13,7 @@ const squareClient = new Client({
   environment: Environment.Production,
   accessToken: process.env.SQUARE_ACCESS_TOKEN
 });
+
 const locationId = process.env.SQUARE_LOCATION_ID;
 
 // Endpoint de prueba
@@ -25,6 +26,28 @@ app.post('/calculate-price', (req, res) => {
   const { fechaInicio, fechaFin } = req.body;
   const precio = calcularPrecio(fechaInicio, fechaFin);
   res.json({ precio });
+});
+
+// Endpoint de pago con Square
+app.post('/create-payment', async (req, res) => {
+  const { nonce, amount, nombre, telefono } = req.body;
+  try {
+    const paymentsApi = squareClient.paymentsApi;
+    const response = await paymentsApi.createPayment({
+      sourceId: nonce,
+      idempotencyKey: Date.now().toString(),
+      amountMoney: {
+        amount: amount * 100, // en céntimos
+        currency: "EUR"
+      },
+      locationId,
+      note: `Reserva de ${nombre}, teléfono: ${telefono}`
+    });
+    res.json(response.result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 const PORT = process.env.PORT || 5000;
