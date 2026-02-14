@@ -259,3 +259,40 @@ section {
     grid-template-columns: 1fr 1fr;
   }
 }
+.reserva-box {
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  max-width: 500px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.reserva-box input, .reserva-box select, .reserva-box button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+.reserva-box button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.reserva-box button:hover { background-color: #45a049; }
+
+/* Spinner */
+.spinner {
+  margin: 10px auto;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4CAF50;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
