@@ -242,4 +242,69 @@ function initCalendars() {
     render();
   });
 }
+import { Payments } from "https://web.squarecdn.com/v1/square.js";
+
+const BACKEND = "https://rafaellabandeira-github-io.onrender.com";
+const payments = Payments("sq0idp-Ue7cMnZzU1fLD0l8u0lpcg", "LA6ZV4WAES4A0");
+const card = await payments.card();
+await card.attach("#square-card");
+
+const loader = document.getElementById("loader");
+const resumen = document.getElementById("resumenReserva");
+
+document.getElementById("formReserva").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  loader.style.display = "block";
+  resumen.style.display = "none";
+  document.getElementById("resultadoReserva").innerText = "";
+
+  const cabana = document.getElementById("cabana").value;
+  const fechaInicio = document.getElementById("fechaInicio").value;
+  const fechaFin = document.getElementById("fechaFin").value;
+
+  try {
+    const res = await fetch(`${BACKEND}/calculate-price`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cabana, fechaInicio, fechaFin })
+    });
+
+    if (!res.ok) throw new Error("Error calculando precio");
+
+    const data = await res.json();
+    const total = data.precio;
+    const señal = 50;
+    const resto = total - señal;
+
+    document.getElementById("resultadoReserva").innerText = "Precio calculado para tu estancia:";
+    document.getElementById("precioTotal").innerText = total;
+    document.getElementById("restoPagar").innerText = resto;
+    resumen.style.display = "block";
+
+  } catch(err) {
+    console.error(err);
+    document.getElementById("resultadoReserva").innerText = "Error calculando el precio. Intenta de nuevo.";
+    resumen.style.display = "none";
+  } finally {
+    loader.style.display = "none";
+  }
+});
+
+document.getElementById("btnPagar").addEventListener("click", async () => {
+  const nombre = document.getElementById("nombre").value;
+  const telefono = document.getElementById("telefono").value;
+  const cabana = document.getElementById("cabana").value;
+
+  const result = await card.tokenize();
+  if (result.status === "OK") {
+    await fetch(`${BACKEND}/create-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nonce: result.token, amount: 50, nombre, telefono, cabana })
+    });
+    alert("Reserva confirmada correctamente.");
+    location.reload();
+  } else { alert("Error en el pago"); }
+});
+
 
