@@ -1,9 +1,9 @@
 {
   "name": "reservas-riomundo",
   "version": "1.0.0",
-  "main": "server/server.js",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node backend/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -12,4 +12,3 @@
     "square": "^32.0.0"
   }
 }
-
