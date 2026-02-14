@@ -1,5 +1,3 @@
-// server/pricing.js
-
 const TEMPORADA_ALTA = 150;
 const TEMPORADA_BAJA = 115;
 const FIN_DE_SEMANA = [5, 6]; // viernes=5, sábado=6
