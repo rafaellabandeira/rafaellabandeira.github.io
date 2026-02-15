@@ -140,7 +140,7 @@
     <p>Señal: 50 €</p>
     <p>Resto a pagar: <span id="resto">0</span> €</p>
 
-    <button id="square-button" style="background-color:#4CAF50; color:white; padding:10px; border:none; border-radius:4px;">Reservar y pagar señal</button>
+    <button id="square-button" style="background-color:#4CAF50; color:white; padding:10px; border:none; border-radius:4px;">Pagar</button>
   </div>
 </section>
 
@@ -191,7 +191,7 @@ calcularBtn.addEventListener("click", async () => {
       body: JSON.stringify({cabana, entrada, salida})
     });
 
-    if(!res.ok) throw new Error("Error en la petición");
+    if(!res.ok) throw new Error("Error en backend");
 
     const data = await res.json();
     totalSpan.textContent = data.total;
@@ -219,5 +219,6 @@ squareBtn.addEventListener("click", () => {
   window.open(`https://squareup.com/pay?amount=${paymentAmount}&name=${encodeURIComponent(nombre)}&cabana=${encodeURIComponent(cabana)}`, "_blank");
 });
 </script>
+
 </body>
 </html>
