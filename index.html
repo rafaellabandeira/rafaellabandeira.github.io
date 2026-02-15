@@ -5,73 +5,97 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Cabañas Río Mundo | Casas Rurales en Riópar</title>
+<meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">
+<meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">
+<link rel="canonical" href="https://casaruralriomundo.es">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="images/favicon.svg">
+
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/index.css">
 
 <style>
-/* ===== Estilos Motor de Reservas ===== */
-.reserva-box {
-  border: 2px solid #e3e3e3;
-  padding: 25px;
-  max-width: 420px;
-  margin: 40px auto;
-  border-radius: 12px;
-  background: #fafafa;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+/* ===== MOTOR DE RESERVAS ===== */
+.reserva-box{
+  border:2px solid #e3e3e3;
+  padding:25px;
+  max-width:450px;
+  margin:40px auto;
+  border-radius:12px;
+  background:#fafafa;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
-.reserva-box label {
-  display: block;
-  margin-top: 15px;
-  font-weight: 600;
+.reserva-box label{
+  display:block;
+  margin-top:15px;
+  font-weight:600;
 }
-.reserva-box input,
-.reserva-box select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.reserva-box input, .reserva-box select{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
-.reserva-box button {
-  margin-top: 20px;
-  padding: 12px;
-  width: 100%;
-  background: #2f5d50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
+.reserva-box button{
+  margin-top:20px;
+  padding:12px;
+  width:100%;
+  background:#2f5d50;
+  color:white;
+  border:none;
+  border-radius:6px;
+  font-size:16px;
+  cursor:pointer;
 }
-.reserva-box button:hover {
-  background: #25473d;
+.reserva-box button:hover{
+  background:#25473d;
 }
-.spinner {
-  margin: 20px auto;
-  width: 35px;
-  height: 35px;
-  border: 4px solid #ddd;
-  border-top: 4px solid #2f5d50;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  display: none;
+.spinner{
+  margin:20px auto;
+  width:35px;
+  height:35px;
+  border:4px solid #ddd;
+  border-top:4px solid #2f5d50;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  display:none;
 }
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+/* Tarjeta resumen */
+.resumen-reserva{
+  border-radius:10px;
+  padding:15px;
+  margin-top:20px;
+  text-align:left;
+  color:#333;
+  font-weight:500;
+  transition: background 0.3s ease;
+}
+.resumen-reserva p{
+  margin:6px 0;
+}
+.resumen-reserva strong{
+  font-weight:700;
+}
+.descuento{
+  color:#e67e22;
+  font-weight:700;
+}
+.campanilla{
+  background:#d0f0e0;
+}
+.tejo{
+  background:#d0e0f5;
 }
 </style>
 </head>
-
 <body>
 
-<!-- ================= Navbar ================= -->
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="nav-container">
     <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
-    <div class="hamburger" id="hamburger">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     <ul class="nav-menu" id="navMenu">
       <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
       <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
@@ -81,7 +105,7 @@
   </div>
 </nav>
 
-<!-- ================= Hero ================= -->
+<!-- ===== HERO ===== -->
 <header class="hero">
   <div class="header-inner">
     <div class="header-text">
@@ -91,18 +115,14 @@
   </div>
 </header>
 
-<!-- ================= Tu escapada ================= -->
+<!-- ===== SECCIONES INFORMATIVAS ===== -->
 <section>
   <h2>Tu escapada rural en Riópar</h2>
-  <p>
-    Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
-    exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
-    Un entorno natural ideal para descansar, disfrutar en familia o realizar
-    escapadas románticas durante todo el año.
-  </p>
+  <p>Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
+     exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
+     Un entorno natural ideal para descansar, disfrutar en familia o realizar escapadas románticas durante todo el año.</p>
 </section>
 
-<!-- ================= Cabañas ================= -->
 <section>
   <h2>Nuestras exclusivas Cabañas</h2>
   <div class="cabanias-grid">
@@ -119,14 +139,10 @@
   </div>
 </section>
 
-<!-- ================= Piscina ================= -->
 <section>
   <h2>Piscina en temporada de verano</h2>
-  <p>
-    Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
-    convirtiendo la estancia en una experiencia, única, refrescante y perfecta para los
-    días más calurosos.
-  </p>
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
+     convirtiendo la estancia en una experiencia única y refrescante.</p>
   <div class="carousel-container small">
     <div class="carousel">
       <div class="carousel-slide"><img src="images/1000173041.jpg" alt="Piscina en verano - detalle"></div>
@@ -143,7 +159,6 @@
   </div>
 </section>
 
-<!-- ================= Galería ================= -->
 <section>
   <h2>Galería de Fotos</h2>
   <div class="carousel-container">
@@ -159,19 +174,19 @@
       <div class="indicator active"></div>
       <div class="indicator"></div>
       <div class="indicator"></div>
+      <!-- Resto de indicadores -->
     </div>
   </div>
   <p style="text-align:center; font-size:14px; color:#999; margin-top:16px;">Desliza o usa los botones para ver más fotos</p>
 </section>
 
-<!-- ================= Ubicación ================= -->
 <section>
   <h2>Ubicación</h2>
   <p>📍 Complejo EL Lagunazo, Riópar</p>
   <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
 </section>
 
-<!-- ================= MOTOR DE RESERVAS ================= -->
+<!-- ===== MOTOR DE RESERVAS ===== -->
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
@@ -180,25 +195,22 @@
       <option value="campanilla">Cabaña Campanilla</option>
       <option value="tejo">Cabaña El Tejo</option>
     </select>
-
     <label>Fecha de entrada</label>
     <input type="date" id="entrada">
     <label>Fecha de salida</label>
     <input type="date" id="salida">
-
     <label>Nombre completo</label>
-    <input type="text" id="nombre" placeholder="Tu nombre" required>
+    <input type="text" id="nombre" placeholder="Nombre">
     <label>Teléfono</label>
-    <input type="tel" id="telefono" placeholder="Tu teléfono" required>
+    <input type="tel" id="telefono" placeholder="Teléfono">
     <label>Email</label>
-    <input type="email" id="email" placeholder="Tu email" required>
-
+    <input type="email" id="email" placeholder="Email">
     <button onclick="calcularReserva()">Calcular precio</button>
-
     <div class="spinner" id="spinner"></div>
-
-    <div id="resultado" style="display:none;">
+    <div id="resultado" class="resumen-reserva" style="display:none;">
+      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
+      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
       <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button onclick="reservar()">Pagar</button>
@@ -206,7 +218,6 @@
   </div>
 </section>
 
-<!-- ================= Contacto ================= -->
 <section id="contacto">
   <h2>Contacto y Reservas</h2>
   <p>Las reservas se gestionan directamente por WhatsApp para una atención personalizada y sin intermediarios.</p>
@@ -223,71 +234,71 @@ function esTemporadaAlta(fecha){
   const f=new Date(fecha);
   const mes=f.getMonth()+1;
   const dia=f.getDate();
-  if(mes==7||mes==8) return true;
-  if((mes==12&&dia>=22)||(mes==1&&dia<=7)) return true;
-  return false;
+  return (mes==7||mes==8) || (mes==12&&dia>=22) || (mes==1&&dia<=7);
 }
-
 function incluyeFinDeSemana(fechaEntrada,noches){
   for(let i=0;i<noches;i++){
     const d=new Date(fechaEntrada);
     d.setDate(d.getDate()+i);
-    const dia=d.getDay();
-    if(dia==5||dia==6) return true;
+    if(d.getDay()==5||d.getDay()==6) return true;
   }
   return false;
 }
 
 function calcularReserva(){
+  const cabaña=document.getElementById("cabaña").value;
+  const entrada=document.getElementById("entrada").value;
+  const salida=document.getElementById("salida").value;
   const nombre=document.getElementById("nombre").value.trim();
   const telefono=document.getElementById("telefono").value.trim();
   const email=document.getElementById("email").value.trim();
-  const cabaña=document.getElementById("cabaña").value;
 
-  if(!nombre||!telefono||!email){
-    alert("Completa todos los datos personales");
-    return;
-  }
-
-  const entrada=document.getElementById("entrada").value;
-  const salida=document.getElementById("salida").value;
-  if(!entrada||!salida){
-    alert("Selecciona fechas");
-    return;
-  }
+  if(!entrada||!salida){alert("Selecciona fechas");return;}
+  if(!nombre||!telefono||!email){alert("Completa todos los datos personales");return;}
 
   document.getElementById("spinner").style.display="block";
   document.getElementById("resultado").style.display="none";
 
   setTimeout(()=>{
     const noches=(new Date(salida)-new Date(entrada))/(1000*60*60*24);
+    let precioNoche=0;
+    if(cabaña=="campanilla"){precioNoche=esTemporadaAlta(entrada)?150:115;}
+    else{precioNoche=esTemporadaAlta(entrada)?120:95;}
 
-    let precioNoche;
-    if(cabaña=="campanilla") precioNoche = esTemporadaAlta(entrada)?150:115;
-    else precioNoche = esTemporadaAlta(entrada)?120:95;
-
-    if(esTemporadaAlta(entrada) && noches<4){alert("En temporada alta mínimo 4 noches"); document.getElementById("spinner").style.display="none"; return;}
-    if(!esTemporadaAlta(entrada) && noches<2){alert("Mínimo 2 noches"); document.getElementById("spinner").style.display="none"; return;}
+    if(esTemporadaAlta(entrada)&&noches<4){alert("En temporada alta mínimo 4 noches");document.getElementById("spinner").style.display="none";return;}
+    if(!esTemporadaAlta(entrada)&&noches<2){alert("Mínimo 2 noches");document.getElementById("spinner").style.display="none";return;}
 
     let total=noches*precioNoche;
+    let descuento=0;
 
-    if(!esTemporadaAlta(entrada)&&noches>=3 && !incluyeFinDeSemana(entrada,noches)) total*=0.90;
-    if(esTemporadaAlta(entrada)&&noches>=6) total*=0.90;
+    if(!esTemporadaAlta(entrada)&&noches>=3 && !incluyeFinDeSemana(entrada,noches)){
+      descuento=total*0.10;
+      total*=0.90;
+    }
+    if(esTemporadaAlta(entrada)&&noches>=6){
+      descuento=total*0.10;
+      total*=0.90;
+    }
 
     const resto=total-50;
 
+    document.getElementById("cabañaSeleccionada").innerText=cabaña=="campanilla"?"Cabaña Campanilla":"Cabaña El Tejo";
     document.getElementById("total").innerText=total.toFixed(2);
     document.getElementById("resto").innerText=resto.toFixed(2);
+    document.getElementById("descuento").innerText=descuento.toFixed(2);
+
+    const resumen=document.getElementById("resultado");
+    resumen.className="resumen-reserva " + (cabaña=="campanilla"?"campanilla":"tejo");
+    
     document.getElementById("spinner").style.display="none";
-    document.getElementById("resultado").style.display="block";
-  },800);
+    resumen.style.display="block";
+  },600);
 }
 
 function reservar(){
-  alert("Aquí se conectará el pago de 50 € ahora y resto a pagar en alojamiento.");
+  alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
 </script>
 
-<script src="js/main.js"></script>
 </body>
 </html>
