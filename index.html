@@ -260,6 +260,111 @@
     📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a>
   </p>
 </section>
+  <!-- 🔴 NUEVA SECCIÓN DE RESERVAS ONLINE -->
+<section id="reservas-online">
+  <h2>Reserva Online</h2>
+  <p>Consulta disponibilidad y paga la señal para confirmar la reserva.</p>
+
+  <form id="formReserva">
+    <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
+    <input type="tel" id="telefono" placeholder="Teléfono" required>
+
+    <select id="cabana">
+      <option value="Campanilla">Campanilla</option>
+      <option value="El Tejo">El Tejo</option>
+    </select>
+
+    <label>Fecha llegada</label>
+    <input type="date" id="fechaInicio" required>
+
+    <label>Fecha salida</label>
+    <input type="date" id="fechaFin" required>
+
+    <button type="submit">Calcular precio</button>
+  </form>
+
+  <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
+
+  <div id="square-card" style="margin-top:20px;"></div>
+
+  <button id="btnPagar" style="display:none;margin-top:10px;">
+    Pagar señal 50€
+  </button>
+
+  <p style="font-size:13px;color:#777;">
+    El resto se abonará a la llegada.
+  </p>
+</section>
+
+<script src="js/main.js"></script>
+
+<!-- 🔴 SCRIPT RESERVAS + SQUARE -->
+<script type="module">
+import { Payments } from "https://web.squarecdn.com/v1/square.js";
+
+/* ⚠️ URL de tu backend en Render */
+const BACKEND = "https://rafaellabandeira-github-io.onrender.com";
+
+/* ✅ Tus credenciales de Square */
+const payments = Payments("sq0idp-Ue7cMnZzU1fLD0l8u0lpcg", "LA6ZV4WAES4A0");
+
+const card = await payments.card();
+await card.attach("#square-card");
+
+document.getElementById("formReserva").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const cabana = document.getElementById("cabana").value;
+  const fechaInicio = document.getElementById("fechaInicio").value;
+  const fechaFin = document.getElementById("fechaFin").value;
+
+  const res = await fetch(`${BACKEND}/calculate-price`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cabana, fechaInicio, fechaFin })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("resultadoReserva").innerHTML =
+    `Precio total estancia: ${data.precio} €`;
+
+  document.getElementById("btnPagar").style.display = "inline-block";
+});
+
+document.getElementById("btnPagar").addEventListener("click", async () => {
+
+  const nombre = document.getElementById("nombre").value;
+  const telefono = document.getElementById("telefono").value;
+  const cabana = document.getElementById("cabana").value;
+
+  const result = await card.tokenize();
+
+  if (result.status === "OK") {
+
+    await fetch(`${BACKEND}/create-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nonce: result.token,
+        amount: 50,
+        nombre,
+        telefono,
+        cabana
+      })
+    });
+
+    alert("Reserva confirmada correctamente.");
+    location.reload();
+  } else {
+    alert("Error en el pago");
+  }
+});
+</script>
+
+</body>
+</html>
+
 
 <footer>
   <p>
