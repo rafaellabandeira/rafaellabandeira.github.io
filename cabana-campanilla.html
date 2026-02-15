@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Cabaña Campanilla | Cabañas Río Mundo · Riópar</title>
 <meta name="description" content="Cabaña Campanilla en Riópar. Casa rural para 6 personas con 2 habitaciones y altillo, junto al Río Mundo. Piscina en verano.">
 <meta name="keywords" content="cabaña campanilla riópar, casa rural 6 personas río mundo">
@@ -15,48 +16,46 @@
 <link rel="stylesheet" href="css/index.css">
 
 <style>
-/* ===== Calendario dinámico ===== */
-.calendario-container {
-  max-width: 420px;
-  margin: 20px auto 40px;
-  border: 2px solid #e3e3e3;
-  border-radius: 12px;
-  padding: 15px;
-  background: #fafafa;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+/* Calendario */
+.calendario-container{
+  max-width:420px;
+  margin:20px auto 40px;
+  border:2px solid #e3e3e3;
+  padding:15px;
+  border-radius:12px;
+  background:#fafafa;
 }
-.calendario-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+.calendario-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
 }
-.calendario-header button {
-  background:#2f5d50; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer;
+.calendario-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
 }
-.calendario-grid {
-  display: grid;
-  grid-template-columns: repeat(7,1fr);
-  gap:5px;
-}
-.dia {
+.dia{
   padding:8px;
   text-align:center;
   border-radius:6px;
   font-size:13px;
   background:#eee;
 }
-.libre { background:#d4edda; }      /* Verde disponible */
-.ocupado { background:#f8d7da; }    /* Rojo ocupado */
+.libre{background:#d4edda;}
+.ocupado{background:#f8d7da;}
+.flecha{cursor:pointer; font-weight:bold;}
 </style>
 </head>
-
 <body>
 
 <nav class="navbar">
   <div class="nav-container">
     <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
-    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
     <ul class="nav-menu" id="navMenu">
       <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
       <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
@@ -75,147 +74,140 @@
 </header>
 
 <section>
-<h2>Descripción</h2>
-<p>
-Capacidad máxima 6 personas. Dispone de dos habitaciones y un altillo, ofreciendo un espacio muy
-cómodo y funcional con chimenea de leña, para familias o grupos de amigos que buscan disfrutar
-de la naturaleza.
-</p>
+  <h2>Descripción</h2>
+  <p>
+    Capacidad máxima 6 personas. Dispone de dos habitaciones y un altillo, ofreciendo un espacio cómodo y funcional con chimenea de leña,
+    para familias o grupos que buscan disfrutar de la naturaleza.
+  </p>
 
-<h3>Calendario Campanilla</h3>
-<div id="calendario-campanilla" class="calendario-container"></div>
+  <!-- Calendario dinámico Campanilla -->
+  <h3>Calendario Campanilla</h3>
+  <div id="calendario-campanilla" class="calendario-container"></div>
 
-<p>
-Situada en el exclusivo complejo El Lagunazo, que dispone de lago propio, se encuentra muy cerca del Nacimiento
-del Río Mundo, en un entorno tranquilo y natural ideal para desconectar.
-</p>
+  <p>
+    Situada en el exclusivo complejo El Lagunazo, con lago propio, muy cerca del Nacimiento del Río Mundo, en un entorno tranquilo y natural.
+  </p>
 </section>
 
 <section>
-<h2>Características</h2>
-<ul>
-<li>Capacidad: hasta 6 personas</li>
-<li>2 habitaciones + altillo</li>
-<li>Cocina totalmente equipada</li>
-<li>Baño completo</li>
-<li>Chimenea de leña</li>
-<li>Aire acondicionado y WIFI</li>
-<li>Lavadora</li>
-<li>Entorno natural, al lado del lago</li>
-<li>Piscina disponible en verano</li>
-</ul>
-</section>
-
-<section>
-<h2>Galería de Fotos</h2>
-<div class="carousel-container">
-  <div class="carousel">
-    <div class="carousel-slide active"><img src="images/1000150758.jpg" alt="Exterior de la casa rural"></div>
-    <div class="carousel-slide"><img src="images/1000150760.jpg" alt="Salón interior de la casa rural"></div>
-    <div class="carousel-slide"><img src="images/1000150764.jpg" alt="Zona exterior de la cabaña"></div>
-    <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Fachada de la casa rural"></div>
-    <div class="carousel-slide"><img src="images/1000150775.jpg" alt="Dormitorio acogedor en la cabaña"></div>
-    <div class="carousel-slide"><img src="images/1000150776.jpg" alt="Altillo de madera en la casa rural"></div>
-    <div class="carousel-slide"><img src="images/1000150779.jpg" alt="Detalle interior rústico"></div>
-    <div class="carousel-slide"><img src="images/1000150780.jpg" alt="Zona interior de descanso"></div>
-    <div class="carousel-slide"><img src="images/1000150783.jpg" alt="Decoración interior rural"></div>
-    <div class="carousel-slide"><img src="images/1000150787.jpg" alt="Habitación de la casa rural"></div>
-    <div class="carousel-slide"><img src="images/1000150788.jpg" alt="Casa rural rodeada de naturaleza"></div>
-    <div class="carousel-slide"><img src="images/1000150793.jpg" alt="Interior acogedor con madera"></div>
-    <div class="carousel-slide"><img src="images/1000150800.jpg" alt="Vistas exteriores del alojamiento rural"></div>
-    <div class="carousel-slide"><img src="images/1000150806.jpg" alt="Detalles del interior de la cabaña"></div>
-    <div class="carousel-slide"><img src="images/1000150807.jpg" alt="Jardín y entorno natural"></div>
-    <div class="carousel-slide"><img src="images/1000150816.jpg" alt="Entorno natural de la casa rural"></div>
-    <div class="carousel-slide"><img src="images/1000173054.jpg" alt="Exterior general del complejo rural"></div>
+  <h2>Galería de Fotos</h2>
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-slide active"><img src="images/1000150758.jpg" alt="Exterior de la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000150760.jpg" alt="Salón interior de la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000150764.jpg" alt="Zona exterior de la cabaña"></div>
+      <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Fachada de la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000150775.jpg" alt="Dormitorio acogedor en la cabaña"></div>
+      <div class="carousel-slide"><img src="images/1000150776.jpg" alt="Altillo de madera en la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000150779.jpg" alt="Detalle interior rústico"></div>
+      <div class="carousel-slide"><img src="images/1000150780.jpg" alt="Zona interior de descanso"></div>
+      <div class="carousel-slide"><img src="images/1000150783.jpg" alt="Decoración interior rural"></div>
+      <div class="carousel-slide"><img src="images/1000150787.jpg" alt="Habitación de la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000150788.jpg" alt="Casa rural rodeada de naturaleza"></div>
+      <div class="carousel-slide"><img src="images/1000150793.jpg" alt="Interior acogedor con madera"></div>
+      <div class="carousel-slide"><img src="images/1000150800.jpg" alt="Vistas exteriores del alojamiento rural"></div>
+      <div class="carousel-slide"><img src="images/1000150806.jpg" alt="Detalles del interior de la cabaña"></div>
+      <div class="carousel-slide"><img src="images/1000150807.jpg" alt="Jardín y entorno natural"></div>
+      <div class="carousel-slide"><img src="images/1000150816.jpg" alt="Entorno natural de la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000173054.jpg" alt="Exterior general del complejo rural"></div>
+    </div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+    <div class="carousel-indicators"></div>
   </div>
-  <button class="carousel-button prev">❮</button>
-  <button class="carousel-button next">❯</button>
-  <div class="carousel-indicators"></div>
-</div>
 </section>
 
 <section>
-<h2>Ubicación</h2>
-<p>📍 Cabaña Campanilla, Riópar</p>
-<iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed"
-width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+  <h2>Ubicación</h2>
+  <p>📍 Cabaña Campanilla, Riópar</p>
+  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
 </section>
 
 <section id="contacto">
-<h2>Contacto y Reservas</h2>
-<p>
-Las reservas se gestionan directamente por WhatsApp o por teléfono, para ofrecer una atención más personalizada.
-</p>
-<p>
-📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a>
-</p>
-<a class="boton" href="index.html">⬅ Volver a la página principal</a>
+  <h2>Contacto y Reservas</h2>
+  <p>Las reservas se gestionan directamente por WhatsApp o por teléfono para una atención más personalizada.</p>
+  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
+  <a class="boton" href="index.html">⬅ Volver a la página principal</a>
 </section>
 
 <footer>
-<p>
-<a href="aviso-legal.html">Aviso Legal</a> |
-<a href="privacidad.html">Política de Privacidad</a> |
-<a href="cookies.html">Política de Cookies</a>
-</p>
-<p>© Cabañas Río Mundo · Riópar</p>
+  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
+  <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
+<a class="whatsapp" href="https://wa.me/34620419157" title="Contacta por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+  </svg>
+</a>
+
+<script src="js/main.js"></script>
+
 <script>
-/* ===== Calendario dinámico multi-mes Campanilla ===== */
-const fechasOcupadasCampanilla = [
-  "2026-02-20","2026-02-21","2026-03-05","2026-03-06","2026-03-15"
-]; // ejemplo
+// ================= CALENDARIO DINÁMICO =================
+const fechasOcupadasCampanilla = ["2026-02-18","2026-02-19","2026-02-25","2026-02-28"];
+let mesActual = new Date().getMonth();
+let añoActual = new Date().getFullYear();
 
-function generarCalendario(cabinaId, fechasOcupadas, mesesAdelante=6){
-  const contenedor = document.getElementById(cabinaId);
-  contenedor.innerHTML = "";
-  
-  const hoy = new Date();
-  for(let m=0;m<mesesAdelante;m++){
-    const mes = new Date(hoy.getFullYear(), hoy.getMonth()+m,1);
-    const mesDiv = document.createElement("div");
-    const header = document.createElement("div");
-    header.className = "calendario-header";
-    header.innerHTML = `<strong>${mes.toLocaleString('es-ES',{month:'long',year:'numeric'})}</strong>`;
-    mesDiv.appendChild(header);
+function dibujarCalendarioCampanilla(mes=añoActual){
+  const calendario = document.getElementById("calendario-campanilla");
+  calendario.innerHTML="";
 
-    const grid = document.createElement("div");
-    grid.className="calendario-grid";
-    // días de la semana
-    ["L","M","X","J","V","S","D"].forEach(dia=>{
-      const div = document.createElement("div");
-      div.className="dia";
-      div.style.fontWeight="bold";
-      div.innerText=dia;
-      grid.appendChild(div);
-    });
-    const primerDia = new Date(mes.getFullYear(),mes.getMonth(),1).getDay();
-    const ajuste = primerDia===0?6:primerDia-1; // lunes=0
-    for(let i=0;i<ajuste;i++){
-      const div=document.createElement("div");
-      div.className="dia";
-      div.innerText="";
-      grid.appendChild(div);
-    }
-    const diasMes = new Date(mes.getFullYear(), mes.getMonth()+1,0).getDate();
-    for(let d=1;d<=diasMes;d++){
-      const fechaStr=`${mes.getFullYear()}-${String(mes.getMonth()+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-      const div=document.createElement("div");
-      div.className="dia "+(fechasOcupadas.includes(fechaStr)?"ocupado":"libre");
-      div.innerText=d;
-      grid.appendChild(div);
-    }
-    mesDiv.appendChild(grid);
-    contenedor.appendChild(mesDiv);
+  const header = document.createElement("div");
+  header.className="calendario-header";
+
+  const btnPrev = document.createElement("span");
+  btnPrev.className="flecha";
+  btnPrev.innerText="❮";
+  btnPrev.onclick=()=>{ cambiarMes(-1); };
+
+  const btnNext = document.createElement("span");
+  btnNext.className="flecha";
+  btnNext.innerText="❯";
+  btnNext.onclick=()=>{ cambiarMes(1); };
+
+  const titulo = document.createElement("div");
+  const fechaTitulo = new Date(añoActual, mesActual);
+  const opciones = { month: "long", year: "numeric"};
+  titulo.innerText = fechaTitulo.toLocaleDateString("es-ES", opciones);
+  header.appendChild(btnPrev);
+  header.appendChild(titulo);
+  header.appendChild(btnNext);
+  calendario.appendChild(header);
+
+  const grid = document.createElement("div");
+  grid.className="calendario-grid";
+
+  const primerDia = new Date(añoActual, mesActual, 1).getDay();
+  const diasMes = new Date(añoActual, mesActual+1, 0).getDate();
+
+  for(let i=0;i<primerDia;i++){
+    const celda = document.createElement("div"); celda.className="dia"; grid.appendChild(celda);
   }
+
+  for(let d=1;d<=diasMes;d++){
+    const fecha = new Date(añoActual, mesActual, d);
+    const fechaStr = fecha.toISOString().split("T")[0];
+    const celda = document.createElement("div");
+    celda.className="dia "+(fechasOcupadasCampanilla.includes(fechaStr)?"ocupado":"libre");
+    celda.innerText=d;
+    grid.appendChild(celda);
+  }
+
+  calendario.appendChild(grid);
+}
+
+function cambiarMes(offset){
+  mesActual+=offset;
+  if(mesActual<0){mesActual=11; añoActual--;}
+  if(mesActual>11){mesActual=0; añoActual++;}
+  dibujarCalendarioCampanilla();
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-  generarCalendario("calendario-campanilla", fechasOcupadasCampanilla,6);
+  dibujarCalendarioCampanilla();
 });
 </script>
 
-<script src="js/main.js"></script>
 </body>
 </html>
