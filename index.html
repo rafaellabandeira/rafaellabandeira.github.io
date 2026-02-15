@@ -263,7 +263,8 @@
   <!-- 🔴 NUEVA SECCIÓN DE RESERVAS ONLINE -->
 <section id="reservas-online">
   <h2>Reserva Online</h2>
-  <div id="reserva-container">
+  <div class="reserva-box"> <!-- 🔹 NUEVO RECUBRIMIENTO -->
+
     <p>Consulta disponibilidad y paga la señal para confirmar la reserva.</p>
 
     <form id="formReserva">
@@ -284,19 +285,24 @@
       <button type="submit">Calcular precio</button>
     </form>
 
+    <!-- RESULTADOS -->
     <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
+    <div id="resumenReserva" style="margin-top:10px;display:none;">
+      <p>Precio total: <span id="precioTotal">0</span> €</p>
+      <p>Señal pagada: 50 €</p>
+      <p>Resto a pagar: <span id="restoPagar">0</span> €</p>
+      <button id="btnPagar" style="margin-top:10px;">Reservar / Pagar señal</button>
+    </div>
 
     <div id="square-card" style="margin-top:20px;"></div>
-
-    <button id="btnPagar" style="display:none;margin-top:10px;">
-      Pagar señal 50€
-    </button>
 
     <p style="font-size:13px;color:#777;">
       El resto se abonará a la llegada.
     </p>
-  </div>
+
+  </div> <!-- fin reserva-box -->
 </section>
+
 
 <script src="js/main.js"></script>
 
