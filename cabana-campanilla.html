@@ -1,20 +1,79 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Cabaña Campanilla | Cabañas Río Mundo · Riópar</title>
+<title>Cabaña Campanilla | Cabañas Río Mundo · Riópar</title>
+<meta name="description" content="Cabaña Campanilla en Riópar. Casa rural para 6 personas con 2 habitaciones y altillo, junto al Río Mundo. Piscina en verano.">
+<meta name="keywords" content="cabaña campanilla riópar, casa rural 6 personas río mundo">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/cabanas.css">
+<link rel="stylesheet" href="css/index.css">
 
-  <meta name="description" content="Cabaña Campanilla en Riópar. Casa rural para 6 personas con 2 habitaciones y altillo, junto al Río Mundo. Piscina en verano.">
-  <meta name="keywords" content="cabaña campanilla riópar, casa rural 6 personas río mundo">
-  <link rel="canonical" href="https://casaruralriomundo.es/cabana-campanilla.html">
-  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="images/favicon.svg">
-  
-  <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/cabanas.css">
-  <link rel="stylesheet" href="css/index.css">
+<style>
+/* Motor reservas */
+.reserva-box{
+  border:2px solid #e3e3e3;
+  padding:25px;
+  max-width:480px;
+  margin:30px auto;
+  border-radius:12px;
+  background:#fafafa;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+.reserva-box label{
+  display:block;
+  margin-top:15px;
+  font-weight:600;
+}
+.reserva-box input{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+.reserva-box button{
+  margin-top:20px;
+  padding:12px;
+  width:100%;
+  background:#2f5d50;
+  color:white;
+  border:none;
+  border-radius:6px;
+  font-size:16px;
+  cursor:pointer;
+}
+.reserva-box button:hover{background:#25473d;}
+.spinner{
+  margin:20px auto;
+  width:35px;
+  height:35px;
+  border:4px solid #ddd;
+  border-top:4px solid #2f5d50;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  display:none;
+}
+/* Calendario */
+.calendario{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+  max-width:420px;
+  margin:15px auto 40px;
+}
+.dia{
+  padding:8px;
+  text-align:center;
+  border-radius:6px;
+  font-size:13px;
+  background:#eee;
+}
+.libre{ background:#d4edda; }      /* Verde disponible */
+.ocupado{ background:#f8d7da; }    /* Rojo ocupado */
+</style>
 </head>
 
 <body>
@@ -22,11 +81,7 @@
 <nav class="navbar">
   <div class="nav-container">
     <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
-    <div class="hamburger" id="hamburger">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     <ul class="nav-menu" id="navMenu">
       <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
       <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
@@ -46,150 +101,122 @@
 
 <section>
   <h2>Descripción</h2>
-  Capacidad máxima 6 personas. 
-  Dispone de dos habitaciones y un altillo, ofreciendo un espacio muy
-    cómodo y funcional con chimenea de leña, para familias o grupos de amigos que buscan disfrutar
-    de la naturaleza.
-  </p>
-  <h3 style="text-align:center;margin-top:20px;">Disponibilidad Campanilla</h3>
-<div id="calendario-campanilla" class="calendario"></div>
-
-  <p>
-    Situada en el exclusivo complejo El Lagunazo, que dispone de lago propio, se encuentra muy cerca del Nacimiento
-    del Río Mundo, en un entorno tranquilo y natural ideal para desconectar.
-  </p>
-<section>
-  <h2>Consultar disponibilidad en el 620419157</h2>
-  <div class="simple-calendar" data-cabin="campanilla"></div>
-</section>
-  
-<section>
-  <h2>Contacto y Reservas</h2>
-  <h2>Rafa 620 41 91 57</h2>
-    </p>
-</section>
-<section>
-  <h2>Características</h2>
-  <ul>
-    <li>Capacidad: hasta 6 personas</li>
-    <li>2 habitaciones + altillo</li>
-    <li>Cocina totalmente equipada</li>
-    <li>Baño completo</li>
-    <li>Chimenea de leña</li>
-    <li>Aire acondicionado y WIFI</li>
-    <li>Lavadora</li>
-    <li>Entorno natural, al lado del lago</li>
-    <li>Piscina disponible en verano</li>
-  </ul>
+  <p>Capacidad máxima 6 personas. Dispone de dos habitaciones y un altillo, ofreciendo un espacio muy cómodo y funcional con chimenea de leña, para familias o grupos de amigos que buscan disfrutar de la naturaleza.</p>
+  <p>Situada en el exclusivo complejo El Lagunazo, con lago propio, muy cerca del Nacimiento del Río Mundo.</p>
 </section>
 
 <section>
   <h2>Galería de Fotos</h2>
   <div class="carousel-container">
     <div class="carousel">
-
-      <div class="carousel-slide active">
-        <img src="images/1000150758.jpg" alt="Exterior de la casa rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150760.jpg" alt="Salón interior de la casa rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150764.jpg" alt="Zona exterior de la cabaña">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150768.jpg" alt="Fachada de la casa rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150775.jpg" alt="Dormitorio acogedor en la cabaña">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150776.jpg" alt="Altillo de madera en la casa rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150779.jpg" alt="Detalle interior rústico">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150780.jpg" alt="Zona interior de descanso">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150783.jpg" alt="Decoración interior rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150787.jpg" alt="Habitación de la casa rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150788.jpg" alt="Casa rural rodeada de naturaleza">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150793.jpg" alt="Interior acogedor con madera">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150800.jpg" alt="Vistas exteriores del alojamiento rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150806.jpg" alt="Detalles del interior de la cabaña">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150807.jpg" alt="Jardín y entorno natural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000150816.jpg" alt="Entorno natural de la casa rural">
-      </div>
-      <div class="carousel-slide">
-        <img src="images/1000173054.jpg" alt="Exterior general del complejo rural">
-      </div>
-
+      <div class="carousel-slide active"><img src="images/1000150758.jpg" alt="Exterior de la casa rural"></div>
+      <div class="carousel-slide"><img src="images/1000150760.jpg" alt="Salón interior"></div>
+      <div class="carousel-slide"><img src="images/1000150764.jpg" alt="Zona exterior"></div>
+      <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Fachada"></div>
+      <div class="carousel-slide"><img src="images/1000150775.jpg" alt="Dormitorio acogedor"></div>
+      <div class="carousel-slide"><img src="images/1000150776.jpg" alt="Altillo de madera"></div>
+      <div class="carousel-slide"><img src="images/1000150779.jpg" alt="Detalle interior rústico"></div>
     </div>
-
     <button class="carousel-button prev">❮</button>
     <button class="carousel-button next">❯</button>
-
-    <!-- Los indicadores se crean solos con JS -->
     <div class="carousel-indicators"></div>
-
   </div>
+</section>
+
+<section id="reserva-campanilla">
+  <h2>Reserva Online - Campanilla</h2>
+  <div class="reserva-box">
+    <label>Fecha de entrada</label>
+    <input type="date" id="entrada-campanilla">
+    <label>Fecha de salida</label>
+    <input type="date" id="salida-campanilla">
+    <label>Nombre completo</label>
+    <input type="text" id="nombre-campanilla">
+    <label>Teléfono</label>
+    <input type="text" id="telefono-campanilla">
+    <label>Email</label>
+    <input type="email" id="email-campanilla">
+
+    <button onclick="calcularReservaCampanilla()">Calcular precio</button>
+
+    <div class="spinner" id="spinner-campanilla"></div>
+
+    <div id="resultado-campanilla" style="display:none; margin-top:20px;">
+      <p><strong>Cabaña seleccionada:</strong> Cabaña Campanilla</p>
+      <p><strong>Total estancia:</strong> <span id="total-campanilla"></span> €</p>
+      <p><strong>Descuento aplicado:</strong> <span id="descuento-campanilla"></span> €</p>
+      <p><strong>Reserva ahora:</strong> 50 €</p>
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto-campanilla"></span> €</p>
+      <button onclick="reservarCampanilla()">Pagar</button>
+    </div>
+  </div>
+
+  <h3>Calendario Campanilla</h3>
+  <div id="calendario-campanilla" class="calendario"></div>
 </section>
 
 <section>
   <h2>Ubicación</h2>
   <p>📍 Cabaña Campanilla, Riópar</p>
-  <iframe
-    src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed"
-    width="100%" 
-    height="350" 
-    style="border:0;" 
-    allowfullscreen="" 
-    loading="lazy">
-  </iframe>
-</section>
-
-<section id="contacto">
-  <h2>Contacto y Reservas</h2>
-  <p>
-    Las reservas se gestionan directamente por WhatsApp o por teléfono, para ofrecer una atención más personalizada.
-  </p>
-  <p>
-    📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a>
-  </p>
-  <a class="boton" href="index.html">⬅ Volver a la página principal</a>
+  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
 </section>
 
 <footer>
-  <p>
-    <a href="aviso-legal.html">Aviso Legal</a> |
-    <a href="privacidad.html">Política de Privacidad</a> |
-    <a href="cookies.html">Política de Cookies</a>
-  </p>
+  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<a class="whatsapp" href="https://wa.me/34620419157" title="Contacta por WhatsApp">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-  </svg>
-</a>
+<script>
+const reservasCampanilla = ["2026-02-20","2026-02-21","2026-02-22"];
 
-<script src="js/main.js"></script>
+function calcularReservaCampanilla(){
+  const entrada=document.getElementById("entrada-campanilla").value;
+  const salida=document.getElementById("salida-campanilla").value;
+  const nombre=document.getElementById("nombre-campanilla").value.trim();
+  const telefono=document.getElementById("telefono-campanilla").value.trim();
+  const email=document.getElementById("email-campanilla").value.trim();
+  if(!entrada||!salida||!nombre||!telefono||!email){alert("Completa todos los datos");return;}
+  document.getElementById("spinner-campanilla").style.display="block";
+  document.getElementById("resultado-campanilla").style.display="none";
+
+  setTimeout(()=>{
+    const noches=(new Date(salida)-new Date(entrada))/(1000*60*60*24);
+    if(noches<1){alert("Selecciona un rango válido");document.getElementById("spinner-campanilla").style.display="none";return;}
+    let precio=esTemporadaAlta(entrada)?150:115;
+    let total=precio*noches;
+    let descuento=0;
+    if(!esTemporadaAlta(entrada)&&noches>=3){descuento=total*0.10;total*=0.90;}
+    if(esTemporadaAlta(entrada)&&noches>=6){descuento=total*0.10;total*=0.90;}
+    const resto=total-50;
+    document.getElementById("total-campanilla").innerText=total.toFixed(2);
+    document.getElementById("descuento-campanilla").innerText=descuento.toFixed(2);
+    document.getElementById("resto-campanilla").innerText=resto.toFixed(2);
+    document.getElementById("spinner-campanilla").style.display="none";
+    document.getElementById("resultado-campanilla").style.display="block";
+  },500);
+}
+
+function reservarCampanilla(){alert("Pago de 50 € simulado para Campanilla");}
+
+/* Render calendario */
+function renderCalendario(id,reservas){
+  const container=document.getElementById(id);
+  container.innerHTML="";
+  for(let i=1;i<=30;i++){
+    const dia=document.createElement("div");
+    dia.className="dia "+(reservas.includes(`2026-02-${i.toString().padStart(2,"0")}`)?"ocupado":"libre");
+    dia.innerText=i;
+    container.appendChild(dia);
+  }
+}
+renderCalendario("calendario-campanilla",reservasCampanilla);
+
+/* Temporada alta auxiliar */
+function esTemporadaAlta(fecha){
+  const f=new Date(fecha);
+  const m=f.getMonth()+1,d=f.getDate();
+  return (m==7||m==8)||(m==12&&d>=22)||(m==1&&d<=7);
+}
+</script>
 </body>
 </html>
