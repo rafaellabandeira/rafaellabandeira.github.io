@@ -3,43 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Cabañas Río Mundo | Casas Rurales en Riópar</title>
-
-  <meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">
-  <meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">
-  <link rel="canonical" href="https://casaruralriomundo.es">
-  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="images/favicon.svg">
-  
   <link rel="stylesheet" href="css/global.css">
   <link rel="stylesheet" href="css/index.css">
-  <style>
-    /* Recuadro y estilo para motor de reservas */
-    #reserva-box {
-      border: 2px solid #4CAF50;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 10px;
-      background: #f9f9f9;
-    }
-    #spinner {
-      display: none;
-      margin: 10px auto;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #4CAF50;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg);}
-      100% { transform: rotate(360deg);}
-    }
-  </style>
 </head>
-
 <body>
 
 <nav class="navbar">
@@ -80,14 +47,12 @@
 
 <section>
   <h2>Nuestras exclusivas Cabañas</h2>
-
   <div class="cabanias-grid">
     <div class="cabin-card">
       <h3>Cabaña Campanilla</h3>
       <p>Capacidad para hasta 6 personas, dispone de 2 habitaciones y un altillo, perfecta para familias o grupos.</p>
       <a class="boton" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>
     </div>
-
     <div class="cabin-card">
       <h3>Cabaña El Tejo</h3>
       <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>
@@ -98,12 +63,8 @@
 
 <section>
   <h2>Piscina en temporada de verano</h2>
-  <p>
-    Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
-    convirtiendo la estancia en una experiencia, única, refrescante y perfecta para los
-    días más calurosos.
-  </p>
-  <!-- Carrusel piscina -->
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos convirtiendo la estancia en una experiencia única, refrescante y perfecta para los días más calurosos.</p>
+  
   <div class="carousel-container small">
     <div class="carousel">
       <div class="carousel-slide"><img src="images/1000173041.jpg" alt="Piscina en verano - detalle"></div>
@@ -122,134 +83,140 @@
 
 <section>
   <h2>Galería de Fotos</h2>
-  <!-- Carrusel principal -->
   <div class="carousel-container">
     <div class="carousel">
-      <!-- Aquí van todas tus imágenes de cabañas e interiores como las tenías antes -->
       <div class="carousel-slide active"><img src="images/1000150795.jpg" alt="Exterior de las cabañas en Riópar"></div>
       <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Exterior de las cabañas en Riópar"></div>
-      <!-- Resto de imágenes ... -->
+      <div class="carousel-slide"><img src="images/1000150758.jpg" alt="Exterior de las cabañas en Riópar"></div>
+      <!-- Mantén el resto de tus slides aquí tal como los tenías -->
     </div>
     <button class="carousel-button prev">❮</button>
     <button class="carousel-button next">❯</button>
     <div class="carousel-indicators">
       <div class="indicator active"></div>
-      <!-- resto de indicadores ... -->
+      <div class="indicator"></div>
+      <div class="indicator"></div>
     </div>
   </div>
-  <p style="text-align: center; font-size: 14px; color: #999; margin-top: 16px;">
-    Desliza o usa los botones para ver más fotos
-  </p>
-</section>
-
-<section>
-  <h2>Reservas Online</h2>
-  <div id="reserva-box">
-    <!-- Selector de cabaña -->
-    <label for="cabana">Elige tu cabaña</label>
-    <select id="cabana">
-      <option value="Campanilla">Cabaña Campanilla (6 personas)</option>
-      <option value="El Tejo">Cabaña El Tejo (4 personas)</option>
-    </select>
-
-    <label for="entrada">Fecha entrada</label>
-    <input type="date" id="entrada">
-
-    <label for="salida">Fecha salida</label>
-    <input type="date" id="salida">
-
-    <label for="nombre">Nombre completo</label>
-    <input type="text" id="nombre" placeholder="Tu nombre completo" required>
-
-    <label for="telefono">Teléfono</label>
-    <input type="tel" id="telefono" placeholder="Tu teléfono" required>
-
-    <label for="email">Email</label>
-    <input type="email" id="email" placeholder="Tu email" required>
-
-    <button id="calcular-btn">Calcular precio</button>
-    <div id="spinner"></div>
-
-    <div id="resultado" style="margin-top:10px;">
-      <p><strong>Total estancia:</strong> <span id="total">0</span> €</p>
-      <p><strong>Seña a pagar ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar:</strong> <span id="resto">0</span> €</p>
-      <button id="square-button">Reservar con Square</button>
-    </div>
-  </div>
+  <p style="text-align: center; font-size: 14px; color: #999; margin-top: 16px;">Desliza o usa los botones para ver más fotos</p>
 </section>
 
 <section>
   <h2>Ubicación</h2>
   <p>📍 Complejo EL Lagunazo, Riópar</p>
-  <iframe 
-    src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed"
-    width="100%" 
-    height="350" 
-    style="border:0;" 
-    allowfullscreen="" 
-    loading="lazy">
-  </iframe>
+  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+</section>
+
+<!-- ------------------- RESERVA ONLINE ------------------- -->
+<section id="reserva-online">
+  <h2>Reserva tu cabaña</h2>
+  <div class="reserva-container" style="border:2px solid #ccc; padding:16px; border-radius:8px; max-width:600px; margin:auto;">
+    <label for="cabana">Elige tu cabaña:</label>
+    <select id="cabana">
+      <option value="Campanilla">Cabaña Campanilla</option>
+      <option value="El Tejo">Cabaña El Tejo</option>
+    </select>
+
+    <label for="entrada">Fecha de entrada:</label>
+    <input type="date" id="entrada">
+
+    <label for="salida">Fecha de salida:</label>
+    <input type="date" id="salida">
+
+    <label for="nombre">Nombre completo:</label>
+    <input type="text" id="nombre" placeholder="Tu nombre">
+
+    <label for="telefono">Teléfono:</label>
+    <input type="tel" id="telefono" placeholder="Tu teléfono">
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" placeholder="Tu email">
+
+    <button id="calcular-btn" style="margin-top:10px;">Calcular precio</button>
+
+    <div id="spinner" style="display:none; margin-top:10px;">⏳ Calculando...</div>
+
+    <p>Total: <span id="total">0</span> €</p>
+    <p>Señal: 50 €</p>
+    <p>Resto a pagar: <span id="resto">0</span> €</p>
+
+    <button id="square-button" style="background-color:#4CAF50; color:white; padding:10px; border:none; border-radius:4px;">Reservar y pagar señal</button>
+  </div>
 </section>
 
 <section id="contacto">
   <h2>Contacto y Reservas</h2>
-  <p>
-    Las reservas se gestionan directamente por WhatsApp para una atención
-    personalizada y sin intermediarios.
-  </p>
-  <p>
-    📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a>
-  </p>
+  <p>Las reservas se gestionan directamente por WhatsApp para una atención personalizada y sin intermediarios.</p>
+  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
 </section>
 
 <footer>
-  <p>
-    <a href="aviso-legal.html">Aviso Legal</a> |
-    <a href="privacidad.html">Política de Privacidad</a> |
-    <a href="cookies.html">Política de Cookies</a>
-  </p>
+  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<script src="js/main.js"></script>
 <script>
 const calcularBtn = document.getElementById("calcular-btn");
 const spinner = document.getElementById("spinner");
 const totalSpan = document.getElementById("total");
 const restoSpan = document.getElementById("resto");
+const squareBtn = document.getElementById("square-button");
 
 calcularBtn.addEventListener("click", async () => {
-    spinner.style.display = "block";
+  spinner.style.display = "block";
 
-    const cabana = document.getElementById("cabana").value;
-    const entrada = document.getElementById("entrada").value;
-    const salida = document.getElementById("salida").value;
-    const nombre = document.getElementById("nombre").value.trim();
-    const telefono = document.getElementById("telefono").value.trim();
-    const email = document.getElementById("email").value.trim();
+  const cabana = document.getElementById("cabana").value;
+  const entrada = document.getElementById("entrada").value;
+  const salida = document.getElementById("salida").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
 
-    if(!entrada || !salida || !nombre || !telefono || !email){
-        alert("Rellena todas las casillas para poder reservar");
-        spinner.style.display = "none";
-        return;
-    }
+  if (!entrada || !salida || !nombre || !telefono || !email) {
+    alert("Rellena todas las casillas para poder reservar");
+    spinner.style.display = "none";
+    return;
+  }
 
-    try{
-        const res = await fetch("https://rafaellabandeira-github-io.orender.com/calcular", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({cabana, entrada, salida})
-        });
-        const data = await res.json();
-        totalSpan.textContent = data.total;
-        restoSpan.textContent = data.total - 50;
-    } catch(err){
-        alert("Error al calcular precio");
-        console.error(err);
-    } finally {
-        spinner.style.display = "none";
-    }
+  if (new Date(salida) <= new Date(entrada)) {
+    alert("La fecha de salida debe ser posterior a la fecha de entrada");
+    spinner.style.display = "none";
+    return;
+  }
+
+  try {
+    const res = await fetch("https://rafaellabandeira-github-io.onrender.com/calcular", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({cabana, entrada, salida})
+    });
+
+    if(!res.ok) throw new Error("Error en la petición");
+
+    const data = await res.json();
+    totalSpan.textContent = data.total;
+    restoSpan.textContent = data.total - 50;
+  } catch(err) {
+    alert("Error al calcular precio. Comprueba tu backend.");
+    console.error(err);
+  } finally {
+    spinner.style.display = "none";
+  }
+});
+
+squareBtn.addEventListener("click", () => {
+  const cabana = document.getElementById("cabana").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if (!nombre || !telefono || !email) {
+    alert("Rellena nombre, teléfono y email antes de reservar");
+    return;
+  }
+
+  const paymentAmount = 50; // señal fija
+  window.open(`https://squareup.com/pay?amount=${paymentAmount}&name=${encodeURIComponent(nombre)}&cabana=${encodeURIComponent(cabana)}`, "_blank");
 });
 </script>
 </body>
