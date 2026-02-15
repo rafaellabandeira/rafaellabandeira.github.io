@@ -320,6 +320,50 @@ function reservar(){
   alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
 </script>
+  <script>
+// ====== FECHAS OCUPADAS (se leerán luego del JSON real) ======
+const reservas = {
+  campanilla: ["2026-07-12","2026-07-13","2026-08-03"],
+  tejo: ["2026-07-20","2026-07-21"]
+};
+
+// ====== GENERADOR DE CALENDARIO ======
+function generarCalendario(idElemento, fechasOcupadas){
+  const contenedor=document.getElementById(idElemento);
+  if(!contenedor) return;
+
+  const hoy=new Date();
+  const año=hoy.getFullYear();
+  const mes=hoy.getMonth();
+
+  const primerDia=new Date(año,mes,1);
+  const ultimoDia=new Date(año,mes+1,0);
+
+  const offset=primerDia.getDay()||7;
+
+  for(let i=1;i<offset;i++){
+    contenedor.innerHTML+="<div></div>";
+  }
+
+  for(let d=1;d<=ultimoDia.getDate();d++){
+    const fecha=`${año}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const ocupado=fechasOcupadas.includes(fecha);
+
+    const div=document.createElement("div");
+    div.className="dia "+(ocupado?"ocupado":"libre");
+    div.innerText=d;
+
+    contenedor.appendChild(div);
+  }
+}
+
+// ====== PINTAR CALENDARIOS ======
+document.addEventListener("DOMContentLoaded",()=>{
+  generarCalendario("calendario-campanilla", reservas.campanilla);
+  generarCalendario("calendario-tejo", reservas.tejo);
+});
+</script>
+
 
 </body>
 </html>
