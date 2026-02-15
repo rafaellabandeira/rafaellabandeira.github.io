@@ -22,12 +22,14 @@
   <div class="nav-container">
     <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
     <div class="hamburger" id="hamburger">
-      <span></span><span></span><span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
     <ul class="nav-menu" id="navMenu">
       <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
       <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
-      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank">Experiencias</a></li>
+      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank" rel="noopener">Experiencias</a></li>
       <li><a href="#contacto" class="nav-link">Contacto</a></li>
     </ul>
   </div>
@@ -37,7 +39,7 @@
   <div class="header-inner">
     <div class="header-text">
       <h1 class="hero-title">Casas rurales en Riópar · <span>Complejo El Lagunazo</span></h1>
-      <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al espectacular Nacimiento del Río Mundo</p>
+      <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al espectacular Nacimiento del Río Mundo, dentro del Parque Natural</p>
     </div>
   </div>
 </header>
@@ -45,69 +47,194 @@
 <section>
   <h2>Tu escapada rural en Riópar</h2>
   <p>
-    Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales con todas las comodidades.
+    Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
+    exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
+    Un entorno natural ideal para descansar, disfrutar en familia o realizar
+    escapadas románticas durante todo el año.
   </p>
 </section>
 
 <section>
   <h2>Nuestras exclusivas Cabañas</h2>
+
   <div class="cabanias-grid">
     <div class="cabin-card">
       <h3>Cabaña Campanilla</h3>
-      <p>Capacidad hasta 6 personas.</p>
+      <p>Capacidad para hasta 6 personas, dispone de 2 habitaciones y un altillo, perfecta para familias o grupos.</p>
       <a class="boton" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>
     </div>
 
     <div class="cabin-card">
       <h3>Cabaña El Tejo</h3>
-      <p>Ideal para parejas o pequeñas familias.</p>
+      <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>
       <a class="boton" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>
     </div>
   </div>
 </section>
 
-<!-- 🔴 NUEVA SECCIÓN DE RESERVAS ONLINE -->
-<section id="reservas-online">
-  <h2>Reserva Online</h2>
-  <div class="reserva-box">
+<section>
+  <h2>Piscina en temporada de verano</h2>
+  <p>
+    Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
+    convirtiendo la estancia en una experiencia, única, refrescante y perfecta para los
+    días más calurosos.
+  </p>
 
-    <form id="formReserva">
-      <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
-      <input type="tel" id="telefono" placeholder="Teléfono" required>
-
-      <select id="cabana">
-        <option value="Campanilla">Campanilla</option>
-        <option value="El Tejo">El Tejo</option>
-      </select>
-
-      <label>Fecha llegada</label>
-      <input type="date" id="fechaInicio" required>
-
-      <label>Fecha salida</label>
-      <input type="date" id="fechaFin" required>
-
-      <button type="submit">Calcular precio</button>
-    </form>
-
-    <!-- Spinner -->
-    <div id="loader" class="spinner" style="display:none;"></div>
-
-    <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
-    <div id="resumenReserva" style="margin-top:10px;display:none;">
-      <p>Precio total: <span id="precioTotal">0</span> €</p>
-      <p>Señal pagada: 50 €</p>
-      <p>Resto a pagar: <span id="restoPagar">0</span> €</p>
-      <button id="btnPagar" style="margin-top:10px;">Reservar / Pagar señal</button>
+  <div class="carousel-container small">
+    <div class="carousel">
+      
+      <div class="carousel-slide">
+        <img src="images/1000173041.jpg" alt="Piscina en verano - detalle">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173042.jpg" alt="Piscina en verano - detalle">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173044.jpg" alt="Piscina en verano - detalle">
+      </div>
     </div>
 
-    <div id="square-card" style="margin-top:20px;"></div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
 
-    <p style="font-size:13px;color:#777;">El resto se abonará a la llegada.</p>
-
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+    </div>
   </div>
 </section>
 
+<section>
+  <h2>Galería de Fotos</h2>
   
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-slide active">
+        <img src="images/1000150795.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150768.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150758.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150764.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150788.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150800.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150807.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150816.jpg" alt="Exterior de las cabañas en Riópar">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150760.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150775.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150776.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150779.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150780.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150783.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150787.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150793.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      
+      <div class="carousel-slide">
+        <img src="images/1000150802.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150806.jpg" alt="Interior acogedor de cabaña rural">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150757.jpg" alt="Entorno natural del Río Mundo">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000150761.jpg" alt="Entorno natural del Río Mundo">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173053.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173054.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173057.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173061.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173065.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173071.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173072.jpg" alt="Exterior de las cabañas">
+      </div>
+      <div class="carousel-slide">
+        <img src="images/1000173073.jpg" alt="Exterior de las cabañas">
+      </div>
+    </div>
+    
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+    
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+    </div>
+  </div>
+
+  <p style="text-align: center; font-size: 14px; color: #999; margin-top: 16px;">
+    Desliza o usa los botones para ver más fotos
+  </p>
+</section>
 
 <section>
   <h2>Ubicación</h2>
@@ -121,11 +248,17 @@
     allowfullscreen="" 
     loading="lazy">
   </iframe>
-</section>
+  </section>
 
 <section id="contacto">
-  <h2>Contacto</h2>
-  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
+  <h2>Contacto y Reservas</h2>
+  <p>
+    Las reservas se gestionan directamente por WhatsApp para una atención
+    personalizada y sin intermediarios.
+  </p>
+  <p>
+    📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a>
+  </p>
 </section>
 
 <footer>
@@ -144,80 +277,5 @@
 </a>
 
 <script src="js/main.js"></script>
-
-<!-- 🔴 SCRIPT RESERVAS + SQUARE -->
-<script type="module">
-import { Payments } from "https://web.squarecdn.com/v1/square.js";
-
-/* ⚠️ URL de tu backend en Render */
-const BACKEND = "https://rafaellabandeira-github-io.onrender.com";
-
-/* ✅ Tus credenciales de Square */
-const payments = Payments("sq0idp-Ue7cMnZzU1fLD0l8u0lpcg", "LA6ZV4WAES4A0");
-
-const card = await payments.card();
-await card.attach("#square-card");
-
-document.getElementById("formReserva").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  const cabana = document.getElementById("cabana").value;
-  const fechaInicio = document.getElementById("fechaInicio").value;
-  const fechaFin = document.getElementById("fechaFin").value;
-
-  try {
-    const res = await fetch(`${BACKEND}/calculate-price`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cabana, fechaInicio, fechaFin })
-    });
-
-    if (!res.ok) throw new Error("Error calculando precio");
-
-    const data = await res.json();
-    document.getElementById("resultadoReserva").innerHTML =
-      `Precio total estancia: ${data.precio} €`;
-
-    document.getElementById("btnPagar").style.display = "inline-block";
-
-  } catch(err) {
-    console.error(err);
-    document.getElementById("resultadoReserva").innerHTML =
-      "Error calculando el precio. Intenta de nuevo.";
-  }
-});
-
-document.getElementById("btnPagar").addEventListener("click", async () => {
-
-  const nombre = document.getElementById("nombre").value;
-  const telefono = document.getElementById("telefono").value;
-  const cabana = document.getElementById("cabana").value;
-
-  const result = await card.tokenize();
-
-  if (result.status === "OK") {
-
-    await fetch(`${BACKEND}/create-payment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nonce: result.token,
-        amount: 50,
-        nombre,
-        telefono,
-        cabana
-      })
-    });
-
-    alert("Reserva confirmada correctamente.");
-    location.reload();
-  } else {
-    alert("Error en el pago");
-  }
-});
-</script>
-
 </body>
 </html>
-
