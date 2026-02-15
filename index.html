@@ -69,8 +69,7 @@
 <!-- 🔴 NUEVA SECCIÓN DE RESERVAS ONLINE -->
 <section id="reservas-online">
   <h2>Reserva Online</h2>
-  <div id="reserva-container">
-    <p>Consulta disponibilidad y paga la señal para confirmar la reserva.</p>
+  <div class="reserva-box">
 
     <form id="formReserva">
       <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
@@ -90,19 +89,25 @@
       <button type="submit">Calcular precio</button>
     </form>
 
+    <!-- Spinner -->
+    <div id="loader" class="spinner" style="display:none;"></div>
+
     <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
+    <div id="resumenReserva" style="margin-top:10px;display:none;">
+      <p>Precio total: <span id="precioTotal">0</span> €</p>
+      <p>Señal pagada: 50 €</p>
+      <p>Resto a pagar: <span id="restoPagar">0</span> €</p>
+      <button id="btnPagar" style="margin-top:10px;">Reservar / Pagar señal</button>
+    </div>
 
     <div id="square-card" style="margin-top:20px;"></div>
 
-    <button id="btnPagar" style="display:none;margin-top:10px;">
-      Pagar señal 50€
-    </button>
+    <p style="font-size:13px;color:#777;">El resto se abonará a la llegada.</p>
 
-    <p style="font-size:13px;color:#777;">
-      El resto se abonará a la llegada.
-    </p>
   </div>
 </section>
+
+  
 
 <section>
   <h2>Ubicación</h2>
@@ -216,88 +221,3 @@ document.getElementById("btnPagar").addEventListener("click", async () => {
 </body>
 </html>
 
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Cabañas Río Mundo | Casas Rurales en Riópar</title>
-
-  <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/index.css">
-</head>
-
-<body>
-
-<nav class="navbar">
-  <div class="nav-container">
-    <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
-    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
-    <ul class="nav-menu" id="navMenu">
-      <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
-      <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
-      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank">Experiencias</a></li>
-      <li><a href="#contacto" class="nav-link">Contacto</a></li>
-    </ul>
-  </div>
-</nav>
-
-<header class="hero">
-  <div class="header-inner">
-    <div class="header-text">
-      <h1 class="hero-title">Casas rurales en Riópar · <span>Complejo El Lagunazo</span></h1>
-      <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al Nacimiento del Río Mundo</p>
-    </div>
-  </div>
-</header>
-
-<section>
-  <h2>Reserva Online</h2>
-  <div class="reserva-box">
-
-    <form id="formReserva">
-      <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
-      <input type="tel" id="telefono" placeholder="Teléfono" required>
-
-      <select id="cabana">
-        <option value="Campanilla">Campanilla</option>
-        <option value="El Tejo">El Tejo</option>
-      </select>
-
-      <label>Fecha llegada</label>
-      <input type="date" id="fechaInicio" required>
-
-      <label>Fecha salida</label>
-      <input type="date" id="fechaFin" required>
-
-      <button type="submit">Calcular precio</button>
-    </form>
-
-    <!-- Spinner -->
-    <div id="loader" class="spinner" style="display:none;"></div>
-
-    <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
-    <div id="resumenReserva" style="margin-top:10px;display:none;">
-      <p>Precio total: <span id="precioTotal">0</span> €</p>
-      <p>Señal pagada: 50 €</p>
-      <p>Resto a pagar: <span id="restoPagar">0</span> €</p>
-      <button id="btnPagar" style="margin-top:10px;">Reservar / Pagar señal</button>
-    </div>
-
-    <div id="square-card" style="margin-top:20px;"></div>
-
-    <p style="font-size:13px;color:#777;">El resto se abonará a la llegada.</p>
-
-  </div>
-</section>
-
-<footer>
-  <p>© Cabañas Río Mundo · Riópar</p>
-</footer>
-
-<script type="module" src="js/main.js"></script>
-
-</body>
-</html>
