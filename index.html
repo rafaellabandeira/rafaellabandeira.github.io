@@ -263,37 +263,39 @@
   <!-- 🔴 NUEVA SECCIÓN DE RESERVAS ONLINE -->
 <section id="reservas-online">
   <h2>Reserva Online</h2>
-  <p>Consulta disponibilidad y paga la señal para confirmar la reserva.</p>
+  <div id="reserva-container">
+    <p>Consulta disponibilidad y paga la señal para confirmar la reserva.</p>
 
-  <form id="formReserva">
-    <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
-    <input type="tel" id="telefono" placeholder="Teléfono" required>
+    <form id="formReserva">
+      <input type="text" id="nombre" placeholder="Nombre y Apellidos" required>
+      <input type="tel" id="telefono" placeholder="Teléfono" required>
 
-    <select id="cabana">
-      <option value="Campanilla">Campanilla</option>
-      <option value="El Tejo">El Tejo</option>
-    </select>
+      <select id="cabana">
+        <option value="Campanilla">Campanilla</option>
+        <option value="El Tejo">El Tejo</option>
+      </select>
 
-    <label>Fecha llegada</label>
-    <input type="date" id="fechaInicio" required>
+      <label>Fecha llegada</label>
+      <input type="date" id="fechaInicio" required>
 
-    <label>Fecha salida</label>
-    <input type="date" id="fechaFin" required>
+      <label>Fecha salida</label>
+      <input type="date" id="fechaFin" required>
 
-    <button type="submit">Calcular precio</button>
-  </form>
+      <button type="submit">Calcular precio</button>
+    </form>
 
-  <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
+    <div id="resultadoReserva" style="margin-top:10px;font-weight:bold;"></div>
 
-  <div id="square-card" style="margin-top:20px;"></div>
+    <div id="square-card" style="margin-top:20px;"></div>
 
-  <button id="btnPagar" style="display:none;margin-top:10px;">
-    Pagar señal 50€
-  </button>
+    <button id="btnPagar" style="display:none;margin-top:10px;">
+      Pagar señal 50€
+    </button>
 
-  <p style="font-size:13px;color:#777;">
-    El resto se abonará a la llegada.
-  </p>
+    <p style="font-size:13px;color:#777;">
+      El resto se abonará a la llegada.
+    </p>
+  </div>
 </section>
 
 <script src="js/main.js"></script>
@@ -313,23 +315,32 @@ await card.attach("#square-card");
 
 document.getElementById("formReserva").addEventListener("submit", async (e) => {
   e.preventDefault();
+  e.stopPropagation();
 
   const cabana = document.getElementById("cabana").value;
   const fechaInicio = document.getElementById("fechaInicio").value;
   const fechaFin = document.getElementById("fechaFin").value;
 
-  const res = await fetch(`${BACKEND}/calculate-price`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ cabana, fechaInicio, fechaFin })
-  });
+  try {
+    const res = await fetch(`${BACKEND}/calculate-price`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cabana, fechaInicio, fechaFin })
+    });
 
-  const data = await res.json();
+    if (!res.ok) throw new Error("Error calculando precio");
 
-  document.getElementById("resultadoReserva").innerHTML =
-    `Precio total estancia: ${data.precio} €`;
+    const data = await res.json();
+    document.getElementById("resultadoReserva").innerHTML =
+      `Precio total estancia: ${data.precio} €`;
 
-  document.getElementById("btnPagar").style.display = "inline-block";
+    document.getElementById("btnPagar").style.display = "inline-block";
+
+  } catch(err) {
+    console.error(err);
+    document.getElementById("resultadoReserva").innerHTML =
+      "Error calculando el precio. Intenta de nuevo.";
+  }
 });
 
 document.getElementById("btnPagar").addEventListener("click", async () => {
@@ -365,7 +376,14 @@ document.getElementById("btnPagar").addEventListener("click", async () => {
 </body>
 </html>
 
+  
 
+ 
+
+
+
+
+   
 <footer>
   <p>
     <a href="aviso-legal.html">Aviso Legal</a> |
