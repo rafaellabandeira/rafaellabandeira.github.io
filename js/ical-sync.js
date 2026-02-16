@@ -68,3 +68,64 @@ window.addEventListener("load", async () => {
   await cargarICal(ICAL_URL_CAMPANILLA, "campanilla");
   await cargarICal(ICAL_URL_TEJO, "tejo");
 });
+// ical.sync.js
+const express = require("express");
+const axios = require("axios");
+const ical = require("node-ical");
+const cors = require("cors");
+
+const app = express();
+app.use(cors()); // Permite que tu frontend consulte este endpoint
+
+// URL de tu iCal de Booking
+const ICAL_URL = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
+
+// Función para extraer fechas ocupadas del iCal
+async function obtenerFechasOcupadas() {
+  try {
+    const response = await axios.get(ICAL_URL);
+    const datos = ical.parseICS(response.data);
+
+    const campanilla = [];
+    const tejo = [];
+
+    for (let k in datos) {
+      const evento = datos[k];
+      if (evento.type === "VEVENT") {
+        const start = evento.start;
+        const end = evento.end;
+
+        // Iterar por cada día entre start y end
+        for (
+          let d = new Date(start);
+          d < end;
+          d.setDate(d.getDate() + 1)
+        ) {
+          const fecha = d.toISOString().split("T")[0]; // YYYY-MM-DD
+
+          // Suponiendo que en el iCal hay "Campanilla" o "El Tejo" en SUMMARY
+          if (evento.summary.toLowerCase().includes("campanilla")) {
+            campanilla.push(fecha);
+          } else if (evento.summary.toLowerCase().includes("tejo")) {
+            tejo.push(fecha);
+          }
+        }
+      }
+    }
+
+    return { campanilla, tejo };
+  } catch (err) {
+    console.error("Error leyendo iCal:", err);
+    return { campanilla: [], tejo: [] };
+  }
+}
+
+// Endpoint para el frontend
+app.get("/reservas", async (req, res) => {
+  const fechas = await obtenerFechasOcupadas();
+  res.json(fechas);
+});
+
+// Puerto de Render
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor iCal escuchando en puerto ${PORT}`));
