@@ -306,5 +306,18 @@ document.getElementById("btnPagar").addEventListener("click", async () => {
     location.reload();
   } else { alert("Error en el pago"); }
 });
+async function cargarReservas() {
+  try {
+    const res = await fetch("https://rafaellabandeira-github-io.onrender.com/reservas");
+    const reservas = await res.json();
+
+    generarCalendario("calendario-campanilla", reservas.campanilla);
+    generarCalendario("calendario-tejo", reservas.tejo);
+  } catch (err) {
+    console.error("Error cargando reservas:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", cargarReservas);
 
 
