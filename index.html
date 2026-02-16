@@ -321,49 +321,54 @@ function reservar(){
 }
 </script>
   <script>
-// ====== FECHAS OCUPADAS (se leerán luego del JSON real) ======
-const reservas = {
-  campanilla: ["2026-07-12","2026-07-13","2026-08-03"],
-  tejo: ["2026-07-20","2026-07-21"]
+let fechasOcupadas = {
+  campanilla: [],
+  tejo: []
 };
 
-// ====== GENERADOR DE CALENDARIO ======
-function generarCalendario(idElemento, fechasOcupadas){
-  const contenedor=document.getElementById(idElemento);
-  if(!contenedor) return;
-
-  const hoy=new Date();
-  const año=hoy.getFullYear();
-  const mes=hoy.getMonth();
-
-  const primerDia=new Date(año,mes,1);
-  const ultimoDia=new Date(año,mes+1,0);
-
-  const offset=primerDia.getDay()||7;
-
-  for(let i=1;i<offset;i++){
-    contenedor.innerHTML+="<div></div>";
-  }
-
-  for(let d=1;d<=ultimoDia.getDate();d++){
-    const fecha=`${año}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const ocupado=fechasOcupadas.includes(fecha);
-
-    const div=document.createElement("div");
-    div.className="dia "+(ocupado?"ocupado":"libre");
-    div.innerText=d;
-
-    contenedor.appendChild(div);
+// 🔹 Cargar fechas desde tu backend Render (que leerá Booking iCal)
+async function cargarDisponibilidad(){
+  try{
+    const res = await fetch("https://rafaellabandeira-github-io.onrender.com/api/ical");
+    const data = await res.json();
+    fechasOcupadas = data;
+    console.log("Disponibilidad cargada:", fechasOcupadas);
+  }catch(e){
+    console.error("Error cargando disponibilidad", e);
   }
 }
 
-// ====== PINTAR CALENDARIOS ======
-document.addEventListener("DOMContentLoaded",()=>{
-  generarCalendario("calendario-campanilla", reservas.campanilla);
-  generarCalendario("calendario-tejo", reservas.tejo);
-});
-</script>
+function rangoOcupado(cabaña, entrada, salida){
+  const inicio = new Date(entrada);
+  const fin = new Date(salida);
 
+  for(let d=new Date(inicio); d<fin; d.setDate(d.getDate()+1)){
+    const fecha = d.toISOString().slice(0,10);
+    if(fechasOcupadas[cabaña]?.includes(fecha)){
+      return true;
+    }
+  }
+  return false;
+}
+
+// 🔹 Interceptamos tu cálculo (SIN cambiar nada de tu lógica)
+const calcularOriginal = calcularReserva;
+
+calcularReserva = async function(){
+  await cargarDisponibilidad();
+
+  const cabaña = document.getElementById("cabaña").value;
+  const entrada = document.getElementById("entrada").value;
+  const salida = document.getElementById("salida").value;
+
+  if(rangoOcupado(cabaña, entrada, salida)){
+    alert("❌ Estas fechas ya están reservadas en Booking.");
+    return;
+  }
+
+  calcularOriginal();
+}
+</script>
 
 </body>
 </html>
