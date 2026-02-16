@@ -13,6 +13,27 @@
 
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/index.css">
+  <style>
+.calendario{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+  max-width:420px;
+  margin:15px auto 40px;
+}
+
+.dia{
+  padding:8px;
+  text-align:center;
+  border-radius:6px;
+  font-size:13px;
+  background:#eee;
+}
+
+.libre{ background:#d4edda; }      /* Verde disponible */
+.ocupado{ background:#f8d7da; }    /* Rojo ocupado */
+</style>
+
 
 <style>
 /* ===== MOTOR DE RESERVAS ===== */
@@ -61,6 +82,7 @@
   animation:spin 1s linear infinite;
   display:none;
 }
+/* Tarjeta resumen */
 .resumen-reserva{
   border-radius:10px;
   padding:15px;
@@ -68,15 +90,29 @@
   text-align:left;
   color:#333;
   font-weight:500;
+  transition: background 0.3s ease;
 }
-.descuento{ color:#e67e22; font-weight:700; }
-.campanilla{ background:#d0f0e0; }
-.tejo{ background:#d0e0f5; }
+.resumen-reserva p{
+  margin:6px 0;
+}
+.resumen-reserva strong{
+  font-weight:700;
+}
+.descuento{
+  color:#e67e22;
+  font-weight:700;
+}
+.campanilla{
+  background:#d0f0e0;
+}
+.tejo{
+  background:#d0e0f5;
+}
 </style>
 </head>
-
 <body>
 
+<!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="nav-container">
     <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
@@ -84,24 +120,28 @@
     <ul class="nav-menu" id="navMenu">
       <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
       <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
-      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank">Experiencias</a></li>
+      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank" rel="noopener">Experiencias</a></li>
       <li><a href="#contacto" class="nav-link">Contacto</a></li>
     </ul>
   </div>
 </nav>
 
+<!-- ===== HERO ===== -->
 <header class="hero">
   <div class="header-inner">
     <div class="header-text">
       <h1 class="hero-title">Casas rurales en Riópar · <span>Complejo El Lagunazo</span></h1>
-      <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al Nacimiento del Río Mundo</p>
+      <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al espectacular Nacimiento del Río Mundo, dentro del Parque Natural</p>
     </div>
   </div>
 </header>
 
+<!-- ===== SECCIONES INFORMATIVAS ===== -->
 <section>
   <h2>Tu escapada rural en Riópar</h2>
-  <p>Disponemos de dos acogedoras cabañas rurales situadas en el exclusivo complejo El Lagunazo.</p>
+  <p>Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
+     exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
+     Un entorno natural ideal para descansar, disfrutar en familia o realizar escapadas románticas durante todo el año.</p>
 </section>
 
 <section>
@@ -109,15 +149,65 @@
   <div class="cabanias-grid">
     <div class="cabin-card">
       <h3>Cabaña Campanilla</h3>
-      <a class="boton" href="cabana-campanilla.html">Ver Cabaña</a>
+      <p>Capacidad para hasta 6 personas, dispone de 2 habitaciones y un altillo, perfecta para familias o grupos.</p>
+      <a class="boton" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>
     </div>
     <div class="cabin-card">
       <h3>Cabaña El Tejo</h3>
-      <a class="boton" href="cabana-el-tejo.html">Ver Cabaña</a>
+      <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>
+      <a class="boton" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>
     </div>
   </div>
 </section>
 
+<section>
+  <h2>Piscina en temporada de verano</h2>
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
+     convirtiendo la estancia en una experiencia única y refrescante.</p>
+  <div class="carousel-container small">
+    <div class="carousel">
+      <div class="carousel-slide"><img src="images/1000173041.jpg" alt="Piscina en verano - detalle"></div>
+      <div class="carousel-slide"><img src="images/1000173042.jpg" alt="Piscina en verano - detalle"></div>
+      <div class="carousel-slide"><img src="images/1000173044.jpg" alt="Piscina en verano - detalle"></div>
+    </div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Galería de Fotos</h2>
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-slide active"><img src="images/1000150795.jpg" alt="Exterior de las cabañas en Riópar"></div>
+      <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Exterior de las cabañas en Riópar"></div>
+      <div class="carousel-slide"><img src="images/1000150758.jpg" alt="Exterior de las cabañas en Riópar"></div>
+      <!-- Resto de imágenes -->
+    </div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+      <!-- Resto de indicadores -->
+    </div>
+  </div>
+  <p style="text-align:center; font-size:14px; color:#999; margin-top:16px;">Desliza o usa los botones para ver más fotos</p>
+</section>
+
+<section>
+  <h2>Ubicación</h2>
+  <p>📍 Complejo EL Lagunazo, Riópar</p>
+  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+</section>
+
+<!-- ===== MOTOR DE RESERVAS ===== -->
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
@@ -126,43 +216,37 @@
       <option value="campanilla">Cabaña Campanilla</option>
       <option value="tejo">Cabaña El Tejo</option>
     </select>
-
     <label>Fecha de entrada</label>
     <input type="date" id="entrada">
-
     <label>Fecha de salida</label>
     <input type="date" id="salida">
-
     <label>Nombre completo</label>
-    <input type="text" id="nombre">
-
+    <input type="text" id="nombre" placeholder="Nombre">
     <label>Teléfono</label>
-    <input type="tel" id="telefono">
-
+    <input type="tel" id="telefono" placeholder="Teléfono">
     <label>Email</label>
-    <input type="email" id="email">
-
+    <input type="email" id="email" placeholder="Email">
     <button onclick="calcularReserva()">Calcular precio</button>
-
     <div class="spinner" id="spinner"></div>
-
     <div id="resultado" class="resumen-reserva" style="display:none;">
-      <p><strong>Cabaña:</strong> <span id="cabañaSeleccionada"></span></p>
-      <p><strong>Total:</strong> <span id="total"></span> €</p>
-      <p><strong>Descuento:</strong> <span id="descuento" class="descuento">0</span> €</p>
+      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
+      <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
+      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto:</strong> <span id="resto"></span> €</p>
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button onclick="reservar()">Pagar</button>
     </div>
   </div>
 </section>
 
 <section id="contacto">
-  <h2>Contacto</h2>
+  <h2>Contacto y Reservas</h2>
+  <p>Las reservas se gestionan directamente por WhatsApp para una atención personalizada y sin intermediarios.</p>
   <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
 </section>
 
 <footer>
+  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
@@ -171,9 +255,8 @@ function esTemporadaAlta(fecha){
   const f=new Date(fecha);
   const mes=f.getMonth()+1;
   const dia=f.getDate();
-  return (mes==7||mes==8)||(mes==12&&dia>=22)||(mes==1&&dia<=7);
+  return (mes==7||mes==8) || (mes==12&&dia>=22) || (mes==1&&dia<=7);
 }
-
 function incluyeFinDeSemana(fechaEntrada,noches){
   for(let i=0;i<noches;i++){
     const d=new Date(fechaEntrada);
@@ -182,44 +265,105 @@ function incluyeFinDeSemana(fechaEntrada,noches){
   }
   return false;
 }
-</script>
 
-<!-- 🔴 BLOQUEO REAL DESDE BOOKING (iCal) -->
-<script>
-let fechasOcupadas={campanilla:[],tejo:[]};
-
-async function cargarDisponibilidad(){
-  const res=await fetch("https://rafaellabandeira-github-io.onrender.com/api/ical");
-  fechasOcupadas=await res.json();
-}
-
-function rangoOcupado(cabaña,entrada,salida){
-  const inicio=new Date(entrada);
-  const fin=new Date(salida);
-  for(let d=new Date(inicio);d<fin;d.setDate(d.getDate()+1)){
-    const f=d.toISOString().slice(0,10);
-    if(fechasOcupadas[cabaña]?.includes(f)) return true;
-  }
-  return false;
-}
-
-const calcularOriginal=window.calcularReserva;
-
-window.calcularReserva=async function(){
-  await cargarDisponibilidad();
-
+function calcularReserva(){
   const cabaña=document.getElementById("cabaña").value;
   const entrada=document.getElementById("entrada").value;
   const salida=document.getElementById("salida").value;
+  const nombre=document.getElementById("nombre").value.trim();
+  const telefono=document.getElementById("telefono").value.trim();
+  const email=document.getElementById("email").value.trim();
 
-  if(rangoOcupado(cabaña,entrada,salida)){
-    alert("Estas fechas ya están reservadas en Booking");
-    return;
-  }
+  if(!entrada||!salida){alert("Selecciona fechas");return;}
+  if(!nombre||!telefono||!email){alert("Completa todos los datos personales");return;}
 
-  calcularOriginal();
+  document.getElementById("spinner").style.display="block";
+  document.getElementById("resultado").style.display="none";
+
+  setTimeout(()=>{
+    const noches=(new Date(salida)-new Date(entrada))/(1000*60*60*24);
+    let precioNoche=0;
+    if(cabaña=="campanilla"){precioNoche=esTemporadaAlta(entrada)?150:115;}
+    else{precioNoche=esTemporadaAlta(entrada)?120:95;}
+
+    if(esTemporadaAlta(entrada)&&noches<4){alert("En temporada alta mínimo 4 noches");document.getElementById("spinner").style.display="none";return;}
+    if(!esTemporadaAlta(entrada)&&noches<2){alert("Mínimo 2 noches");document.getElementById("spinner").style.display="none";return;}
+
+    let total=noches*precioNoche;
+    let descuento=0;
+
+    if(!esTemporadaAlta(entrada)&&noches>=3 && !incluyeFinDeSemana(entrada,noches)){
+      descuento=total*0.10;
+      total*=0.90;
+    }
+    if(esTemporadaAlta(entrada)&&noches>=6){
+      descuento=total*0.10;
+      total*=0.90;
+    }
+
+    const resto=total-50;
+
+    document.getElementById("cabañaSeleccionada").innerText=cabaña=="campanilla"?"Cabaña Campanilla":"Cabaña El Tejo";
+    document.getElementById("total").innerText=total.toFixed(2);
+    document.getElementById("resto").innerText=resto.toFixed(2);
+    document.getElementById("descuento").innerText=descuento.toFixed(2);
+
+    const resumen=document.getElementById("resultado");
+    resumen.className="resumen-reserva " + (cabaña=="campanilla"?"campanilla":"tejo");
+    
+    document.getElementById("spinner").style.display="none";
+    resumen.style.display="block";
+  },600);
+}
+
+function reservar(){
+  alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
 </script>
+  <script>
+// ====== FECHAS OCUPADAS (se leerán luego del JSON real) ======
+const reservas = {
+  campanilla: ["2026-07-12","2026-07-13","2026-08-03"],
+  tejo: ["2026-07-20","2026-07-21"]
+};
+
+// ====== GENERADOR DE CALENDARIO ======
+function generarCalendario(idElemento, fechasOcupadas){
+  const contenedor=document.getElementById(idElemento);
+  if(!contenedor) return;
+
+  const hoy=new Date();
+  const año=hoy.getFullYear();
+  const mes=hoy.getMonth();
+
+  const primerDia=new Date(año,mes,1);
+  const ultimoDia=new Date(año,mes+1,0);
+
+  const offset=primerDia.getDay()||7;
+
+  for(let i=1;i<offset;i++){
+    contenedor.innerHTML+="<div></div>";
+  }
+
+  for(let d=1;d<=ultimoDia.getDate();d++){
+    const fecha=`${año}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const ocupado=fechasOcupadas.includes(fecha);
+
+    const div=document.createElement("div");
+    div.className="dia "+(ocupado?"ocupado":"libre");
+    div.innerText=d;
+
+    contenedor.appendChild(div);
+  }
+}
+
+// ====== PINTAR CALENDARIOS ======
+document.addEventListener("DOMContentLoaded",()=>{
+  generarCalendario("calendario-campanilla", reservas.campanilla);
+  generarCalendario("calendario-tejo", reservas.tejo);
+});
+</script>
+
 
 </body>
 </html>
