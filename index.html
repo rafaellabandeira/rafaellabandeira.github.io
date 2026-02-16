@@ -208,34 +208,42 @@
 </section>
 
 <!-- ===== MOTOR DE RESERVAS ===== -->
-<section id="reserva-online">
-  <h2>Reserva Online</h2>
-  <div class="reserva-box">
-    <label>Selecciona cabaña</label>
-    <select id="cabaña">
-      <option value="campanilla">Cabaña Campanilla</option>
-      <option value="tejo">Cabaña El Tejo</option>
-    </select>
-    <label>Fecha de entrada</label>
-    <input type="date" id="entrada">
-    <label>Fecha de salida</label>
-    <input type="date" id="salida">
-    <label>Nombre completo</label>
-    <input type="text" id="nombre" placeholder="Nombre">
-    <label>Teléfono</label>
-    <input type="tel" id="telefono" placeholder="Teléfono">
-    <label>Email</label>
-    <input type="email" id="email" placeholder="Email">
-    <button onclick="calcularReserva()">Calcular precio</button>
-    <div class="spinner" id="spinner"></div>
-    <div id="resultado" class="resumen-reserva" style="display:none;">
-      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
-      <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
-      <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
-      <button onclick="reservar()">Pagar</button>
-    </div>
+<h3>Reserva ahora</h3>
+
+<label>Cabaña</label>
+<select id="cabaña">
+  <option value="campanilla">Campanilla</option>
+  <option value="tejo">El Tejo</option>
+</select>
+
+<label>Entrada</label>
+<input type="date" id="entrada">
+
+<label>Salida</label>
+<input type="date" id="salida">
+
+<label>Nombre</label>
+<input type="text" id="nombre">
+
+<label>Teléfono</label>
+<input type="text" id="telefono">
+
+<label>Email</label>
+<input type="email" id="email">
+
+<button onclick="calcularReserva()">Calcular precio</button>
+
+<div id="spinner" style="display:none;">Calculando…</div>
+
+<div id="resultado" style="display:none;">
+  <p><strong id="cabañaSeleccionada"></strong></p>
+  <p>Total: <span id="total"></span> €</p>
+  <p>Descuento: <span id="descuento"></span> €</p>
+  <p>Resto a la llegada: <span id="resto"></span> €</p>
+
+  <button onclick="reservar()">Reservar (50€)</button>
+</div>
+
   </div>
 </section>
 
