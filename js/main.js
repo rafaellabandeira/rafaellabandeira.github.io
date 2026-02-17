@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // ===== CONFIG =====
-const BACKEND = "https://rafaellabandeira-github-io.onrender.com";
+const BACKEND = fetch("https://rafaellabandeira-github-io.onrender.com/availability/campanilla")
+
 
 // ===== CARRUSEL =====
 function initCarousel() {
