@@ -1,3 +1,6 @@
+const syncBookingCalendar = require("./bookingSync");
+
+
 import { getBookingBlockedDates } from "./bookingSync.js";
 
 require('dotenv').config();
@@ -63,6 +66,7 @@ app.get("/availability/campanilla", async (req, res) => {
     res.status(500).send("Error sincronizando con Booking");
   }
 });
+
 
 
 
