@@ -1,6 +1,9 @@
 const syncBookingCalendar = require("./bookingSync");
 // Primera sincronización al arrancar
 syncBookingCalendar();
+// Se actualiza solo (Booking no avisa, hay que ir a buscarlo)
+setInterval(syncBookingCalendar, 30 * 60 * 1000);
+
 
 
 
@@ -69,6 +72,7 @@ app.get("/availability/campanilla", async (req, res) => {
     res.status(500).send("Error sincronizando con Booking");
   }
 });
+
 
 
 
