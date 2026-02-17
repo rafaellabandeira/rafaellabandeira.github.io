@@ -8,8 +8,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel();
   initHamburger();
 
-  // Cargar fechas ocupadas desde el backend
+  // Cargar fechas ocupadas desde el backend (Render)
   const reservas = await cargarReservas();
+
+  console.log("Fechas ocupadas cargadas:", reservas);
 
   // Inicializar la lógica de bloqueo de fechas
   bloquearFechas(reservas);
@@ -23,12 +25,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function cargarReservas() {
   try {
-    const res = await fetch("/reservas");
+    // 🔴 ESTA ES LA CLAVE: llamar a tu backend real de Render
+    const res = await fetch("https://rafaellabandeira-github-io.onrender.com/reservas");
+
     if (!res.ok) throw new Error("No se pudieron cargar las reservas");
+
     const data = await res.json();
+
     return data.campanilla || [];
   } catch (err) {
-    console.error(err);
+    console.error("Error cargando reservas:", err);
     return [];
   }
 }
@@ -131,7 +137,6 @@ async function reservar() {
   const telefono = document.getElementById("telefono").value;
   const cabaña = document.getElementById("cabaña").value;
 
-  // Aquí conectarías con Square o la pasarela de pago que uses
   alert(`Reserva confirmada: ${cabaña}\nNombre: ${nombre}\nTeléfono: ${telefono}\nSeñal de 50 € pagada`);
 
   location.reload();
