@@ -1,131 +1,98 @@
-// === URL ICAL BOOKING CAMPANILLA ===
-const ICAL_URL_CAMPANILLA = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
+// js/ical-sync.js
 
-// Aquí podrás añadir luego otro iCal para El Tejo
-const ICAL_URL_TEJO = ""; // lo pondremos cuando tengas el otro
+// URL de tu backend que devuelve las reservas sincronizadas
+const BACKEND_RESERVAS = "https://tu-backend.onrender.com/reservas"; // Cambia por tu URL
 
+/**
+ * Carga las fechas ocupadas desde el backend
+ * y actualiza el calendario en la página
+ */
+export async function cargarReservas() {
+  try {
+    const res = await fetch(BACKEND_RESERVAS);
+    if (!res.ok) throw new Error("No se pudieron cargar las reservas");
+    const reservas = await res.json(); // { campanilla: [], tejo: [] }
 
-let fechasBloqueadas = {
-  campanilla: [],
-  tejo: []
-};
+    // Actualiza los calendarios visibles (si los hay)
+    actualizarCalendario("calendario-campanilla", reservas.campanilla);
+    actualizarCalendario("calendario-tejo", reservas.tejo);
 
+    // Bloquea fechas en los inputs de reserva
+    bloquearFechasInput("entrada", "salida", reservas);
 
-// --- Cargar calendario ICAL ---
-async function cargarICal(url, cabaña) {
-  if (!url) return;
+  } catch (err) {
+    console.error("Error cargando reservas:", err);
+  }
+}
 
-  const response = await fetch(url);
-  const text = await response.text();
+/**
+ * Marca los días ocupados en el calendario estático
+ */
+function actualizarCalendario(idElemento, fechasOcupadas) {
+  const contenedor = document.getElementById(idElemento);
+  if (!contenedor) return;
 
-  const eventos = text.split("BEGIN:VEVENT");
+  // Recorre todos los días del calendario
+  const dias = contenedor.querySelectorAll(".dia");
+  dias.forEach(d => {
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth() + 1; // Mes actual
+    const day = parseInt(d.textContent, 10);
+    const fecha = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-  eventos.forEach(ev => {
-    const inicio = ev.match(/DTSTART;VALUE=DATE:(\d+)/);
-    const fin = ev.match(/DTEND;VALUE=DATE:(\d+)/);
-
-    if (inicio && fin) {
-      const fechaInicio = parseFechaICS(inicio[1]);
-      const fechaFin = parseFechaICS(fin[1]);
-
-      for (let d = new Date(fechaInicio); d < fechaFin; d.setDate(d.getDate() + 1)) {
-        fechasBloqueadas[cabaña].push(formatearFecha(d));
-      }
+    if (fechasOcupadas.includes(fecha)) {
+      d.classList.remove("libre");
+      d.classList.add("ocupado");
+    } else {
+      d.classList.remove("ocupado");
+      d.classList.add("libre");
     }
   });
-
-  console.log("Fechas bloqueadas cargadas:", cabaña, fechasBloqueadas[cabaña]);
 }
 
+/**
+ * Bloquea automáticamente los días ocupados en los inputs de fecha
+ */
+function bloquearFechasInput(idEntrada, idSalida, reservas) {
+  const entrada = document.getElementById(idEntrada);
+  const salida = document.getElementById(idSalida);
 
-function parseFechaICS(fecha) {
-  const y = fecha.substring(0,4);
-  const m = fecha.substring(4,6);
-  const d = fecha.substring(6,8);
-  return new Date(`${y}-${m}-${d}`);
-}
+  if (!entrada || !salida) return;
 
-function formatearFecha(date) {
-  return date.toISOString().split("T")[0];
-}
+  // Cada vez que el usuario elige una fecha de entrada
+  entrada.addEventListener("change", () => {
+    const cabana = document.getElementById("cabaña").value;
+    const fechasOcupadas = reservas[cabana] || [];
 
+    // Deshabilitar manualmente las fechas ocupadas en salida
+    salida.setAttribute("min", entrada.value);
 
-// --- Verificar disponibilidad ---
-function fechaDisponible(cabaña, entrada, salida) {
-  const ocupadas = fechasBloqueadas[cabaña];
-
-  for (let d = new Date(entrada); d < new Date(salida); d.setDate(d.getDate() + 1)) {
-    const f = formatearFecha(d);
-    if (ocupadas.includes(f)) return false;
-  }
-
-  return true;
-}
-
-
-// --- Cargar calendarios al iniciar ---
-window.addEventListener("load", async () => {
-  await cargarICal(ICAL_URL_CAMPANILLA, "campanilla");
-  await cargarICal(ICAL_URL_TEJO, "tejo");
-});
-// ical.sync.js
-const express = require("express");
-const axios = require("axios");
-const ical = require("node-ical");
-const cors = require("cors");
-
-const app = express();
-app.use(cors()); // Permite que tu frontend consulte este endpoint
-
-// URL de tu iCal de Booking
-const ICAL_URL = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
-
-// Función para extraer fechas ocupadas del iCal
-async function obtenerFechasOcupadas() {
-  try {
-    const response = await axios.get(ICAL_URL);
-    const datos = ical.parseICS(response.data);
-
-    const campanilla = [];
-    const tejo = [];
-
-    for (let k in datos) {
-      const evento = datos[k];
-      if (evento.type === "VEVENT") {
-        const start = evento.start;
-        const end = evento.end;
-
-        // Iterar por cada día entre start y end
-        for (
-          let d = new Date(start);
-          d < end;
-          d.setDate(d.getDate() + 1)
-        ) {
-          const fecha = d.toISOString().split("T")[0]; // YYYY-MM-DD
-
-          // Suponiendo que en el iCal hay "Campanilla" o "El Tejo" en SUMMARY
-          if (evento.summary.toLowerCase().includes("campanilla")) {
-            campanilla.push(fecha);
-          } else if (evento.summary.toLowerCase().includes("tejo")) {
-            tejo.push(fecha);
-          }
+    salida.addEventListener("input", () => {
+      const selectedDates = generarRangoFechas(entrada.value, salida.value);
+      for (const f of selectedDates) {
+        if (fechasOcupadas.includes(f)) {
+          alert(`La fecha ${f} ya está ocupada, elige otro rango`);
+          salida.value = "";
+          break;
         }
       }
-    }
-
-    return { campanilla, tejo };
-  } catch (err) {
-    console.error("Error leyendo iCal:", err);
-    return { campanilla: [], tejo: [] };
-  }
+    });
+  });
 }
 
-// Endpoint para el frontend
-app.get("/reservas", async (req, res) => {
-  const fechas = await obtenerFechasOcupadas();
-  res.json(fechas);
-});
+/**
+ * Genera un array de fechas entre inicio y fin (inclusive)
+ */
+function generarRangoFechas(inicio, fin) {
+  const fechas = [];
+  const start = new Date(inicio);
+  const end = new Date(fin);
 
-// Puerto de Render
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor iCal escuchando en puerto ${PORT}`));
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    fechas.push(d.toISOString().slice(0, 10));
+  }
+  return fechas;
+}
+
+// Ejecutar al cargar la página
+document.addEventListener("DOMContentLoaded", cargarReservas);
