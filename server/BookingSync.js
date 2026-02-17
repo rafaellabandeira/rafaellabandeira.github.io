@@ -1,72 +1,42 @@
 // server/BookingSync.js
-// Sincroniza reservas desde Booking iCal al archivo local reservas.json
-
-import fs from "fs";
 import ical from "node-ical";
-import path from "path";
+import axios from "axios";
 
-// Ruta del archivo de reservas local
-const reservasFile = path.join(process.cwd(), "js", "reservas.json");
+// URL iCal de Booking (la que me diste)
+const ICAL_URL = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
 
-// Tu iCal de Booking
-const BOOKING_ICAL_URL = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
-
-/**
- * Función para actualizar reservas desde iCal
- */
-export async function syncBooking() {
+// Función para leer y parsear el iCal
+export async function getBookingDates() {
   try {
-    console.log("Sincronizando reservas desde Booking...");
+    // Descargamos el iCal
+    const response = await axios.get(ICAL_URL);
+    const data = ical.parseICS(response.data);
 
-    // Descargar y parsear el iCal
-    const data = await ical.async.fromURL(BOOKING_ICAL_URL);
+    // Array donde vamos a guardar las fechas ocupadas
+    const fechasOcupadas = [];
 
-    // Arrays para cada cabaña
-    const reservasCampanilla = [];
-    const reservasTejo = [];
-
+    // Recorremos todos los eventos del iCal
     for (const key in data) {
-      const ev = data[key];
-      if (ev.type === "VEVENT") {
-        // Formatear fechas a yyyy-mm-dd
-        const start = ev.start.toISOString().slice(0, 10);
-        const end = ev.end.toISOString().slice(0, 10);
+      if (data[key].type === "VEVENT") {
+        const start = data[key].start.toISOString().split("T")[0];
+        const end = data[key].end.toISOString().split("T")[0];
 
-        // Booking marca el final como el día siguiente, vamos a marcar todos los días ocupados
+        // Generar todas las fechas entre start y end
         let current = new Date(start);
         const endDate = new Date(end);
-        const dias = [];
 
         while (current < endDate) {
-          dias.push(current.toISOString().slice(0, 10));
+          fechasOcupadas.push(current.toISOString().split("T")[0]);
           current.setDate(current.getDate() + 1);
-        }
-
-        // Por título distinguimos cabaña (ajustar si tu iCal tiene otro texto)
-        const summary = ev.summary.toLowerCase();
-        if (summary.includes("campanilla")) {
-          reservasCampanilla.push(...dias);
-        } else if (summary.includes("tejo")) {
-          reservasTejo.push(...dias);
         }
       }
     }
 
-    // Eliminar duplicados
-    const uniq = (arr) => [...new Set(arr)];
+    console.log("Fechas ocupadas obtenidas del iCal:", fechasOcupadas);
+    return fechasOcupadas;
 
-    const reservas = {
-      campanilla: uniq(reservasCampanilla),
-      tejo: uniq(reservasTejo),
-    };
-
-    // Guardar en reservas.json
-    fs.writeFileSync(reservasFile, JSON.stringify(reservas, null, 2), "utf-8");
-    console.log("Reservas sincronizadas correctamente.");
-
-    return reservas;
   } catch (err) {
-    console.error("Error sincronizando Booking:", err);
-    return null;
+    console.error("Error leyendo iCal de Booking:", err.message);
+    return []; // devuelve vacío si falla
   }
 }
