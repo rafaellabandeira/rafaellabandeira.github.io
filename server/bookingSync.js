@@ -1,70 +1,72 @@
-const fs = require("fs");
-const path = require("path");
-const https = require("https");
+// server/bookingSync.js
+// Sincroniza reservas desde Booking iCal al archivo local reservas.json
 
-// 👉 URL iCal de Booking (Campanilla)
+import fs from "fs";
+import ical from "node-ical";
+import path from "path";
+
+// Ruta del archivo de reservas local
+const reservasFile = path.join(process.cwd(), "js", "reservas.json");
+
+// Tu iCal de Booking
 const BOOKING_ICAL_URL = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
 
-// 👉 dónde guardaremos las fechas bloqueadas
-const outputFile = path.join(__dirname, "../js/reservas.json");
+/**
+ * Función para actualizar reservas desde iCal
+ */
+export async function syncBooking() {
+  try {
+    console.log("Sincronizando reservas desde Booking...");
 
-function downloadICAL(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      let data = "";
+    // Descargar y parsear el iCal
+    const data = await ical.async.fromURL(BOOKING_ICAL_URL);
 
-      res.on("data", chunk => data += chunk);
-      res.on("end", () => resolve(data));
-    }).on("error", reject);
-  });
-}
+    // Arrays para cada cabaña
+    const reservasCampanilla = [];
+    const reservasTejo = [];
 
-function parseICAL(icalData) {
-  const events = icalData.split("BEGIN:VEVENT");
-  const blockedDates = [];
+    for (const key in data) {
+      const ev = data[key];
+      if (ev.type === "VEVENT") {
+        // Formatear fechas a yyyy-mm-dd
+        const start = ev.start.toISOString().slice(0, 10);
+        const end = ev.end.toISOString().slice(0, 10);
 
-  events.forEach(event => {
-    const startMatch = event.match(/DTSTART;VALUE=DATE:(\d+)/);
-    const endMatch = event.match(/DTEND;VALUE=DATE:(\d+)/);
+        // Booking marca el final como el día siguiente, vamos a marcar todos los días ocupados
+        let current = new Date(start);
+        const endDate = new Date(end);
+        const dias = [];
 
-    if (startMatch && endMatch) {
-      let start = startMatch[1];
-      let end = endMatch[1];
+        while (current < endDate) {
+          dias.push(current.toISOString().slice(0, 10));
+          current.setDate(current.getDate() + 1);
+        }
 
-      const startDate = new Date(
-        start.substring(0,4),
-        start.substring(4,6)-1,
-        start.substring(6,8)
-      );
-
-      const endDate = new Date(
-        end.substring(0,4),
-        end.substring(4,6)-1,
-        end.substring(6,8)
-      );
-
-      for (let d = new Date(startDate); d < endDate; d.setDate(d.getDate() + 1)) {
-        blockedDates.push(d.toISOString().split("T")[0]);
+        // Por título distinguimos cabaña (ajustar si tu iCal tiene otro texto)
+        const summary = ev.summary.toLowerCase();
+        if (summary.includes("campanilla")) {
+          reservasCampanilla.push(...dias);
+        } else if (summary.includes("tejo")) {
+          reservasTejo.push(...dias);
+        }
       }
     }
-  });
 
-  return blockedDates;
-}
+    // Eliminar duplicados
+    const uniq = (arr) => [...new Set(arr)];
 
-async function syncBookingCalendar() {
-  try {
-    console.log("🔄 Sincronizando calendario Booking...");
+    const reservas = {
+      campanilla: uniq(reservasCampanilla),
+      tejo: uniq(reservasTejo),
+    };
 
-    const icalData = await downloadICAL(BOOKING_ICAL_URL);
-    const blockedDates = parseICAL(icalData);
+    // Guardar en reservas.json
+    fs.writeFileSync(reservasFile, JSON.stringify(reservas, null, 2), "utf-8");
+    console.log("Reservas sincronizadas correctamente.");
 
-    fs.writeFileSync(outputFile, JSON.stringify(blockedDates, null, 2));
-
-    console.log("✅ Fechas bloqueadas actualizadas:", blockedDates.length);
+    return reservas;
   } catch (err) {
-    console.error("❌ Error sincronizando Booking:", err);
+    console.error("Error sincronizando Booking:", err);
+    return null;
   }
 }
-
-module.exports = syncBookingCalendar;
