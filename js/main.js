@@ -1,173 +1,163 @@
 // js/main.js
 
-import { cargarReservas } from './ical-sync.js';
-import { Payments } from "https://web.squarecdn.com/v1/square.js";
+// Espera a que el DOM cargue
+document.addEventListener("DOMContentLoaded", async () => {
+  console.log("Sitio Cabañas Río Mundo cargado");
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('Sitio web Cabañas Río Mundo cargado');
-  
+  // Inicializa carruseles y menú
   initCarousel();
   initHamburger();
-  cargarReservas(); // Carga reservas de Booking/Backend y bloquea fechas
-  initReserva();
+
+  // Cargar fechas ocupadas desde el backend
+  const reservas = await cargarReservas();
+
+  // Inicializar la lógica de bloqueo de fechas
+  bloquearFechas(reservas);
+
+  // Configurar cálculo de reserva
+  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar").addEventListener("click", reservar);
 });
 
-// ====== CARRUSEL ======
-function initCarousel() {
-  const carousels = document.querySelectorAll('.carousel');
-  if (!carousels) return;
+// --------------------- FUNCIONES ---------------------
 
-  carousels.forEach(carousel => {
-    const slides = carousel.querySelectorAll('.carousel-slide');
-    const prevBtn = carousel.parentElement.querySelector('.carousel-button.prev');
-    const nextBtn = carousel.parentElement.querySelector('.carousel-button.next');
-    const indicators = carousel.parentElement.querySelectorAll('.indicator');
-
-    if (!slides) return;
-
-    let currentSlide = 0;
-    let autoplayInterval;
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    function showSlide(n) {
-      slides.forEach(sl => sl.classList.remove('active'));
-      indicators.forEach(ind => ind.classList.remove('active'));
-
-      currentSlide = (n + slides.length) % slides.length;
-      slides[currentSlide].classList.add('active');
-      if (indicators[currentSlide]) indicators[currentSlide].classList.add('active');
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => { showSlide(currentSlide-1); resetAutoplay(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { showSlide(currentSlide+1); resetAutoplay(); });
-
-    indicators.forEach((ind, idx) => {
-      ind.addEventListener('click', () => { showSlide(idx); resetAutoplay(); });
-    });
-
-    function startAutoplay() {
-      autoplayInterval = setInterval(() => { showSlide(currentSlide+1); }, 5000);
-    }
-    function resetAutoplay() {
-      clearInterval(autoplayInterval);
-      startAutoplay();
-    }
-
-    carousel.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
-    carousel.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipe(); resetAutoplay(); });
-    function handleSwipe() {
-      if (touchEndX < touchStartX - 50) showSlide(currentSlide+1);
-      if (touchEndX > touchStartX + 50) showSlide(currentSlide-1);
-    }
-
-    showSlide(0);
-    startAutoplay();
-    carousel.parentElement.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
-    carousel.parentElement.addEventListener('mouseleave', () => startAutoplay());
-  });
+async function cargarReservas() {
+  try {
+    const res = await fetch("/reservas");
+    if (!res.ok) throw new Error("No se pudieron cargar las reservas");
+    const data = await res.json();
+    return data.campanilla || [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
-// ====== MENÚ HAMBURGUESA ======
-function initHamburger() {
-  const hamburger = document.getElementById('hamburger');
-  const navMenu = document.getElementById('navMenu');
-  const navLinks = document.querySelectorAll('.nav-link');
-  if (!hamburger) return;
+function bloquearFechas(fechasOcupadas) {
+  const inputEntrada = document.getElementById("entrada");
+  const inputSalida = document.getElementById("salida");
 
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
+  function isOcupado(fecha) {
+    return fechasOcupadas.includes(fecha);
+  }
 
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('active');
-      navMenu.classList.remove('active');
-    });
-  });
+  // Función para validar que la fecha no esté ocupada
+  function validarFecha(e) {
+    const valor = e.target.value;
+    if (isOcupado(valor)) {
+      alert("Esta fecha está ocupada, elige otra.");
+      e.target.value = "";
+    }
+  }
+
+  inputEntrada.addEventListener("change", validarFecha);
+  inputSalida.addEventListener("change", validarFecha);
 }
 
-// ====== MOTOR DE RESERVAS ======
-function initReserva() {
-  const BACKEND = "https://tu-backend.onrender.com"; // Cambiar por tu URL backend
+// --------------------- CÁLCULO DE RESERVA ---------------------
 
-  const entrada = document.getElementById("entrada");
-  const salida = document.getElementById("salida");
-  const cabanaSelect = document.getElementById("cabaña");
-  const nombreInput = document.getElementById("nombre");
-  const telefonoInput = document.getElementById("telefono");
-  const emailInput = document.getElementById("email");
+function esTemporadaAlta(fecha){
+  const f = new Date(fecha);
+  const mes = f.getMonth() + 1;
+  const dia = f.getDate();
+  return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
+}
+
+function incluyeFinDeSemana(fechaEntrada, noches){
+  for(let i = 0; i < noches; i++){
+    const d = new Date(fechaEntrada);
+    d.setDate(d.getDate() + i);
+    if(d.getDay() === 5 || d.getDay() === 6) return true;
+  }
+  return false;
+}
+
+function calcularReserva(){
+  const cabaña = document.getElementById("cabaña").value;
+  const entrada = document.getElementById("entrada").value;
+  const salida = document.getElementById("salida").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if(!entrada || !salida){ alert("Selecciona fechas"); return; }
+  if(!nombre || !telefono || !email){ alert("Completa todos los datos personales"); return; }
 
   const spinner = document.getElementById("spinner");
-  const resultadoDiv = document.getElementById("resultado");
+  const resultado = document.getElementById("resultado");
 
-  document.querySelector(".reserva-box button").addEventListener("click", async () => {
-    const cabana = cabanaSelect.value;
-    const entradaVal = entrada.value;
-    const salidaVal = salida.value;
-    const nombre = nombreInput.value.trim();
-    const telefono = telefonoInput.value.trim();
-    const email = emailInput.value.trim();
+  spinner.style.display = "block";
+  resultado.style.display = "none";
 
-    if (!entradaVal || !salidaVal) return alert("Selecciona fechas");
-    if (!nombre || !telefono || !email) return alert("Completa todos los datos personales");
+  setTimeout(() => {
+    const noches = (new Date(salida) - new Date(entrada)) / (1000*60*60*24);
+    let precioNoche = 0;
+    if(cabaña === "campanilla"){ precioNoche = esTemporadaAlta(entrada) ? 150 : 115; }
+    else { precioNoche = esTemporadaAlta(entrada) ? 120 : 95; }
 
-    spinner.style.display = "block";
-    resultadoDiv.style.display = "none";
+    if(esTemporadaAlta(entrada) && noches < 4){ alert("En temporada alta mínimo 4 noches"); spinner.style.display="none"; return; }
+    if(!esTemporadaAlta(entrada) && noches < 2){ alert("Mínimo 2 noches"); spinner.style.display="none"; return; }
 
-    try {
-      const res = await fetch(`${BACKEND}/calculate-price`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ cabana, fechaInicio:entradaVal, fechaFin:salidaVal })
-      });
-      if (!res.ok) throw new Error("Error calculando precio");
+    let total = noches * precioNoche;
+    let descuento = 0;
 
-      const data = await res.json();
-      const total = data.precio;
-      const señal = 50;
-      const resto = total - señal;
-
-      document.getElementById("cabañaSeleccionada").innerText = cabana==="campanilla"?"Cabaña Campanilla":"Cabaña El Tejo";
-      document.getElementById("total").innerText = total.toFixed(2);
-      document.getElementById("resto").innerText = resto.toFixed(2);
-      document.getElementById("descuento").innerText = data.descuento?.toFixed(2) || "0";
-
-      resultadoDiv.className = "resumen-reserva " + (cabana==="campanilla"?"campanilla":"tejo");
-      resultadoDiv.style.display = "block";
-
-    } catch(err) {
-      console.error(err);
-      alert("Error calculando el precio, intenta de nuevo.");
-    } finally {
-      spinner.style.display = "none";
+    if(!esTemporadaAlta(entrada) && noches >= 3 && !incluyeFinDeSemana(entrada, noches)){
+      descuento = total * 0.10;
+      total *= 0.90;
     }
+    if(esTemporadaAlta(entrada) && noches >= 6){
+      descuento = total * 0.10;
+      total *= 0.90;
+    }
+
+    const resto = total - 50;
+
+    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("resto").innerText = resto.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
+
+    resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
+    spinner.style.display = "none";
+    resultado.style.display = "block";
+
+  }, 600);
+}
+
+// --------------------- RESERVA / PAGO ---------------------
+
+async function reservar() {
+  const nombre = document.getElementById("nombre").value;
+  const telefono = document.getElementById("telefono").value;
+  const cabaña = document.getElementById("cabaña").value;
+
+  // Aquí conectarías con Square o la pasarela de pago que uses
+  alert(`Reserva confirmada: ${cabaña}\nNombre: ${nombre}\nTeléfono: ${telefono}\nSeñal de 50 € pagada`);
+
+  location.reload();
+}
+
+// --------------------- CARRUSEL ---------------------
+
+function initCarousel() {
+  const carousels = document.querySelectorAll('.carousel');
+  carousels.forEach(carousel => {
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    let current = 0;
+    function show(n){ slides.forEach(s=>s.classList.remove("active")); slides[n].classList.add("active"); }
+    show(0);
+    setInterval(()=>{ current = (current+1)%slides.length; show(current); }, 5000);
   });
+}
 
-  // ==== PAGO SQUARE ====
-  (async () => {
-    const payments = Payments("sq0idp-Ue7cMnZzU1fLD0l8u0lpcg","LA6ZV4WAES4A0");
-    const card = await payments.card();
-    await card.attach("#square-card");
+// --------------------- MENÚ HAMBURGUESA ---------------------
 
-    document.getElementById("btnPagar").addEventListener("click", async () => {
-      const nombre = nombreInput.value;
-      const telefono = telefonoInput.value;
-      const cabana = cabanaSelect.value;
-      const result = await card.tokenize();
-
-      if (result.status === "OK") {
-        await fetch(`${BACKEND}/create-payment`, {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({ nonce:result.token, amount:50, nombre, telefono, cabana })
-        });
-        alert("Reserva confirmada correctamente.");
-        location.reload();
-      } else {
-        alert("Error en el pago");
-      }
-    });
-  })();
+function initHamburger() {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  if(!hamburger) return;
+  hamburger.addEventListener("click", ()=>{ hamburger.classList.toggle("active"); navMenu.classList.toggle("active"); });
+  document.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", ()=>{ hamburger.classList.remove("active"); navMenu.classList.remove("active"); });
+  });
 }
