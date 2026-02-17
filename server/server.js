@@ -54,4 +54,15 @@ app.post('/create-payment', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
+app.get("/availability/campanilla", async (req, res) => {
+  try {
+    const blocked = await getBookingBlockedDates();
+    res.json(blocked);
+  } catch (err) {
+    console.error("Error leyendo Booking:", err);
+    res.status(500).send("Error sincronizando con Booking");
+  }
+});
+
+
 
