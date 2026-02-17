@@ -408,3 +408,12 @@ footer a:hover {
   text-align: center;
   border: 1px solid #ffb3b3;
 }
+/* Días ocupados en el calendario */
+.flatpickr-day.ocupado {
+  background-color: #ff4c4c; /* rojo fuerte */
+  color: white;
+  cursor: not-allowed;
+}
+
+
+
