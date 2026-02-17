@@ -1,3 +1,5 @@
+import { getBookingBlockedDates } from "./bookingSync.js";
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -52,3 +54,4 @@ app.post('/create-payment', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
+
