@@ -79,7 +79,7 @@ function iniciarCalendarios(fechasOcupadas) {
   flatpickr("#salida", opcionesFlatpickr);
 }
 
-// --------------------- PRECIO DINÁMICO ---------------------
+// --------------------- CÁLCULO DE RESERVA ---------------------
 
 function esTemporadaAlta(fecha){
   const f = new Date(fecha);
@@ -97,34 +97,91 @@ function incluyeFinDeSemana(fechaEntrada, noches){
   return false;
 }
 
-// Devuelve el precio real de un día según cabaña y temporada
-function obtenerPrecioPorFecha(fecha, cabaña){
-  const f = new Date(fecha);
-  const mes = f.getMonth() + 1;
-  const diaSemana = f.getDay();
+function calcularReserva(){
+  const cabaña = document.getElementById("cabaña").value;
+  const entrada = document.getElementById("entrada").value;
+  const salida = document.getElementById("salida").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
 
-  if(cabaña === "campanilla"){
-    if(esTemporadaAlta(fecha)) return 150;
-    else return 115;
-  } else {
-    if(esTemporadaAlta(fecha)) return 120;
-    else return 95;
-  }
+  if(!entrada || !salida){ alert("Selecciona fechas"); return; }
+  if(!nombre || !telefono || !email){ alert("Completa todos los datos personales"); return; }
+
+  const spinner = document.getElementById("spinner");
+  const resultado = document.getElementById("resultado");
+
+  spinner.style.display = "block";
+  resultado.style.display = "none";
+
+  setTimeout(() => {
+    const noches = (new Date(salida) - new Date(entrada)) / (1000*60*60*24);
+    let precioNoche = 0;
+    if(cabaña === "campanilla"){ precioNoche = esTemporadaAlta(entrada) ? 150 : 115; }
+    else { precioNoche = esTemporadaAlta(entrada) ? 120 : 95; }
+
+    if(esTemporadaAlta(entrada) && noches < 4){ alert("En temporada alta mínimo 4 noches"); spinner.style.display="none"; return; }
+    if(!esTemporadaAlta(entrada) && noches < 2){ alert("Mínimo 2 noches"); spinner.style.display="none"; return; }
+
+    let total = noches * precioNoche;
+    let descuento = 0;
+
+    if(!esTemporadaAlta(entrada) && noches >= 3 && !incluyeFinDeSemana(entrada, noches)){
+      descuento = total * 0.10;
+      total *= 0.90;
+    }
+    if(esTemporadaAlta(entrada) && noches >= 6){
+      descuento = total * 0.10;
+      total *= 0.90;
+    }
+
+    const resto = total - 50;
+
+    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("resto").innerText = resto.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
+
+    resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
+    spinner.style.display = "none";
+    resultado.style.display = "block";
+
+  }, 600);
 }
 
-function calcularTotalEstancia(entrada, salida, cabaña){
-  let total = 0;
-  let noches = 0;
-  let actual = new Date(entrada);
-  const fin = new Date(salida);
+// --------------------- RESERVA / PAGO ---------------------
 
-  while(actual < fin){
-    const fechaISO = actual.toISOString().split("T")[0];
-    total += obtenerPrecioPorFecha(fechaISO, cabaña);
-    noches++;
-    actual.setDate(actual.getDate() + 1);
-  }
+async function reservar() {
+  const nombre = document.getElementById("nombre").value;
+  const telefono = document.getElementById("telefono").value;
+  const cabaña = document.getElementById("cabaña").value;
 
-  // Aplicar descuentos según reglas actuales
-  let descuento = 0;
-  if(!esTemporadaAlta(entrada) && noches >= 3 &&
+  alert(`Reserva confirmada: ${cabaña}\nNombre: ${nombre}\nTeléfono: ${telefono}\nSeñal de 50 € pagada`);
+
+  location.reload();
+}
+
+// --------------------- CARRUSEL ---------------------
+
+function initCarousel() {
+  const carousels = document.querySelectorAll('.carousel');
+  carousels.forEach(carousel => {
+    const slides = carousel.querySelectorAll('.carousel-slide');
+    let current = 0;
+    function show(n){ slides.forEach(s=>s.classList.remove("active")); slides[n].classList.add("active"); }
+    show(0);
+    setInterval(()=>{ current = (current+1)%slides.length; show(current); }, 5000);
+  });
+}
+
+// --------------------- MENÚ HAMBURGUESA ---------------------
+
+function initHamburger() {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  if(!hamburger) return;
+  hamburger.addEventListener("click", ()=>{ hamburger.classList.toggle("active"); navMenu.classList.toggle("active"); });
+  document.querySelectorAll(".nav-link").forEach(link => {
+    link.addEventListener("click", ()=>{ hamburger.classList.remove("active"); navMenu.classList.remove("active"); });
+  });
+}
