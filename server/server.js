@@ -1,4 +1,7 @@
 const syncBookingCalendar = require("./bookingSync");
+// Primera sincronización al arrancar
+syncBookingCalendar();
+
 
 
 import { getBookingBlockedDates } from "./bookingSync.js";
@@ -66,6 +69,7 @@ app.get("/availability/campanilla", async (req, res) => {
     res.status(500).send("Error sincronizando con Booking");
   }
 });
+
 
 
 
