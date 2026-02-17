@@ -1,4 +1,4 @@
-// server/bookingSync.js
+// server/BookingSync.js
 // Sincroniza reservas desde Booking iCal al archivo local reservas.json
 
 import fs from "fs";
