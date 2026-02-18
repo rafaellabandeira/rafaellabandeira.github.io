@@ -102,8 +102,7 @@ function esTemporadaAlta(fecha) {
 
 function obtenerPrecioPorNoche(fecha, cabaña) {
   if (esTemporadaAlta(fecha)) {
-    if (cabaña === "campanilla") return 150;
-    if (cabaña === "tejo") return 140;
+    return cabaña === "campanilla" ? 150 : 140;
   }
   return 110; // temporada baja
 }
@@ -199,4 +198,3 @@ function initHamburger() {
     link.addEventListener("click", () => { hamburger.classList.remove("active"); navMenu.classList.remove("active"); });
   });
 }
-
