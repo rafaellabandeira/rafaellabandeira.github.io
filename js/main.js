@@ -1,37 +1,30 @@
 // main.js
+import flatpickr from "flatpickr";
 
-document.addEventListener("DOMContentLoaded", async () => {
-  console.log("Cabañas Río Mundo cargado");
-
-  initCarousel();
-  initHamburger();
-
-  const reservas = await cargarReservas();
-  console.log("Fechas ocupadas cargadas:", reservas);
-
-  iniciarCalendarios(reservas);
-
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
-});
+// --------------------- CONFIGURACIÓN ---------------------
+let fechasOcupadas = {
+  campanilla: [],
+  tejo: []
+};
 
 // --------------------- CARGA DE RESERVAS ---------------------
-
 async function cargarReservas() {
   try {
-    const res = await fetch("/reservas");
+    const res = await fetch("/reservas"); // tu endpoint Render
     if (!res.ok) throw new Error("No se pudieron cargar las reservas");
     const data = await res.json();
-    return data.campanilla || [];
+    fechasOcupadas = data;
+    console.log("Fechas ocupadas cargadas:", fechasOcupadas);
   } catch (err) {
     console.error("Error cargando reservas:", err);
-    return [];
+    fechasOcupadas = { campanilla: [], tejo: [] };
   }
 }
 
 // --------------------- CALENDARIO ---------------------
+async function iniciarCalendarios() {
+  await cargarReservas();
 
-function iniciarCalendarios(fechasOcupadas) {
   const aviso = document.getElementById("avisoFechas");
 
   function actualizarAviso() {
@@ -42,10 +35,11 @@ function iniciarCalendarios(fechasOcupadas) {
     let actual = new Date(entrada);
     const fin = new Date(salida);
     let ocupado = false;
+    const cabaña = document.getElementById("cabaña").value;
 
     while (actual < fin) {
       const fechaISO = actual.toISOString().split("T")[0];
-      if (fechasOcupadas.includes(fechaISO)) {
+      if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
         ocupado = true;
         break;
       }
@@ -54,44 +48,57 @@ function iniciarCalendarios(fechasOcupadas) {
     aviso.style.display = ocupado ? "block" : "none";
   }
 
-  flatpickr("#entrada", {
+  const opcionesFlatpickrEntrada = {
     dateFormat: "Y-m-d",
     minDate: "today",
-    disable: fechasOcupadas,
-    weekStart: 1,
+    weekStart: 1, // lunes
     onChange: actualizarAviso,
     onDayCreate: function(dObj, dStr, fp, dayElem) {
       const fecha = dayElem.dateObj.toISOString().split("T")[0];
-      if (fechasOcupadas.includes(fecha)) dayElem.classList.add("ocupado");
-    }
-  });
+      const cabaña = document.getElementById("cabaña").value;
+      if (fechasOcupadas[cabaña]?.includes(fecha)) {
+        dayElem.classList.add("ocupado"); // rojo
+      }
+    },
+    disable: fechasOcupadas.campanilla // se actualizará dinámicamente al cambiar cabaña
+  };
 
-  flatpickr("#salida", {
+  const opcionesFlatpickrSalida = {
     dateFormat: "Y-m-d",
     minDate: "today",
-    disable: fechasOcupadas,
-    weekStart: 1,
+    weekStart: 1, // lunes
     onChange: actualizarAviso,
     onDayCreate: function(dObj, dStr, fp, dayElem) {
       const fecha = dayElem.dateObj.toISOString().split("T")[0];
-      if (fechasOcupadas.includes(fecha)) dayElem.classList.add("ocupado");
+      const cabaña = document.getElementById("cabaña").value;
+      if (fechasOcupadas[cabaña]?.includes(fecha)) {
+        dayElem.classList.add("ocupado"); // rojo
+      }
     }
+  };
+
+  const entradaPicker = flatpickr("#entrada", opcionesFlatpickrEntrada);
+  const salidaPicker = flatpickr("#salida", opcionesFlatpickrSalida);
+
+  // Actualizar fechas bloqueadas cuando cambie la cabaña
+  document.getElementById("cabaña").addEventListener("change", () => {
+    const cabaña = document.getElementById("cabaña").value;
+    entradaPicker.set("disable", fechasOcupadas[cabaña] || []);
+    salidaPicker.set("disable", []); // salida siempre seleccionable
   });
 }
 
 // --------------------- CÁLCULO DE RESERVA ---------------------
-
 function esTemporadaAlta(fecha) {
   const f = new Date(fecha);
   const mes = f.getMonth() + 1;
   const dia = f.getDate();
-  // Julio, agosto y navidad/fin de año
   return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
 }
 
 function esFinDeSemana(fecha) {
   const f = new Date(fecha);
-  return f.getDay() === 5 || f.getDay() === 6; // viernes=5, sábado=6
+  return f.getDay() === 5 || f.getDay() === 6;
 }
 
 function calcularReserva() {
@@ -115,7 +122,7 @@ function calcularReserva() {
     let precioNoche = 0;
 
     if (esTemporadaAlta(entrada)) {
-      // Temporada alta julio/agosto/navidad
+      // Julio, Agosto, Navidad
       precioNoche = cabaña === "campanilla" ? 150 : 140;
       if (noches < 4) { alert("En temporada alta mínimo 4 noches"); spinner.style.display = "none"; return; }
     } else {
@@ -155,31 +162,13 @@ function calcularReserva() {
 }
 
 // --------------------- RESERVA / PAGO ---------------------
-
 function reservar() {
   alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
 
-// --------------------- CARRUSEL ---------------------
-
-function initCarousel() {
-  document.querySelectorAll('.carousel').forEach(carousel => {
-    const slides = carousel.querySelectorAll('.carousel-slide');
-    let current = 0;
-    function show(n) { slides.forEach(s => s.classList.remove("active")); slides[n].classList.add("active"); }
-    show(0);
-    setInterval(() => { current = (current + 1) % slides.length; show(current); }, 5000);
-  });
-}
-
-// --------------------- MENÚ HAMBURGUESA ---------------------
-
-function initHamburger() {
-  const hamburger = document.getElementById("hamburger");
-  const navMenu = document.getElementById("navMenu");
-  if (!hamburger) return;
-  hamburger.addEventListener("click", () => { hamburger.classList.toggle("active"); navMenu.classList.toggle("active"); });
-  document.querySelectorAll(".nav-link").forEach(link => {
-    link.addEventListener("click", () => { hamburger.classList.remove("active"); navMenu.classList.remove("active"); });
-  });
-}
+// --------------------- INICIALIZACIÓN ---------------------
+document.addEventListener("DOMContentLoaded", () => {
+  iniciarCalendarios();
+  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar").addEventListener("click", reservar);
+});
