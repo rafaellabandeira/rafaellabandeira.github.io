@@ -1,4 +1,3 @@
-// parseICS.js
 export function parseICS(icsText) {
   const eventos = icsText.split("BEGIN:VEVENT");
   const fechasOcupadas = [];
@@ -12,7 +11,6 @@ export function parseICS(icsText) {
     const start = startMatch[1];
     const end = endMatch[1];
 
-    // Convertimos a fechas reales
     const fechaInicio = new Date(
       start.substring(0, 4),
       start.substring(4, 6) - 1,
@@ -25,12 +23,11 @@ export function parseICS(icsText) {
       end.substring(6, 8)
     );
 
-    // Booking bloquea hasta el día anterior al checkout
     const actual = new Date(fechaInicio);
 
+    // Booking deja libre el checkout → NO bloqueamos el último día
     while (actual < fechaFin) {
-      const iso = actual.toISOString().split("T")[0];
-      fechasOcupadas.push(iso);
+      fechasOcupadas.push(actual.toISOString().split("T")[0]);
       actual.setDate(actual.getDate() + 1);
     }
   }
