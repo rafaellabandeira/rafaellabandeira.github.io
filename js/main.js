@@ -9,7 +9,7 @@
 const PRECIOS = {
   campanilla: {
     alta: 150,
-    baja: 110
+    baja: 120
   },
   tejo: {
     alta: 140,
