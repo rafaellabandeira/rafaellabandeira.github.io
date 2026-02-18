@@ -1,36 +1,43 @@
 // main.js
 import flatpickr from "flatpickr";
 
-// --------------------- CONFIGURACIÓN ---------------------
-let fechasOcupadas = {
-  campanilla: [],
-  tejo: []
-};
+// js/main.js
+document.addEventListener("DOMContentLoaded", async () => {
+  initCarousel();
+  initHamburger();
 
-// --------------------- CARGA DE RESERVAS ---------------------
+  const reservas = await cargarReservas();
+  iniciarCalendarios(reservas);
+
+  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar").addEventListener("click", reservar);
+});
+
+// --------------------- CARGAR RESERVAS ---------------------
+
 async function cargarReservas() {
   try {
-    const res = await fetch("/reservas"); // tu endpoint Render
+    const res = await fetch("/reservas");
     if (!res.ok) throw new Error("No se pudieron cargar las reservas");
-    const data = await res.json();
-    fechasOcupadas = data;
-    console.log("Fechas ocupadas cargadas:", fechasOcupadas);
+    return await res.json();
   } catch (err) {
-    console.error("Error cargando reservas:", err);
-    fechasOcupadas = { campanilla: [], tejo: [] };
+    console.error(err);
+    return { campanilla: [], tejo: [] };
   }
 }
 
-// --------------------- CALENDARIO ---------------------
-async function iniciarCalendarios() {
-  await cargarReservas();
+// --------------------- CALENDARIO / BLOQUEO ---------------------
 
+function iniciarCalendarios(fechasOcupadas) {
   const aviso = document.getElementById("avisoFechas");
 
   function actualizarAviso() {
     const entrada = document.getElementById("entrada").value;
     const salida = document.getElementById("salida").value;
-    if (!entrada || !salida) { aviso.style.display = "none"; return; }
+    if (!entrada || !salida) {
+      aviso.style.display = "none";
+      return;
+    }
 
     let actual = new Date(entrada);
     const fin = new Date(salida);
@@ -45,60 +52,38 @@ async function iniciarCalendarios() {
       }
       actual.setDate(actual.getDate() + 1);
     }
+
     aviso.style.display = ocupado ? "block" : "none";
   }
 
-  const opcionesFlatpickrEntrada = {
+  const opcionesFlatpickr = {
     dateFormat: "Y-m-d",
     minDate: "today",
-    weekStart: 1, // lunes
+    disable: [],
+    locale: { firstDayOfWeek: 1 }, // lunes primer día
     onChange: actualizarAviso,
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const fecha = dayElem.dateObj.toISOString().split("T")[0];
       const cabaña = document.getElementById("cabaña").value;
-      if (fechasOcupadas[cabaña]?.includes(fecha)) {
-        dayElem.classList.add("ocupado"); // rojo
-      }
-    },
-    disable: fechasOcupadas.campanilla // se actualizará dinámicamente al cambiar cabaña
-  };
+      const fecha = dayElem.dateObj.toISOString().split("T")[0];
 
-  const opcionesFlatpickrSalida = {
-    dateFormat: "Y-m-d",
-    minDate: "today",
-    weekStart: 1, // lunes
-    onChange: actualizarAviso,
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const fecha = dayElem.dateObj.toISOString().split("T")[0];
-      const cabaña = document.getElementById("cabaña").value;
+      // marcar días ocupados en rojo
       if (fechasOcupadas[cabaña]?.includes(fecha)) {
-        dayElem.classList.add("ocupado"); // rojo
+        dayElem.classList.add("ocupado"); 
       }
     }
   };
 
-  const entradaPicker = flatpickr("#entrada", opcionesFlatpickrEntrada);
-  const salidaPicker = flatpickr("#salida", opcionesFlatpickrSalida);
-
-  // Actualizar fechas bloqueadas cuando cambie la cabaña
-  document.getElementById("cabaña").addEventListener("change", () => {
-    const cabaña = document.getElementById("cabaña").value;
-    entradaPicker.set("disable", fechasOcupadas[cabaña] || []);
-    salidaPicker.set("disable", []); // salida siempre seleccionable
-  });
+  flatpickr("#entrada", opcionesFlatpickr);
+  flatpickr("#salida", opcionesFlatpickr);
 }
 
-// --------------------- CÁLCULO DE RESERVA ---------------------
+// --------------------- PRECIO Y RESERVA ---------------------
+
 function esTemporadaAlta(fecha) {
   const f = new Date(fecha);
   const mes = f.getMonth() + 1;
   const dia = f.getDate();
   return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
-}
-
-function esFinDeSemana(fecha) {
-  const f = new Date(fecha);
-  return f.getDay() === 5 || f.getDay() === 6;
 }
 
 function calcularReserva() {
@@ -109,8 +94,8 @@ function calcularReserva() {
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
 
-  if (!entrada || !salida) { alert("Selecciona fechas"); return; }
-  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
+  if(!entrada || !salida){ alert("Selecciona fechas"); return; }
+  if(!nombre || !telefono || !email){ alert("Completa todos los datos personales"); return; }
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
@@ -118,35 +103,36 @@ function calcularReserva() {
   resultado.style.display = "none";
 
   setTimeout(() => {
-    const noches = (new Date(salida) - new Date(entrada)) / (1000 * 60 * 60 * 24);
-    let precioNoche = 0;
+    const noches = (new Date(salida) - new Date(entrada)) / (1000*60*60*24);
+    const fechaEntrada = new Date(entrada);
+    let minNoches, precioNoche;
 
+    // 🔹 Reglas de precio y mínima estancia
     if (esTemporadaAlta(entrada)) {
-      // Julio, Agosto, Navidad
+      minNoches = 4;
       precioNoche = cabaña === "campanilla" ? 150 : 140;
-      if (noches < 4) { alert("En temporada alta mínimo 4 noches"); spinner.style.display = "none"; return; }
     } else {
-      // Resto del año
-      if (esFinDeSemana(entrada)) {
+      minNoches = 2;
+      const diaSemana = fechaEntrada.getDay();
+      if (diaSemana === 5 || diaSemana === 6) { // viernes o sábado
         precioNoche = cabaña === "campanilla" ? 150 : 140;
       } else {
         precioNoche = cabaña === "campanilla" ? 115 : 110;
       }
-      if (noches < 2) { alert("Mínimo 2 noches fuera de temporada alta"); spinner.style.display = "none"; return; }
+    }
+
+    if (noches < minNoches) {
+      alert(`Mínimo ${minNoches} noches en estas fechas`);
+      spinner.style.display = "none";
+      return;
     }
 
     let total = noches * precioNoche;
     let descuento = 0;
 
-    // Descuentos
-    if (!esTemporadaAlta(entrada) && noches >= 3 && !esFinDeSemana(entrada)) {
-      descuento = total * 0.10;
-      total *= 0.9;
-    }
-    if (esTemporadaAlta(entrada) && noches >= 6) {
-      descuento = total * 0.10;
-      total *= 0.9;
-    }
+    // 🔹 Descuentos
+    if (!esTemporadaAlta(entrada) && noches >= 3) { descuento = total*0.10; total*=0.90; }
+    if (esTemporadaAlta(entrada) && noches >= 6) { descuento = total*0.10; total*=0.90; }
 
     const resto = total - 50;
 
@@ -158,17 +144,14 @@ function calcularReserva() {
     resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
     spinner.style.display = "none";
     resultado.style.display = "block";
-  }, 600);
+  }, 500);
 }
 
-// --------------------- RESERVA / PAGO ---------------------
 function reservar() {
   alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
 
-// --------------------- INICIALIZACIÓN ---------------------
-document.addEventListener("DOMContentLoaded", () => {
-  iniciarCalendarios();
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
-});
+// --------------------- CARRUSEL ---------------------
+
+function initCarousel() { /* tu código de carrusel */ }
+function initHamburger() { /* tu código de menú hamburguesa */ }
