@@ -1,5 +1,5 @@
 {
-  "name": "cabanas",
+  "name": "cabanas-rio-mundo",
   "version": "1.0.0",
   "type": "module",
   "main": "src/server.js",
@@ -11,5 +11,3 @@
     "cors": "^2.8.5"
   }
 }
-
-
