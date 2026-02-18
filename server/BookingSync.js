@@ -4,48 +4,63 @@ import axios from "axios";
 import fs from "fs";
 import path from "path";
 
+// URL iCal de Booking (cambia por la tuya si es necesario)
 const ICAL_URL = "https://ical.booking.com/v1/export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
-const JSON_PATH = path.join(process.cwd(), "reservas.json");
+
+// Ruta para guardar reservas locales
+const RESERVAS_JSON = path.join(process.cwd(), "server/reservas.json");
 
 /**
- * Descarga el iCal de Booking, parsea todos los eventos
- * y guarda las fechas ocupadas en reservas.json.
+ * Descarga y parsea el iCal de Booking.
+ * Devuelve un objeto con arrays de fechas ocupadas para cada cabaña.
  */
 export async function sincronizarReservas() {
   try {
     const response = await axios.get(ICAL_URL);
     const data = ical.parseICS(response.data);
 
-    const fechasOcupadas = [];
+    const fechasCampanilla = [];
+    const fechasTejo = []; // si tuvieras otra cabaña, ajusta aquí
 
     for (const key in data) {
-      const event = data[key];
-      if (event.type === "VEVENT") {
-        const start = event.start.toISOString().split("T")[0];
-        const end = event.end.toISOString().split("T")[0];
+      if (data[key].type === "VEVENT") {
+        const start = data[key].start.toISOString().split("T")[0];
+        const end = data[key].end.toISOString().split("T")[0];
 
         let current = new Date(start);
         const endDate = new Date(end);
 
         while (current < endDate) {
-          fechasOcupadas.push(current.toISOString().split("T")[0]);
+          const fecha = current.toISOString().split("T")[0];
+          // Guardamos para Campanilla (puedes agregar lógica para Tejo si tienes otro iCal)
+          fechasCampanilla.push(fecha);
           current.setDate(current.getDate() + 1);
         }
-
-        console.log(`Evento: "${event.summary || "sin título"}" → ${start} a ${end}`);
       }
     }
 
-    console.log("✅ Fechas ocupadas obtenidas del iCal:", fechasOcupadas);
+    const reservas = {
+      campanilla: fechasCampanilla,
+      tejo: fechasTejo
+    };
 
-    // Guardar en JSON
-    fs.writeFileSync(JSON_PATH, JSON.stringify({ campanilla: fechasOcupadas }, null, 2));
+    // Guardar en JSON local
+    fs.writeFileSync(RESERVAS_JSON, JSON.stringify(reservas, null, 2));
     console.log("✅ reservas.json actualizado correctamente");
 
-    return fechasOcupadas;
+    return reservas;
 
   } catch (err) {
-    console.error("❌ Error leyendo iCal de Booking:", err.message);
-    return [];
+    console.error("Error leyendo iCal de Booking:", err.message);
+    // Devolver JSON local si falla
+    try {
+      const backup = fs.readFileSync(RESERVAS_JSON, "utf-8");
+      console.log("⚠️ Usando reservas.json de backup");
+      return JSON.parse(backup);
+    } catch (e) {
+      console.error("No hay backup disponible:", e.message);
+      return { campanilla: [], tejo: [] };
+    }
   }
 }
+
