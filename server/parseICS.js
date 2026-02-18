@@ -1,32 +1,39 @@
+// parseICS.js
 export function parseICS(icsText) {
   const eventos = icsText.split("BEGIN:VEVENT");
-  const fechas = [];
+  const fechasOcupadas = [];
 
-  eventos.forEach(ev => {
-    const start = ev.match(/DTSTART;VALUE=DATE:(\d+)/);
-    const end = ev.match(/DTEND;VALUE=DATE:(\d+)/);
+  for (const evento of eventos) {
+    const startMatch = evento.match(/DTSTART;VALUE=DATE:(\d{8})/);
+    const endMatch = evento.match(/DTEND;VALUE=DATE:(\d{8})/);
 
-    if (!start || !end) return;
+    if (!startMatch || !endMatch) continue;
 
-    let actual = formatear(start[1]);
-    const salida = formatear(end[1]);
+    const start = startMatch[1];
+    const end = endMatch[1];
 
-    // Booking bloquea hasta el día anterior a salida
-    while (actual < salida) {
-      fechas.push(actual);
-      actual = sumarDia(actual);
+    // Convertimos a fechas reales
+    const fechaInicio = new Date(
+      start.substring(0, 4),
+      start.substring(4, 6) - 1,
+      start.substring(6, 8)
+    );
+
+    const fechaFin = new Date(
+      end.substring(0, 4),
+      end.substring(4, 6) - 1,
+      end.substring(6, 8)
+    );
+
+    // Booking bloquea hasta el día anterior al checkout
+    const actual = new Date(fechaInicio);
+
+    while (actual < fechaFin) {
+      const iso = actual.toISOString().split("T")[0];
+      fechasOcupadas.push(iso);
+      actual.setDate(actual.getDate() + 1);
     }
-  });
+  }
 
-  return fechas;
-}
-
-function formatear(fecha) {
-  return `${fecha.slice(0,4)}-${fecha.slice(4,6)}-${fecha.slice(6,8)}`;
-}
-
-function sumarDia(fecha) {
-  const d = new Date(fecha);
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().slice(0,10);
+  return fechasOcupadas;
 }
