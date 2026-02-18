@@ -1,26 +1,32 @@
-import express from "express";
-import cors from "cors";
-import fs from "fs";
-import path from "path";
-import { sincronizarBooking } from "./BookingSync.js";
+export function parseICS(icsText) {
+  const eventos = icsText.split("BEGIN:VEVENT");
+  const fechas = [];
 
-const app = express();
-app.use(cors());
+  eventos.forEach(ev => {
+    const start = ev.match(/DTSTART;VALUE=DATE:(\d+)/);
+    const end = ev.match(/DTEND;VALUE=DATE:(\d+)/);
 
-const PORT = process.env.PORT || 10000;
-const filePath = path.join(process.cwd(), "reservas.json");
+    if (!start || !end) return;
 
-// 🔹 sincroniza reservas al arrancar
-await sincronizarBooking();
+    let actual = formatear(start[1]);
+    const salida = formatear(end[1]);
 
-// 🔹 endpoint que devuelve reservas
-app.get("/reservas", (req, res) => {
-  try {
-    const data = fs.readFileSync(filePath, "utf8");
-    res.json(JSON.parse(data));
-  } catch {
-    res.json({ campanilla: [], tejo: [] });
-  }
-});
+    // Booking bloquea hasta el día anterior a salida
+    while (actual < salida) {
+      fechas.push(actual);
+      actual = sumarDia(actual);
+    }
+  });
 
-app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
+  return fechas;
+}
+
+function formatear(fecha) {
+  return `${fecha.slice(0,4)}-${fecha.slice(4,6)}-${fecha.slice(6,8)}`;
+}
+
+function sumarDia(fecha) {
+  const d = new Date(fecha);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0,10);
+}
