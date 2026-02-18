@@ -58,7 +58,7 @@ export function calcularPrecio(cabana, fechaInicioStr, fechaFinStr) {
       throw new Error("Mínimo 2 noches fuera de temporada alta: 2 noches");
     }
   } else if (cabana === "tejo") {
-    precioNoche = esTemporadaAlta(fechaInicio) ? 120 : 95;
+    precioNoche = esTemporadaAlta(fechaInicio) ? 140 : 110;
     if (esTemporadaAlta(fechaInicio) && noches < 4) {
       throw new Error("En temporada alta mínimo 4 noches");
     }
@@ -109,3 +109,4 @@ export function fechasDisponibles(cabana, fechaInicioStr, fechaFinStr) {
 
   return true;
 }
+
