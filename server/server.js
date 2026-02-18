@@ -46,6 +46,12 @@ export async function sincronizarBooking() {
     console.error("Error sincronizando Booking:", err);
   }
 }
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
+await sincronizarBooking(); // espera a que termine la sincronización
+
+app.listen(PORT, () => {
+  console.log(`Servidor activo en puerto ${PORT}`);
+});
+
+
+
 
