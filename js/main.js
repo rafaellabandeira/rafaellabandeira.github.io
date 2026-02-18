@@ -122,7 +122,7 @@ function obtenerPrecioPorNoche(fecha, cabaña) {
   }
 
   // Todo lo demás → temporada baja
-  return 110;
+  return 115;
 }
 
 // --------------------- CÁLCULO DE RESERVA ---------------------
