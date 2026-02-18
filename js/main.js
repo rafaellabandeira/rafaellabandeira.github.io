@@ -56,7 +56,7 @@ function iniciarCalendarios(fechasOcupadas) {
   flatpickr("#entrada", {
     dateFormat: "Y-m-d",
     minDate: "today",
-    locale: { firstDayOfWeek: 1 }, // lunes primer día
+    locale: { firstDayOfWeek: 1 },
     onChange: actualizarAviso,
     onDayCreate: (dObj, dStr, fp, dayElem) => {
       const cabaña = document.getElementById("cabaña").value;
@@ -71,7 +71,14 @@ function iniciarCalendarios(fechasOcupadas) {
   flatpickr("#salida", {
     dateFormat: "Y-m-d",
     minDate: "today",
-    locale: { firstDayOfWeek: 1 }
+    locale: { firstDayOfWeek: 1 },
+    onDayCreate: (dObj, dStr, fp, dayElem) => {
+      const cabaña = document.getElementById("cabaña").value;
+      const fecha = dayElem.dateObj.toISOString().split("T")[0];
+      if (fechasOcupadas[cabaña]?.includes(fecha)) {
+        dayElem.classList.add("ocupado"); // rojo
+      }
+    }
   });
 }
 
@@ -110,7 +117,7 @@ function calcularReserva() {
     } else {
       minNoches = 2;
       const diaSemana = fechaEntrada.getDay();
-      if (diaSemana === 5 || diaSemana === 6) {
+      if (diaSemana === 5 || diaSemana === 6) { // viernes o sábado
         precioNoche = cabaña === "campanilla" ? 150 : 140;
       } else {
         precioNoche = cabaña === "campanilla" ? 115 : 110;
@@ -131,12 +138,14 @@ function calcularReserva() {
 
     const resto = total - 50;
 
+    // colores de cada cabaña
     document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
+
     document.getElementById("total").innerText = total.toFixed(2);
     document.getElementById("resto").innerText = resto.toFixed(2);
     document.getElementById("descuento").innerText = descuento.toFixed(2);
 
-    resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
     spinner.style.display = "none";
     resultado.style.display = "block";
   }, 500);
