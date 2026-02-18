@@ -1,47 +1,32 @@
-import https from "https";
-import fs from "fs";
-import path from "path";
-import { parseICS } from "./parseICS.js";
+export function parseICS(icsText) {
+  const eventos = icsText.split("BEGIN:VEVENT");
+  const fechas = [];
 
-const filePath = path.join(process.cwd(), "reservas.json");
+  eventos.forEach(ev => {
+    const start = ev.match(/DTSTART;VALUE=DATE:(\d+)/);
+    const end = ev.match(/DTEND;VALUE=DATE:(\d+)/);
 
-// ✅ TU ICAL DE CAMPANILLA
-const ICAL_CAMPANILLA =
-  "https://ical.booking.com/v1export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
+    if (!start || !end) return;
 
-// 👉 cuando tengas el del Tejo lo pegas aquí
-const ICAL_TEJO = null;
+    let actual = formatear(start[1]);
+    const salida = formatear(end[1]);
 
-function descargarICS(url) {
-  return new Promise((resolve, reject) => {
-    https.get(url, res => {
-      let data = "";
-      res.on("data", chunk => (data += chunk));
-      res.on("end", () => resolve(data));
-    }).on("error", reject);
-  });
-}
-
-export async function sincronizarBooking() {
-  try {
-    console.log("Sincronizando Booking…");
-
-    const icsCampanilla = await descargarICS(ICAL_CAMPANILLA);
-    const campanilla = parseICS(icsCampanilla);
-
-    let tejo = [];
-    if (ICAL_TEJO) {
-      const icsTejo = await descargarICS(ICAL_TEJO);
-      tejo = parseICS(icsTejo);
+    // Booking bloquea hasta el día anterior de salida
+    while (actual < salida) {
+      fechas.push(actual);
+      actual = sumarDia(actual);
     }
+  });
 
-    const reservas = { campanilla, tejo };
-
-    fs.writeFileSync(filePath, JSON.stringify(reservas, null, 2));
-
-    console.log("reservas.json actualizado correctamente");
-  } catch (err) {
-    console.error("Error sincronizando Booking:", err);
-  }
+  return fechas;
 }
 
+function formatear(fecha) {
+  return `${fecha.slice(0,4)}-${fecha.slice(4,6)}-${fecha.slice(6,8)}`;
+}
+
+function sumarDia(fecha) {
+  const d = new Date(fecha);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0,10);
+}
