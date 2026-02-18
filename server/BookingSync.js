@@ -1,48 +1,31 @@
+// src/BookingSync.js
 import fs from "fs";
 import path from "path";
-import ical from "node-ical";
 import fetch from "node-fetch";
+import { parseICS } from "./parseICS.js"; // función para parsear iCal, la puedes tener
 
-const __dirname = process.cwd(); // 🔴 importante en Render
-const filePath = path.join(__dirname, "reservas.json");
+const filePath = path.join(process.cwd(), "reservas.json");
 
-// 👉 PON AQUÍ TU ICAL DE BOOKING
-const ICAL_URL = "TU_URL_ICAL_DE_BOOKING";
+const URL_ICAL_CAMPANILLA = "TU_URL_ICAL_CAMPANILLA";
+const URL_ICAL_TEJO = "TU_URL_ICAL_TEJO";
 
-export async function sincronizarReservas() {
+export async function sincronizarBooking() {
   try {
-    console.log("🔄 Sincronizando con Booking…");
+    const [resCampanilla, resTejo] = await Promise.all([
+      fetch(URL_ICAL_CAMPANILLA),
+      fetch(URL_ICAL_TEJO)
+    ]);
 
-    const response = await fetch(ICAL_URL);
-    const data = await response.text();
+    const icsCampanilla = await resCampanilla.text();
+    const icsTejo = await resTejo.text();
 
-    const eventos = ical.parseICS(data);
+    const campanilla = parseICS(icsCampanilla); // devuelve array de fechas ocupadas
+    const tejo = parseICS(icsTejo);
 
-    const fechas = [];
-
-    for (const k in eventos) {
-      const ev = eventos[k];
-      if (ev.type === "VEVENT") {
-        let actual = new Date(ev.start);
-        const fin = new Date(ev.end);
-
-        while (actual < fin) {
-          fechas.push(actual.toISOString().split("T")[0]);
-          actual.setDate(actual.getDate() + 1);
-        }
-      }
-    }
-
-    const resultado = {
-      campanilla: fechas,
-      tejo: [] // luego podremos separar
-    };
-
-    fs.writeFileSync(filePath, JSON.stringify(resultado, null, 2));
-
-    console.log("✅ reservas.json actualizado:", resultado.campanilla.length, "fechas");
-
+    const reservas = { campanilla, tejo };
+    fs.writeFileSync(filePath, JSON.stringify(reservas, null, 2));
+    console.log("✅ reservas.json actualizado desde Booking");
   } catch (err) {
-    console.error("❌ Error sincronizando:", err);
+    console.error("Error sincronizando Booking:", err);
   }
 }
