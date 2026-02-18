@@ -88,23 +88,41 @@ function esTemporadaAlta(fecha) {
   const dia = fecha.getDate();
   const diaSemana = fecha.getDay(); // 0=domingo ... 5=viernes, 6=sábado
 
-  // Fines de semana → temporada alta
+  // Viernes y sábado → temporada alta
   if (diaSemana === 5 || diaSemana === 6) return true;
 
-  // Julio y Agosto
+  // Julio y Agosto → temporada alta
   if (mes === 7 || mes === 8) return true;
 
-  // Navidad: 22 diciembre a 7 enero
+  // Navidad 22 dic - 7 ene → temporada alta
   if ((mes === 12 && dia >= 22) || (mes === 1 && dia <= 7)) return true;
 
   return false;
 }
 
 function obtenerPrecioPorNoche(fecha, cabaña) {
-  if (esTemporadaAlta(fecha)) {
+  const diaSemana = fecha.getDay(); // 0=domingo, 1=lunes ... 5=viernes, 6=sábado
+
+  // Viernes y sábado → temporada alta
+  if (diaSemana === 5 || diaSemana === 6) {
     return cabaña === "campanilla" ? 150 : 140;
   }
-  return 110; // temporada baja
+
+  const mes = fecha.getMonth() + 1;
+  const dia = fecha.getDate();
+
+  // Julio y agosto → temporada alta
+  if (mes === 7 || mes === 8) {
+    return cabaña === "campanilla" ? 150 : 140;
+  }
+
+  // Navidad 22 dic - 7 ene → temporada alta
+  if ((mes === 12 && dia >= 22) || (mes === 1 && dia <= 7)) {
+    return cabaña === "campanilla" ? 150 : 140;
+  }
+
+  // Todo lo demás → temporada baja
+  return 110;
 }
 
 // --------------------- CÁLCULO DE RESERVA ---------------------
@@ -134,11 +152,9 @@ function calcularReserva() {
     let hayAlta = false;
     let hayBaja = false;
 
-    // Recorremos cada noche para sumar precio
     for (let d = new Date(entradaDate); d < salidaDate; d.setDate(d.getDate() + 1)) {
       total += obtenerPrecioPorNoche(new Date(d), cabaña);
       noches++;
-
       if (esTemporadaAlta(new Date(d))) hayAlta = true;
       else hayBaja = true;
     }
