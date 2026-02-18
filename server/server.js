@@ -8,29 +8,62 @@ const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || 10000;
-const filePath = path.join(process.cwd(), "reservas.json");
 
-// 🔹 endpoint que devuelve reservas
+/* 📍 Ruta ABSOLUTA real (Render cambia el cwd a veces) */
+const filePath = path.resolve("./reservas.json");
+
+console.log("📂 Archivo reservas en:", filePath);
+
+/* 🔹 Endpoint que lee reservas */
 app.get("/reservas", (req, res) => {
   try {
+    if (!fs.existsSync(filePath)) {
+      console.log("⚠️ reservas.json no existe todavía");
+      return res.json({ campanilla: [], tejo: [] });
+    }
+
     const data = fs.readFileSync(filePath, "utf8");
-    res.json(JSON.parse(data));
-  } catch {
+    const json = JSON.parse(data);
+
+    console.log("📤 Enviando reservas:", {
+      campanilla: json.campanilla?.length || 0,
+      tejo: json.tejo?.length || 0
+    });
+
+    res.json(json);
+  } catch (err) {
+    console.error("Error leyendo reservas:", err);
     res.json({ campanilla: [], tejo: [] });
   }
 });
 
-// 🔹 función async que inicia servidor después de sincronizar Booking
+/* 🔹 Arranque controlado (Render necesita esto sí o sí) */
 async function iniciarServidor() {
   try {
-    await sincronizarBooking(); // tu lógica de BookingSync intacta
+    console.log("🚀 Iniciando sincronización con Booking…");
+
+    await sincronizarBooking();
+
+    console.log("✅ Sincronización terminada");
+
+    /* Verificamos que el JSON realmente exista */
+    if (fs.existsSync(filePath)) {
+      const contenido = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      console.log("📊 Reservas guardadas:", {
+        campanilla: contenido.campanilla?.length || 0,
+        tejo: contenido.tejo?.length || 0
+      });
+    } else {
+      console.log("❌ reservas.json NO se creó");
+    }
 
     app.listen(PORT, () => {
-      console.log(`Servidor activo en puerto ${PORT}`);
+      console.log(`🌐 Servidor activo en puerto ${PORT}`);
     });
+
   } catch (err) {
-    console.error("Error iniciando servidor:", err);
-    process.exit(1); // Render marcará error si falla Booking
+    console.error("❌ Error iniciando servidor:", err);
+    process.exit(1);
   }
 }
 
