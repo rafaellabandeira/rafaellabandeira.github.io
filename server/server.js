@@ -1,24 +1,48 @@
-// server/server.js
-import express from "express";
-import cors from "cors";
+import fs from "fs";
 import path from "path";
-import { sincronizarReservas } from "./BookingSync.js";
+import ical from "node-ical";
+import fetch from "node-fetch";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const __dirname = process.cwd(); // 🔴 importante en Render
+const filePath = path.join(__dirname, "reservas.json");
 
-// ===== Sincronizar reservas al iniciar el servidor =====
-sincronizarReservas(); // actualiza reservas.json al arrancar
+// 👉 PON AQUÍ TU ICAL DE BOOKING
+const ICAL_URL = "TU_URL_ICAL_DE_BOOKING";
 
-// Endpoint para devolver reservas de Campanilla
-app.get("/reservas", async (req, res) => {
-  const fechasOcupadas = await sincronizarReservas();
-  res.json({ campanilla: fechasOcupadas });
-});
+export async function sincronizarReservas() {
+  try {
+    console.log("🔄 Sincronizando con Booking…");
 
-// Puerto dinámico para Render
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Server running on port", PORT));
+    const response = await fetch(ICAL_URL);
+    const data = await response.text();
 
+    const eventos = ical.parseICS(data);
 
+    const fechas = [];
+
+    for (const k in eventos) {
+      const ev = eventos[k];
+      if (ev.type === "VEVENT") {
+        let actual = new Date(ev.start);
+        const fin = new Date(ev.end);
+
+        while (actual < fin) {
+          fechas.push(actual.toISOString().split("T")[0]);
+          actual.setDate(actual.getDate() + 1);
+        }
+      }
+    }
+
+    const resultado = {
+      campanilla: fechas,
+      tejo: [] // luego podremos separar
+    };
+
+    fs.writeFileSync(filePath, JSON.stringify(resultado, null, 2));
+
+    console.log("✅ reservas.json actualizado:", resultado.campanilla.length, "fechas");
+
+  } catch (err) {
+    console.error("❌ Error sincronizando:", err);
+  }
+}
