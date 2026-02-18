@@ -295,3 +295,23 @@ section {
   animation: spin 1s linear infinite;
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+/* ============================
+   CALENDARIO - DÍAS OCUPADOS
+============================ */
+
+.flatpickr-day.ocupado {
+  background: #e74c3c !important;
+  color: #fff !important;
+  border-color: #e74c3c !important;
+  cursor: not-allowed;
+}
+
+.flatpickr-day.ocupado:hover {
+  background: #c0392b !important;
+}
+
+.flatpickr-day.ocupado.flatpickr-disabled {
+  background: #e74c3c !important;
+  color: #fff !important;
+  opacity: 1 !important;
+}
