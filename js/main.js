@@ -87,20 +87,36 @@ function iniciarCalendarios(fechasOcupadas) {
 
 // --------------------- CÁLCULO DE RESERVA ---------------------
 
-function esTemporadaAlta(fecha){
-  const f = new Date(fecha);
-  const mes = f.getMonth() + 1;
-  const dia = f.getDate();
-  return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
+// Detecta si un día concreto es temporada alta
+function esTemporadaAlta(fecha) {
+  const mes = fecha.getMonth() + 1;
+  const dia = fecha.getDate();
+  const diaSemana = fecha.getDay(); // 5 viernes | 6 sábado
+
+  // Fin de semana = temporada alta
+  if (diaSemana === 5 || diaSemana === 6) return true;
+
+  // Julio y Agosto
+  if (mes === 7 || mes === 8) return true;
+
+  // Navidad
+  if ((mes === 12 && dia >= 22) || (mes === 1 && dia <= 7)) return true;
+
+  return false;
 }
 
-function incluyeFinDeSemana(fechaEntrada, noches){
-  for(let i = 0; i < noches; i++){
-    const d = new Date(fechaEntrada);
-    d.setDate(d.getDate() + i);
-    if(d.getDay() === 5 || d.getDay() === 6) return true;
+
+// Precio real por noche según reglas
+function obtenerPrecioPorNoche(fecha, cabaña) {
+
+  if (esTemporadaAlta(fecha)) {
+    if (cabaña === "campanilla") return 150;
+    if (cabaña === "tejo") return 140;
   }
-  return false;
+
+  return 110; // temporada baja
+}
+
 }
 
 function calcularReserva(){
@@ -121,4 +137,61 @@ function calcularReserva(){
   resultado.style.display = "none";
 
   setTimeout(() => {
-    const noches = (new Date(salida) - new Date(
+    const entradaDate = new Date(entrada);
+    const salidaDate = new Date(salida);
+
+    let total = 0;
+    let noches = 0;
+    let hayAlta = false;
+    let hayBaja = false;
+
+    for (let d = new Date(entradaDate); d < salidaDate; d.setDate(d.getDate() + 1)) {
+
+      const fechaActual = new Date(d);
+
+      if (esTemporadaAlta(fechaActual)) hayAlta = true;
+      else hayBaja = true;
+
+      total += obtenerPrecioPorNoche(fechaActual, cabaña);
+      noches++;
+    }
+
+    // ---------------- VALIDACIONES ----------------
+
+    if (noches < 2) {
+      alert("La estancia mínima es de 2 noches");
+      spinner.style.display="none";
+      return;
+    }
+
+    // Alta real (verano / navidad)
+    const mesEntrada = entradaDate.getMonth()+1;
+    const diaEntrada = entradaDate.getDate();
+
+    const altaReal =
+      (mesEntrada === 7 || mesEntrada === 8) ||
+      ((mesEntrada === 12 && diaEntrada >= 22) ||
+       (mesEntrada === 1 && diaEntrada <= 7));
+
+    if (altaReal && noches < 4) {
+      alert("En temporada alta la estancia mínima es de 4 noches");
+      spinner.style.display="none";
+      return;
+    }
+
+    // ---------------- DESCUENTOS ----------------
+
+    let descuento = 0;
+
+    if (!hayAlta && noches >= 3) {
+      descuento = total * 0.10;
+    }
+
+    if (hayAlta && noches > 6) {
+      descuento = total * 0.10;
+    }
+
+    total -= descuento;
+
+    const resto = total - 50;
+    
