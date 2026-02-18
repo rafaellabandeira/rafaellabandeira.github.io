@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { sincronizarBooking } from "./BookingSync.js";
 import fs from "fs";
 import path from "path";
+import { sincronizarBooking } from "./BookingSync.js";
 
 const app = express();
 app.use(cors());
@@ -10,10 +10,9 @@ app.use(cors());
 const PORT = process.env.PORT || 10000;
 const filePath = path.join(process.cwd(), "reservas.json");
 
-// 🔹 sincroniza al arrancar
+// 🔹 sincroniza reservas desde Booking al arrancar
 await sincronizarBooking();
 
-// 🔹 endpoint que usa tu web
 app.get("/reservas", (req, res) => {
   try {
     const data = fs.readFileSync(filePath, "utf8");
@@ -23,4 +22,4 @@ app.get("/reservas", (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log("Servidor activo"));
+app.listen(PORT, () => console.log(`Servidor activo en puerto ${PORT}`));
