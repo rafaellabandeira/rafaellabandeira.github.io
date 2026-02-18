@@ -411,7 +411,7 @@ footer a:hover {
 /* Días ocupados en el calendario */
 .flatpickr-day.ocupado {
   background-color: #ff4c4c; /* rojo fuerte */
-  color: white;
+  color: green;
   cursor: not-allowed;
 }
 
@@ -438,4 +438,16 @@ footer a:hover {
   display: block;
 }
 
+.ocupado {
+  background-color: #ff4d4d !important; /* rojo */
+  color: green;
+}
+
+.resumen-reserva.campanilla {
+  background-color: #c6f5c6; /* verde */
+}
+
+.resumen-reserva.tejo {
+  background-color: #c6d7f5; /* azul */
+}
 
