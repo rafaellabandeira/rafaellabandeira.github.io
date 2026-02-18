@@ -5,11 +5,11 @@ import { parseICS } from "./parseICS.js";
 
 const filePath = path.join(process.cwd(), "reservas.json");
 
-// ✅ TU ICAL DE CAMPANILLA
+// ✅ iCal Booking Campanilla
 const ICAL_CAMPANILLA =
   "https://ical.booking.com/v1export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
 
-// 👉 cuando tengas el del Tejo lo pegas aquí
+// 🔹 iCal El Tejo (si lo tienes)
 const ICAL_TEJO = null;
 
 function descargarICS(url) {
@@ -24,7 +24,7 @@ function descargarICS(url) {
 
 export async function sincronizarBooking() {
   try {
-    console.log("Sincronizando Booking…");
+    console.log("🔄 Sincronizando Booking…");
 
     const icsCampanilla = await descargarICS(ICAL_CAMPANILLA);
     const campanilla = parseICS(icsCampanilla);
@@ -36,10 +36,9 @@ export async function sincronizarBooking() {
     }
 
     const reservas = { campanilla, tejo };
-
     fs.writeFileSync(filePath, JSON.stringify(reservas, null, 2));
 
-    console.log("reservas.json actualizado correctamente");
+    console.log("✅ reservas.json actualizado correctamente");
   } catch (err) {
     console.error("Error sincronizando Booking:", err);
   }
