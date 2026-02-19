@@ -8,7 +8,7 @@ import { parseICS } from "./parseICS.js";
 const filePath = path.join(process.cwd(), "reservas.json");
 
 // 🔹 iCal Booking Campanilla
-const ICAL_CAMPANILLA = "https://ical.booking.com/v1export?t=c30b7026-0047-476f-8439-7a91f6e06b87";
+const ICAL_CAMPANILLA = "https://ical.booking.com/v1/export?t=a9688215-118d-43be-8a19-da58f26ed9ee";
 
 // 🔹 iCal El Tejo (añádelo cuando lo tengas)
 const ICAL_TEJO = null;
