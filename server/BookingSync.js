@@ -4,8 +4,8 @@ import fs from "fs";
 import path from "path";
 import { parseICS } from "./parseICS.js";
 
-// 🔹 Ruta segura para Render
-const filePath = path.join(process.cwd(), "reservas.json");
+// 🔹 Ruta segura para Render: carpeta temporal
+const filePath = path.join(process.env.TMPDIR || "/tmp", "reservas.json");
 
 // 🔹 iCal Booking Campanilla
 const ICAL_CAMPANILLA = "https://ical.booking.com/v1/export?t=a9688215-118d-43be-8a19-da58f26ed9ee";
@@ -60,7 +60,7 @@ export async function sincronizarBooking() {
     // Guardamos todas las reservas
     const reservas = { campanilla, tejo };
 
-    // Aseguramos que la carpeta existe
+    // Aseguramos que la carpeta temporal exista
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
