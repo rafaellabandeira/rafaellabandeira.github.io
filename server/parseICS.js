@@ -12,25 +12,35 @@ export function parseICS(icsText) {
     const end = endMatch[1];
 
     const fechaInicio = new Date(
-      start.substring(0, 4),
-      start.substring(4, 6) - 1,
-      start.substring(6, 8)
+      Number(start.substring(0, 4)),
+      Number(start.substring(4, 6)) - 1,
+      Number(start.substring(6, 8)),
+      12, 0, 0 // 🔴 evitar saltos por zona horaria
     );
 
     const fechaFin = new Date(
-      end.substring(0, 4),
-      end.substring(4, 6) - 1,
-      end.substring(6, 8)
+      Number(end.substring(0, 4)),
+      Number(end.substring(4, 6)) - 1,
+      Number(end.substring(6, 8)),
+      12, 0, 0
     );
 
     const actual = new Date(fechaInicio);
 
     // Booking deja libre el checkout → NO bloqueamos el último día
     while (actual < fechaFin) {
-      fechasOcupadas.push(actual.toISOString().split("T")[0]);
+      fechasOcupadas.push(formatearFechaLocal(actual));
       actual.setDate(actual.getDate() + 1);
     }
   }
 
   return fechasOcupadas;
+}
+
+/* ✅ Formato YYYY-MM-DD en LOCAL (NO UTC) */
+function formatearFechaLocal(fecha) {
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
