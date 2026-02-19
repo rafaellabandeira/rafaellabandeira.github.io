@@ -1,160 +1,69 @@
+/* === ESTILOS PERSONALIZADOS PARA FLATPICKR - Cabañas Río Mundo === */
+/* Colores: libres #e6ffe6 (verde suave), ocupados #f44336 (rojo fuerte), día actual borde #FFD700 */
 
-body {
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  background-color: #f7f7f5;
-  color: #2b2b2b;
-  line-height: 1.6;
-}
-
-/* -------------------- CONTENEDORES -------------------- */
-.container {
-  width: 90%;
-  max-width: 1200px;
-  margin: auto;
-}
-
-/* -------------------- BOTONES -------------------- */
-button {
-  background-color: #5c7a60;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.25s ease;
-}
-
-button:hover {
-  background-color: #4b6650;
-}
-
-/* -------------------- INPUTS -------------------- */
-input,
-select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin-top: 6px;
-  margin-bottom: 16px;
-  font-size: 14px;
-  background: white;
-}
-
-/* -------------------- AVISO FECHAS OCUPADAS -------------------- */
-#avisoFechas {
-  display: none;
-  background-color: #ffe5e5;
-  color: #b71c1c;
-  padding: 12px;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  font-weight: 500;
-}
-
-/* -------------------- RESUMEN RESERVA -------------------- */
-.resumen-reserva {
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  display: none;
-}
-
-.resumen-reserva.campanilla {
-  border-left: 6px solid #7da37f;
-}
-
-.resumen-reserva.tejo {
-  border-left: 6px solid #a38b6d;
-}
-
-/* -------------------- SPINNER -------------------- */
-#spinner {
-  display: none;
-  text-align: center;
-  padding: 20px;
-}
-
-/* -------------------- FLATPICKR BASE -------------------- */
 .flatpickr-calendar {
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-  font-family: "Segoe UI", sans-serif;
+  font-family: inherit !important; /* para que herede tipografía del sitio */
 }
 
-/* Cabecera */
-.flatpickr-months {
-  background-color: #5c7a60;
-  color: white;
-  border-radius: 12px 12px 0 0;
-}
-
-/* Días de la semana */
-.flatpickr-weekdays {
-  background: #f1f4f1;
-}
-
-.flatpickr-weekday {
-  color: #4b6650;
-  font-weight: 600;
-}
-
-/* -------------------- DÍAS NORMALES (LIBRES) -------------------- */
+/* Base para todos los días: forma circular, tamaño fijo, centrado */
 .flatpickr-day {
-  border-radius: 6px;
-  transition: 0.2s ease;
+  border-radius: 50% !important;
+  margin: 2px !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  background: transparent !important;          /* mata cualquier fondo por defecto */
+  transition: background-color 0.15s ease;      /* suave cambio de color */
 }
 
-.flatpickr-day:hover {
-  background: #dfeee0;
+/* Eliminar fondos automáticos de Flatpickr en estados no deseados */
+.flatpickr-day.today,
+.flatpickr-day:not(.selected):not(.startRange):not(.endRange):not(.inRange):not(.ocupado),
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay,
+.flatpickr-day.inRange,
+.flatpickr-day.today.inRange {
+  background: transparent !important;
+  border: none !important;
 }
 
-/* Verde suave = disponible */
-.flatpickr-day:not(.ocupado) {
-  background-color: #e6ffe6;
-  color: #2b2b2b;
+/* Verde suave por defecto para TODOS los días libres (prioridad alta) */
+.flatpickr-day:not(.ocupado):not(.selected):not(.startRange):not(.endRange) {
+  background-color: #e6ffe6 !important;
+  color: #000000 !important;
 }
 
-/* -------------------- DÍAS OCUPADOS -------------------- */
+/* Rojo fuerte + texto blanco para días ocupados (máxima prioridad) */
 .flatpickr-day.ocupado {
   background-color: #f44336 !important;
   color: #ffffff !important;
-  font-weight: 600;
-  cursor: not-allowed;
+  font-weight: bold !important;
 }
 
-/* Hover NO cambia en ocupados */
-.flatpickr-day.ocupado:hover {
-  background-color: #f44336 !important;
-}
-
-/* -------------------- DÍA ACTUAL -------------------- */
+/* Día actual: SOLO borde amarillo brillante, fondo NO cambia (queda verde si libre) */
 .flatpickr-day.today {
-  border: 2px solid #FFD700;
+  background: transparent !important;
+  border: 3px solid #FFD700 !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
 }
 
-/* -------------------- DÍA SELECCIONADO -------------------- */
-.flatpickr-day.selected {
-  background-color: #5c7a60 !important;
-  color: white !important;
-}
-
-/* -------------------- INPUT CALENDARIO -------------------- */
-input.flatpickr-input {
-  background: white;
+/* Opcional: hover suave para mejor UX (no obligatorio) */
+.flatpickr-day:hover:not(.ocupado):not(.selected):not(.startRange):not(.endRange) {
+  background-color: #d4ffd4 !important; /* verde un poco más claro en hover */
   cursor: pointer;
 }
 
-/* -------------------- RESPONSIVE -------------------- */
-@media (max-width: 768px) {
-  .container {
-    width: 95%;
-  }
+.flatpickr-day.ocupado:hover {
+  background-color: #e53935 !important; /* rojo un poco más oscuro en hover */
+}
 
-  button {
-    width: 100%;
-  }
+/* Si quieres ajustar el header/mes/año (opcional) */
+.flatpickr-current-month,
+.flatpickr-weekdays {
+  background: #f8f9fa !important; /* fondo claro para el encabezado */
+  color: #333 !important;
 }
