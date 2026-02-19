@@ -1,5 +1,5 @@
 import flatpickr from "flatpickr";
-import "flatpickr/dist/l10n/es.js"; // idioma español
+import { Spanish } from "flatpickr/dist/l10n/es.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   initCarousel();
@@ -55,19 +55,32 @@ function iniciarCalendarios(fechasOcupadas) {
 
   const marcarDias = (dayElem) => {
     const cabaña = document.getElementById("cabaña").value.toLowerCase();
-    const fecha = dayElem.dateObj.toISOString().split("T")[0];
+    const fechaISO = dayElem.dateObj.toISOString().split("T")[0];
+    const hoyISO = new Date().toISOString().split("T")[0];
 
-    // ✅ marcamos en rojo todos los días de reserva excepto el día de salida
-    if (fechasOcupadas[cabaña]?.includes(fecha)) {
+    // Día actual con borde amarillo
+    if (fechaISO === hoyISO) {
+      dayElem.style.border = "2px solid #FFD700";
+      dayElem.style.borderRadius = "50%";
+    }
+
+    // Días ocupados en rojo fuerte
+    if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
+      dayElem.style.backgroundColor = "#f44336";
+      dayElem.style.color = "#fff";
       dayElem.classList.add("ocupado");
+    } else {
+      // Días libres en verde suave
+      dayElem.style.backgroundColor = "#e6ffe6";
+      dayElem.style.color = "#000";
     }
   };
 
   const fpConfig = {
-    dateFormat: "d/m/Y", // día/mes/año
+    dateFormat: "d/m/Y",
     minDate: "today",
-    locale: "es",
-    firstDayOfWeek: 1, // lunes
+    locale: Spanish,
+    firstDayOfWeek: 1,
     onChange: actualizarAviso,
     onDayCreate: (dObj, dStr, fp, dayElem) => marcarDias(dayElem)
   };
@@ -111,7 +124,7 @@ function calcularReserva() {
     } else {
       minNoches = 2;
       const diaSemana = fechaEntrada.getDay();
-      if (diaSemana === 5 || diaSemana === 6) { // viernes o sábado
+      if (diaSemana === 5 || diaSemana === 6) {
         precioNoche = cabaña === "campanilla" ? 150 : 140;
       } else {
         precioNoche = cabaña === "campanilla" ? 115 : 110;
@@ -132,7 +145,6 @@ function calcularReserva() {
 
     const resto = total - 50;
 
-    // colores de cada cabaña
     document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
 
