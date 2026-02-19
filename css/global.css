@@ -1,34 +1,166 @@
-flatpickr-day {
-  border-radius: 50% !important;
-  margin: 2px !important;
-  width: 34px !important;
-  height: 34px !important;
-  line-height: 34px !important;
-  font-size: 14px !important;
-  text-align: center !important;
-  box-sizing: border-box !important;
-  background: transparent !important; /* evita fondos por defecto */
+/* -------------------- RESET BÁSICO -------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.flatpickr-day.today,
-.flatpickr-day:not(.selected):not(.startRange):not(.endRange):not(.inRange) {
-  background: transparent !important;
-  border: none !important;
+body {
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background-color: #f7f7f5;
+  color: #2b2b2b;
+  line-height: 1.6;
 }
 
-/* Verde por defecto para libres */
+/* -------------------- CONTENEDORES -------------------- */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* -------------------- BOTONES -------------------- */
+button {
+  background-color: #5c7a60;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s ease;
+}
+
+button:hover {
+  background-color: #4b6650;
+}
+
+/* -------------------- INPUTS -------------------- */
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  background: white;
+}
+
+/* -------------------- AVISO FECHAS OCUPADAS -------------------- */
+#avisoFechas {
+  display: none;
+  background-color: #ffe5e5;
+  color: #b71c1c;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+/* -------------------- RESUMEN RESERVA -------------------- */
+.resumen-reserva {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  display: none;
+}
+
+.resumen-reserva.campanilla {
+  border-left: 6px solid #7da37f;
+}
+
+.resumen-reserva.tejo {
+  border-left: 6px solid #a38b6d;
+}
+
+/* -------------------- SPINNER -------------------- */
+#spinner {
+  display: none;
+  text-align: center;
+  padding: 20px;
+}
+
+/* -------------------- FLATPICKR BASE -------------------- */
+.flatpickr-calendar {
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Cabecera */
+.flatpickr-months {
+  background-color: #5c7a60;
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Días de la semana */
+.flatpickr-weekdays {
+  background: #f1f4f1;
+}
+
+.flatpickr-weekday {
+  color: #4b6650;
+  font-weight: 600;
+}
+
+/* -------------------- DÍAS NORMALES (LIBRES) -------------------- */
 .flatpickr-day {
-  background-color: #e6ffe6 !important;
+  border-radius: 6px;
+  transition: 0.2s ease;
 }
 
-/* Rojo para ocupados (prioridad) */
+.flatpickr-day:hover {
+  background: #dfeee0;
+}
+
+/* Verde suave = disponible */
+.flatpickr-day:not(.ocupado) {
+  background-color: #e6ffe6;
+  color: #2b2b2b;
+}
+
+/* -------------------- DÍAS OCUPADOS -------------------- */
 .flatpickr-day.ocupado {
   background-color: #f44336 !important;
   color: #ffffff !important;
-  font-weight: bold !important;
+  font-weight: 600;
+  cursor: not-allowed;
 }
 
-/* Día actual: solo borde */
+/* Hover NO cambia en ocupados */
+.flatpickr-day.ocupado:hover {
+  background-color: #f44336 !important;
+}
+
+/* -------------------- DÍA ACTUAL -------------------- */
 .flatpickr-day.today {
-  background: transparent !important;
+  border: 2px solid #FFD700;
+}
+
+/* -------------------- DÍA SELECCIONADO -------------------- */
+.flatpickr-day.selected {
+  background-color: #5c7a60 !important;
+  color: white !important;
+}
+
+/* -------------------- INPUT CALENDARIO -------------------- */
+input.flatpickr-input {
+  background: white;
+  cursor: pointer;
+}
+
+/* -------------------- RESPONSIVE -------------------- */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+  }
+
+  button {
+    width: 100%;
+  }
 }
