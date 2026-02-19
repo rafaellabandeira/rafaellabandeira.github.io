@@ -63,14 +63,30 @@ function iniciarCalendarios(fechasOcupadas) {
     onDayCreate: (dObj, dStr, fp, dayElem) => {
       const cabaña = document.getElementById("cabaña").value.toLowerCase();
       const fecha = dayElem.dateObj.toISOString().split("T")[0];
-      if (fechasOcupadas[cabaña]?.includes(fecha)) {
-        dayElem.classList.add("ocupado"); // rojo
+
+      // ✅ Marcamos en rojo todos los días de reserva excepto el último
+      if (fechasOcupadas[cabaña]?.some(f => f === fecha)) {
+        dayElem.classList.add("ocupado");
       }
     }
   };
 
+  // Inicializamos flatpickr en entrada y salida
   flatpickr("#entrada", fpConfig);
-  flatpickr("#salida", fpConfig); // mismo config para marcar días ocupados en salida
+
+  flatpickr("#salida", {
+    ...fpConfig,
+    onChange: actualizarAviso, // mismo aviso
+    onDayCreate: (dObj, dStr, fp, dayElem) => {
+      const cabaña = document.getElementById("cabaña").value.toLowerCase();
+      const fecha = dayElem.dateObj.toISOString().split("T")[0];
+
+      // ✅ Marcamos en rojo todos los días de reserva excepto el último
+      if (fechasOcupadas[cabaña]?.some(f => f === fecha)) {
+        dayElem.classList.add("ocupado");
+      }
+    }
+  });
 }
 
 // --------------------- PRECIO Y RESERVA ---------------------
@@ -82,7 +98,7 @@ function esTemporadaAlta(fecha) {
 }
 
 function calcularReserva() {
-  const cabaña = document.getElementById("cabaña").value.toLowerCase();
+  const cabaña = document.getElementById("cabaña").value;
   const entrada = document.getElementById("entrada").value;
   const salida = document.getElementById("salida").value;
   const nombre = document.getElementById("nombre").value.trim();
@@ -129,9 +145,8 @@ function calcularReserva() {
 
     const resto = total - 50;
 
-    // colores por cabaña
-    document.getElementById("cabañaSeleccionada").innerText = 
-      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    // colores de cada cabaña
+    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
 
     document.getElementById("total").innerText = total.toFixed(2);
