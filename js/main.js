@@ -6,7 +6,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
 
   const reservas = await cargarReservas();
-  iniciarCalendarios(reservas);
+  let fpEntrada, fpSalida; // Guardamos las instancias para poder destruirlas
+
+  function crearCalendarios() {
+    // Destruir instancias previas si existen
+    if (fpEntrada) fpEntrada.destroy();
+    if (fpSalida) fpSalida.destroy();
+
+    fpEntrada = flatpickr("#entrada", getFlatpickrConfig(reservas));
+    fpSalida  = flatpickr("#salida",  getFlatpickrConfig(reservas));
+  }
+
+  crearCalendarios();
+
+  // Redibujar calendarios al cambiar de cabaña
+  document.getElementById("cabaña").addEventListener("change", crearCalendarios);
 
   document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
   document.getElementById("btnPagar").addEventListener("click", reservar);
@@ -24,8 +38,8 @@ async function cargarReservas() {
   }
 }
 
-// --------------------- CALENDARIO / BLOQUEO ---------------------
-function iniciarCalendarios(fechasOcupadas) {
+// --------------------- CONFIGURACIÓN FLATPICKR ---------------------
+function getFlatpickrConfig(fechasOcupadas) {
   const aviso = document.getElementById("avisoFechas");
 
   function actualizarAviso() {
@@ -41,6 +55,7 @@ function iniciarCalendarios(fechasOcupadas) {
     const fin = new Date(salida);
     let ocupado = false;
 
+    // Excluimos el día de salida (check-in día entrada → check-out día salida)
     while (actual < fin) {
       const fechaISO = actual.toISOString().split("T")[0];
       if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
@@ -53,40 +68,37 @@ function iniciarCalendarios(fechasOcupadas) {
     aviso.style.display = ocupado ? "block" : "none";
   }
 
-  const marcarDias = (dayElem) => {
+  function marcarDias(dObj, dStr, fp, dayElem) {
     const cabaña = document.getElementById("cabaña").value.toLowerCase();
-    const fechaISO = dayElem.dateObj.toISOString().split("T")[0];
+    const fechaISO = dObj.toISOString().split("T")[0];
     const hoyISO = new Date().toISOString().split("T")[0];
 
-    // Día actual con borde amarillo
-    if (fechaISO === hoyISO) {
-      dayElem.style.border = "2px solid #FFD700";
-      dayElem.style.borderRadius = "50%";
-    }
-
-    // Días ocupados en rojo fuerte
+    // Fondo según estado
     if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
       dayElem.style.backgroundColor = "#f44336";
-      dayElem.style.color = "#fff";
+      dayElem.style.color = "#ffffff";
       dayElem.classList.add("ocupado");
     } else {
-      // Días libres en verde suave
       dayElem.style.backgroundColor = "#e6ffe6";
-      dayElem.style.color = "#000";
+      dayElem.style.color = "#000000";
     }
-  };
 
-  const fpConfig = {
+    // Día actual → borde amarillo (prioridad alta)
+    if (fechaISO === hoyISO) {
+      dayElem.style.border = "3px solid #FFD700";
+      dayElem.style.borderRadius = "50%";
+      dayElem.style.boxSizing = "border-box";
+    }
+  }
+
+  return {
     dateFormat: "d/m/Y",
     minDate: "today",
     locale: Spanish,
     firstDayOfWeek: 1,
     onChange: actualizarAviso,
-    onDayCreate: (dObj, dStr, fp, dayElem) => marcarDias(dayElem)
+    onDayCreate: marcarDias
   };
-
-  flatpickr("#entrada", fpConfig);
-  flatpickr("#salida", fpConfig);
 }
 
 // --------------------- PRECIO Y RESERVA ---------------------
@@ -105,8 +117,8 @@ function calcularReserva() {
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
 
-  if(!entrada || !salida){ alert("Selecciona fechas"); return; }
-  if(!nombre || !telefono || !email){ alert("Completa todos los datos personales"); return; }
+  if (!entrada || !salida) { alert("Selecciona fechas de entrada y salida"); return; }
+  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
@@ -114,7 +126,7 @@ function calcularReserva() {
   resultado.style.display = "none";
 
   setTimeout(() => {
-    const noches = (new Date(salida) - new Date(entrada)) / (1000*60*60*24);
+    const noches = (new Date(salida) - new Date(entrada)) / (1000 * 60 * 60 * 24);
     const fechaEntrada = new Date(entrada);
     let minNoches, precioNoche;
 
@@ -124,7 +136,7 @@ function calcularReserva() {
     } else {
       minNoches = 2;
       const diaSemana = fechaEntrada.getDay();
-      if (diaSemana === 5 || diaSemana === 6) {
+      if (diaSemana === 5 || diaSemana === 6) { // viernes o sábado
         precioNoche = cabaña === "campanilla" ? 150 : 140;
       } else {
         precioNoche = cabaña === "campanilla" ? 115 : 110;
@@ -140,12 +152,19 @@ function calcularReserva() {
     let total = noches * precioNoche;
     let descuento = 0;
 
-    if (!esTemporadaAlta(entrada) && noches >= 3) { descuento = total*0.10; total*=0.90; }
-    if (esTemporadaAlta(entrada) && noches >= 6) { descuento = total*0.10; total*=0.90; }
+    if (!esTemporadaAlta(entrada) && noches >= 3) {
+      descuento = total * 0.10;
+      total *= 0.90;
+    }
+    if (esTemporadaAlta(entrada) && noches >= 6) {
+      descuento = total * 0.10;
+      total *= 0.90;
+    }
 
     const resto = total - 50;
 
-    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("cabañaSeleccionada").innerText =
+      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
 
     document.getElementById("total").innerText = total.toFixed(2);
