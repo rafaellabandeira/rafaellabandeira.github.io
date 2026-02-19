@@ -38,6 +38,5 @@ export function parseICS(icsText) {
     }
   }
 
-  console.log("📅 Fechas parseadas:", fechasOcupadas);
   return fechasOcupadas;
 }
