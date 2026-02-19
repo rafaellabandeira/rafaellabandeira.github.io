@@ -9,8 +9,8 @@ app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-/* 📍 Ruta ABSOLUTA real (Render cambia el cwd a veces) */
-const filePath = path.resolve("./reservas.json");
+/* 📍 Ruta ABSOLUTA segura en Render: usar carpeta temporal */
+const filePath = path.join(process.env.TMPDIR || "/tmp", "reservas.json");
 
 console.log("📂 Archivo reservas en:", filePath);
 
@@ -37,7 +37,7 @@ app.get("/reservas", (req, res) => {
   }
 });
 
-/* 🔹 Arranque controlado (Render necesita esto sí o sí) */
+/* 🔹 Arranque controlado (Render necesita esto) */
 async function iniciarServidor() {
   try {
     console.log("🚀 Iniciando sincronización con Booking…");
