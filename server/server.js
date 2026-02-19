@@ -9,12 +9,11 @@ app.use(cors());
 
 const PORT = process.env.PORT || 10000;
 
-/* 📍 Ruta ABSOLUTA segura en Render: usar carpeta temporal */
+// 🔹 Ruta absoluta segura en Render
 const filePath = path.join(process.env.TMPDIR || "/tmp", "reservas.json");
-
 console.log("📂 Archivo reservas en:", filePath);
 
-/* 🔹 Endpoint que lee reservas */
+// 🔹 Endpoint que devuelve reservas
 app.get("/reservas", (req, res) => {
   try {
     if (!fs.existsSync(filePath)) {
@@ -32,21 +31,20 @@ app.get("/reservas", (req, res) => {
 
     res.json(json);
   } catch (err) {
-    console.error("Error leyendo reservas:", err);
+    console.error("❌ Error leyendo reservas:", err);
     res.json({ campanilla: [], tejo: [] });
   }
 });
 
-/* 🔹 Arranque controlado (Render necesita esto) */
+// 🔹 Arranque controlado
 async function iniciarServidor() {
   try {
     console.log("🚀 Iniciando sincronización con Booking…");
 
     await sincronizarBooking();
-
     console.log("✅ Sincronización terminada");
 
-    /* Verificamos que el JSON realmente exista */
+    // Comprobación final de archivo
     if (fs.existsSync(filePath)) {
       const contenido = JSON.parse(fs.readFileSync(filePath, "utf8"));
       console.log("📊 Reservas guardadas:", {
