@@ -1,12 +1,4 @@
-/* === ESTILOS PERSONALIZADOS PARA FLATPICKR - Cabañas Río Mundo === */
-/* Colores: libres #e6ffe6 (verde suave), ocupados #f44336 (rojo fuerte), día actual borde #FFD700 */
-
-.flatpickr-calendar {
-  font-family: inherit !important; /* para que herede tipografía del sitio */
-}
-
-/* Base para todos los días: forma circular, tamaño fijo, centrado */
-.flatpickr-day {
+flatpickr-day {
   border-radius: 50% !important;
   margin: 2px !important;
   width: 34px !important;
@@ -15,55 +7,28 @@
   font-size: 14px !important;
   text-align: center !important;
   box-sizing: border-box !important;
-  background: transparent !important;          /* mata cualquier fondo por defecto */
-  transition: background-color 0.15s ease;      /* suave cambio de color */
+  background: transparent !important; /* evita fondos por defecto */
 }
 
-/* Eliminar fondos automáticos de Flatpickr en estados no deseados */
 .flatpickr-day.today,
-.flatpickr-day:not(.selected):not(.startRange):not(.endRange):not(.inRange):not(.ocupado),
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay,
-.flatpickr-day.inRange,
-.flatpickr-day.today.inRange {
+.flatpickr-day:not(.selected):not(.startRange):not(.endRange):not(.inRange) {
   background: transparent !important;
   border: none !important;
 }
 
-/* Verde suave por defecto para TODOS los días libres (prioridad alta) */
-.flatpickr-day:not(.ocupado):not(.selected):not(.startRange):not(.endRange) {
+/* Verde por defecto para libres */
+.flatpickr-day {
   background-color: #e6ffe6 !important;
-  color: #000000 !important;
 }
 
-/* Rojo fuerte + texto blanco para días ocupados (máxima prioridad) */
+/* Rojo para ocupados (prioridad) */
 .flatpickr-day.ocupado {
   background-color: #f44336 !important;
   color: #ffffff !important;
   font-weight: bold !important;
 }
 
-/* Día actual: SOLO borde amarillo brillante, fondo NO cambia (queda verde si libre) */
+/* Día actual: solo borde */
 .flatpickr-day.today {
   background: transparent !important;
-  border: 3px solid #FFD700 !important;
-  border-radius: 50% !important;
-  box-sizing: border-box !important;
-}
-
-/* Opcional: hover suave para mejor UX (no obligatorio) */
-.flatpickr-day:hover:not(.ocupado):not(.selected):not(.startRange):not(.endRange) {
-  background-color: #d4ffd4 !important; /* verde un poco más claro en hover */
-  cursor: pointer;
-}
-
-.flatpickr-day.ocupado:hover {
-  background-color: #e53935 !important; /* rojo un poco más oscuro en hover */
-}
-
-/* Si quieres ajustar el header/mes/año (opcional) */
-.flatpickr-current-month,
-.flatpickr-weekdays {
-  background: #f8f9fa !important; /* fondo claro para el encabezado */
-  color: #333 !important;
 }
