@@ -21,7 +21,12 @@ function descargarICS(url) {
 
       res.on("data", chunk => (data += chunk));
 
-      res.on("end", () => resolve(data));
+      res.on("end", () => {
+        if (data.length === 0) {
+          console.warn("⚠️ ICS descargado vacío:", url);
+        }
+        resolve(data);
+      });
 
     }).on("error", err => {
       console.error("❌ Error descargando ICS:", err);
@@ -52,11 +57,17 @@ export async function sincronizarBooking() {
       console.log("📅 Fechas Tejo parseadas:", tejo);
     }
 
+    // Guardamos todas las reservas
     const reservas = { campanilla, tejo };
-    console.log("💾 Guardando reservas en:", filePath);
+
+    // Aseguramos que la carpeta existe
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
     fs.writeFileSync(filePath, JSON.stringify(reservas, null, 2));
-    console.log("✅ reservas.json actualizado correctamente");
+    console.log("✅ reservas.json actualizado correctamente con:");
+    console.log("   Campanilla:", campanilla.length, "fechas");
+    console.log("   Tejo:", tejo.length, "fechas");
 
   } catch (err) {
     console.error("❌ Error sincronizando Booking:", err);
