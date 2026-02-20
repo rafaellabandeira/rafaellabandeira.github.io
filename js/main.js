@@ -1,5 +1,14 @@
 import flatpickr from "flatpickr";
-import { Spanish } from "flatpickr/dist/l10n/es.js";
+import "flatpickr/dist/l10n/es.js"; // idioma español
+
+
+// ✅ AÑADE ESTO JUSTO AQUÍ (debajo de los imports)
+function formatearLocal(fecha) {
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   initCarousel();
