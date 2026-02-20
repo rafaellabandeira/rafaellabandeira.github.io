@@ -367,26 +367,50 @@ async function calcularReserva() {
   resumen.style.display="block";
 }
 
-function reservar() { alert("Reserva confirmada. Señal de 50 € pagada."); }
+function reservar() { alert("Reserva en espera de ser confirmada. Señal de 50 € pagada."); }
+// -------------------- FLATPICKR DEFINITIVO --------------------
+let fpEntrada, fpSalida;
 
-// -------------------- FLATPICKR --------------------
 function inicializarCalendarios(cabana) {
   const diasOcupados = fechasOcupadas[cabana] || [];
+  
+  // Destruir instancias previas
   if (fpEntrada) fpEntrada.destroy();
   if (fpSalida) fpSalida.destroy();
 
   const opciones = {
-    dateFormat:"d-m-Y",
-    minDate:"today",
-    disable:diasOcupados,
-    firstDayOfWeek:1,
-    onDayCreate: (dObj,dStr,fp,dayElem) => {
-      const fecha = dayElem.dateObj.toISOString().split("T")[0];
-      if (diasOcupados.includes(fecha)) dayElem.classList.add("ocupado");
-      const hoy = new Date();
-      if (fecha >= hoy.toISOString().split("T")[0] && !diasOcupados.includes(fecha)) {
-        dayElem.classList.add("libre");
+    dateFormat: "d/m/Y",         // Día/mes/año
+    minDate: "today",
+    disable: diasOcupados,       // Días ocupados bloqueados
+    locale: {
+      ...Spanish,                // Español real
+      firstDayOfWeek: 1          // Lunes como primer día de la semana
+    },
+    onDayCreate: (dObj, dStr, fp, dayElem) => {
+      const fechaISO = dayElem.dateObj.toISOString().split("T")[0];
+      const hoyISO = new Date().toISOString().split("T")[0];
+
+      // Día ocupado
+      if (diasOcupados.includes(fechaISO)) {
+        dayElem.classList.add("ocupado"); // rojo
+      } 
+      // Días libres y día anterior a la llegada disponible
+      else if (fechaISO >= hoyISO) {
+        dayElem.classList.add("libre"); // verde
       }
+
+      // Destacar hoy con borde amarillo
+      if (fechaISO === hoyISO) {
+        dayElem.style.border = "2px solid #FFD700";
+        dayElem.style.borderRadius = "50%";
+      }
+    }
+  };
+
+  // Inicializar Flatpickr en ambos inputs
+  fpEntrada = flatpickr("#entrada", opciones);
+  fpSalida = flatpickr("#salida", opciones);
+}
     }
   };
 
