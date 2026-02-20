@@ -257,6 +257,7 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
 let fechasOcupadas = { campanilla: [], tejo: [] };
 let fpEntrada, fpSalida;
@@ -283,13 +284,11 @@ function crearFechaLocal(fechaStr) {
 function esTemporadaAlta(fecha) {
   const dia = fecha.getDate();
   const mes = fecha.getMonth() + 1;
-  const diaSemana = fecha.getDay();
-  const esViernesSabado = diaSemana === 5 || diaSemana === 6;
-
-  const esVerano = mes === 7 || mes === 8;
-  const esNavidad = (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
-
-  return esVerano || esNavidad || esViernesSabado;
+  // Julio, Agosto
+  if (mes === 7 || mes === 8) return true;
+  // Navidad / Año nuevo
+  if ((mes === 12 && dia >= 22) || (mes === 1 && dia <= 7)) return true;
+  return false;
 }
 
 function rangoOcupado(cabana, entrada, salida) {
@@ -303,15 +302,20 @@ function rangoOcupado(cabana, entrada, salida) {
 }
 
 function calcularTotalEstancia(cabana, fechaEntrada, noches) {
-  const PRECIOS = {
-    campanilla: { alta: 150, baja: 110 },
-    tejo: { alta: 140, baja: 110 }
-  };
   let total = 0;
   for (let i = 0; i < noches; i++) {
     const d = new Date(fechaEntrada.getFullYear(), fechaEntrada.getMonth(), fechaEntrada.getDate()+i);
     const alta = esTemporadaAlta(d);
-    total += PRECIOS[cabana][alta ? "alta" : "baja"];
+    const diaSemana = d.getDay();
+    if (alta) {
+      total += cabana === "campanilla" ? 150 : 140;
+    } else {
+      if (diaSemana === 5 || diaSemana === 6) {
+        total += cabana === "campanilla" ? 150 : 140;
+      } else {
+        total += cabana === "campanilla" ? 115 : 110;
+      }
+    }
   }
   return { total };
 }
@@ -329,7 +333,7 @@ async function calcularReserva() {
   if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
 
   if (rangoOcupado(cabana, entradaStr, salidaStr)) {
-    alert("❌ Estas fechas ya están reservadas en Booking.");
+    alert("❌ Estas fechas ya están reservadas.");
     return;
   }
 
@@ -341,8 +345,7 @@ async function calcularReserva() {
     esTemporadaAlta(new Date(entrada.getFullYear(), entrada.getMonth(), entrada.getDate()+i))
   );
 
-  // -------------------- ESTANCIA MÍNIMA --------------------
-  let minEstancia = hayAlta ? 4 : 2;
+  const minEstancia = hayAlta ? 4 : 2;
   if (noches < minEstancia) { 
     alert(`Estancia mínima: ${minEstancia} noches`); 
     return; 
@@ -350,12 +353,10 @@ async function calcularReserva() {
 
   let { total } = calcularTotalEstancia(cabana, entrada, noches);
 
-  // -------------------- DESCUENTOS --------------------
   let descuento = 0;
   if (!hayAlta && noches >= 3) { descuento = total*0.1; total *= 0.9; }
-  if (hayAlta && noches > 6) { descuento = total*0.1; total *= 0.9; }
+  if (hayAlta && noches >= 6) { descuento = total*0.1; total *= 0.9; }
 
-  // -------------------- ACTUALIZAR HTML --------------------
   const resumen = document.getElementById("resultado");
   resumen.className = "resumen-reserva " + (cabana==="campanilla"?"campanilla":"tejo");
   document.getElementById("cabañaSeleccionada").innerText = cabana==="campanilla"?"Cabaña Campanilla":"Cabaña El Tejo";
@@ -378,10 +379,14 @@ function inicializarCalendarios(cabana) {
     dateFormat:"Y-m-d",
     minDate:"today",
     disable:diasOcupados,
-    firstDayOfWeek:1, // lunes
+    firstDayOfWeek:1,
     onDayCreate: (dObj,dStr,fp,dayElem) => {
       const fecha = dayElem.dateObj.toISOString().split("T")[0];
       if (diasOcupados.includes(fecha)) dayElem.classList.add("ocupado");
+      const hoy = new Date();
+      if (fecha >= hoy.toISOString().split("T")[0] && !diasOcupados.includes(fecha)) {
+        dayElem.classList.add("libre");
+      }
     }
   };
 
@@ -395,12 +400,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const selectCabana = document.getElementById("cabaña");
   inicializarCalendarios(selectCabana.value);
   selectCabana.addEventListener("change", ()=>inicializarCalendarios(selectCabana.value));
-
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
 });
 </script>
-
 
 
 
