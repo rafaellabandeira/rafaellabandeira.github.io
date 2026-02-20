@@ -97,6 +97,27 @@ function esTemporadaAlta(fecha) {
   const dia = f.getDate();
   return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
 }
+// --------------------- TOTAL ESTANCIA ---------------------
+function calcularTotalEstancia(cabana, fechaEntrada, noches) {
+  const PRECIOS = {
+    campanilla: { alta: 150, baja: 115 },
+    tejo: { alta: 140, baja: 110 }
+  };
+  const totalInicial = calcularTotalEstancia(cabaña, fechaEntrada, noches);
+let total = totalInicial;
+let descuento = 0;
+
+// DESCUENTO
+if (!esTemporadaAlta(fechaEntrada) && noches >= 3) {
+  descuento = total * 0.10;
+  total *= 0.90;
+} else if (esTemporadaAlta(fechaEntrada) && noches >= 6) {
+  descuento = total * 0.10;
+  total *= 0.90;
+}
+  }
+  return total;
+}
 
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
