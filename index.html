@@ -256,8 +256,13 @@
       return;
     }
 
-    const dateEntrada = new Date(entrada.split("-").reverse().join("-"));
-    const dateSalida = new Date(salida.split("-").reverse().join("-"));
+    const parseDate = d => {
+      const [day, month, year] = d.split("-");
+      return new Date(`${year}-${month}-${day}`);
+    };
+
+    const dateEntrada = parseDate(entrada);
+    const dateSalida = parseDate(salida);
 
     if (dateSalida <= dateEntrada) {
       alert("La fecha de salida debe ser posterior a la de entrada");
@@ -266,10 +271,48 @@
 
     const dias = (dateSalida - dateEntrada) / (1000 * 60 * 60 * 24);
 
-    const precios = { campanilla: 100, tejo: 80 };
-    const total = dias * precios[cabana];
+    // Precios según tu descripción
+    const precios = {
+      campanilla: { alta: 150, viernesSabado: 150, resto: 115, descuentoDias: 6, minima: 4 },
+      tejo: { alta: 150, viernesSabado: 140, resto: 110, descuentoDias: 3, minima: 2 }
+    };
 
-    const descuento = dias >= 7 ? total * 0.1 : 0;
+    const temporadaAlta = (date) => {
+      const mes = date.getMonth() + 1;
+      const dia = date.getDate();
+      const fechaNum = `${mes}-${dia}`;
+      // Julio y agosto
+      if (mes === 7 || mes === 8) return true;
+      // 22 diciembre al 7 enero
+      if ((mes === 12 && dia >= 22) || (mes === 1 && dia <= 7)) return true;
+      return false;
+    };
+
+    let total = 0;
+    let currentDate = new Date(dateEntrada);
+
+    while (currentDate < dateSalida) {
+      const day = currentDate.getDay(); // 0 domingo ... 6 sábado
+      let precioDia = 0;
+      if (temporadaAlta(currentDate)) {
+        precioDia = precios[cabana].alta;
+      } else if (day === 5 || day === 6) { // viernes o sábado
+        precioDia = precios[cabana].viernesSabado;
+      } else {
+        precioDia = precios[cabana].resto;
+      }
+      total += precioDia;
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Verificar estancia mínima
+    if (dias < precios[cabana].minima) {
+      alert(`La estancia mínima para esta cabaña es de ${precios[cabana].minima} días`);
+      return;
+    }
+
+    // Calcular descuento
+    const descuento = dias >= precios[cabana].descuentoDias ? total * 0.10 : 0;
     const resto = total - 50;
 
     document.getElementById("cabañaSeleccionada").textContent = cabana === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
