@@ -62,50 +62,75 @@ function iniciarCalendarios(fechasOcupadas) {
     aviso.style.display = ocupado ? "block" : "none";
   }
 
-  const marcarDias = (dayElem) => {
+  function pintarDias(instance) {
     const cabaña = document.getElementById("cabaña").value.toLowerCase();
-    const fechaISO = formatearLocal(dayElem.dateObj);
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
 
-    if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
-      dayElem.style.setProperty("background", "#e53935", "important"); // rojo
-      dayElem.style.setProperty("color", "#fff", "important");
-      dayElem.style.setProperty("border-radius", "6px");
-    } else {
-      dayElem.style.setProperty("background", "#e8f5e9", "important"); // verde
-      dayElem.style.setProperty("color", "#000", "important");
-      dayElem.style.setProperty("border-radius", "6px");
-    }
-  };
+    instance.days.childNodes.forEach(dayElem => {
+      if (!dayElem.dateObj) return;
 
-  const fpConfig = {
+      const fechaISO = formatearLocal(dayElem.dateObj);
+
+      // Reset estilos
+      dayElem.style.background = "";
+      dayElem.style.color = "";
+
+      // Día pasado → negro
+      if (dayElem.dateObj < hoy) {
+        dayElem.style.background = "#212121";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      }
+
+      // Día reservado → rojo bloqueado
+      else if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
+        dayElem.style.background = "#e53935";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      }
+
+      // Día disponible → verde
+      else {
+        dayElem.style.background = "#e8f5e9";
+        dayElem.style.color = "#000";
+      }
+
+      dayElem.style.borderRadius = "6px";
+    });
+  }
+
+  const config = {
     mode: "range",
     dateFormat: "d/m/Y",
     minDate: "today",
     locale: { ...Spanish, firstDayOfWeek: 1 },
-    onChange: actualizarAviso,
-    onDayCreate: (dObj, dStr, fp, dayElem) => marcarDias(dayElem)
+
+    disable: [
+      function(date) {
+        const cabaña = document.getElementById("cabaña").value.toLowerCase();
+        const fechaISO = formatearLocal(date);
+        return fechasOcupadas[cabaña]?.includes(fechaISO);
+      }
+    ],
+
+    onReady: (sel, str, instance) => pintarDias(instance),
+    onMonthChange: (sel, str, instance) => pintarDias(instance),
+    onChange: (sel, str, instance) => {
+      actualizarAviso(sel);
+      pintarDias(instance);
+    }
   };
 
-  flatpickr("#entrada", fpConfig);
-  flatpickr("#salida", fpConfig);
+  const fpEntrada = flatpickr("#entrada", config);
+  const fpSalida  = flatpickr("#salida", config);
+
+  // 🔁 Si cambia la cabaña, repintar calendario
+  document.getElementById("cabaña").addEventListener("change", () => {
+    fpEntrada.redraw();
+    fpSalida.redraw();
+  });
 }
-function calcularReserva() {
-  const cabaña = document.getElementById("cabaña").value;
-  const entradaStr = document.getElementById("entrada").value;
-  const salidaStr = document.getElementById("salida").value;
-  const nombre = document.getElementById("nombre").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const email = document.getElementById("email").value.trim();
-
-  if (!entradaStr || !salidaStr) { alert("Selecciona fechas"); return; }
-  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
-
-  const spinner = document.getElementById("spinner");
-  const resultado = document.getElementById("resultado");
-  spinner.style.display = "block";
-  resultado.style.display = "none";
-
-  setTimeout(() => {
     // Convertir a fecha
     const [d, m, y] = entradaStr.split("/");
     const fechaEntrada = new Date(`${y}-${m}-${d}`);
