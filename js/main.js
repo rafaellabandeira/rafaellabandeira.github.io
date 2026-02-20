@@ -89,46 +89,16 @@ function iniciarCalendarios(fechasOcupadas) {
   flatpickr("#entrada", fpConfig);
   flatpickr("#salida", fpConfig);
 }
-
-// --------------------- PRECIO Y RESERVA ---------------------
-function esTemporadaAlta(fecha) {
-  const f = new Date(fecha);
-  const mes = f.getMonth() + 1;
-  const dia = f.getDate();
-  return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
-}
-// --------------------- TOTAL ESTANCIA ---------------------
-function calcularTotalEstancia(cabana, fechaEntrada, noches) {
-  const PRECIOS = {
-    campanilla: { alta: 150, baja: 115 },
-    tejo: { alta: 140, baja: 110 }
-  };
-  const totalInicial = calcularTotalEstancia(cabaña, fechaEntrada, noches);
-let total = totalInicial;
-let descuento = 0;
-
-// DESCUENTO
-if (!esTemporadaAlta(fechaEntrada) && noches >= 3) {
-  descuento = total * 0.10;
-  total *= 0.90;
-} else if (esTemporadaAlta(fechaEntrada) && noches >= 6) {
-  descuento = total * 0.10;
-  total *= 0.90;
-}
-  }
-  return total;
-}
-
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
-  const entrada = document.getElementById("entrada").value;
-  const salida = document.getElementById("salida").value;
+  const entradaStr = document.getElementById("entrada").value;
+  const salidaStr = document.getElementById("salida").value;
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
 
-  if(!entrada || !salida){ alert("Selecciona fechas"); return; }
-  if(!nombre || !telefono || !email){ alert("Completa todos los datos personales"); return; }
+  if (!entradaStr || !salidaStr) { alert("Selecciona fechas"); return; }
+  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
@@ -136,47 +106,62 @@ function calcularReserva() {
   resultado.style.display = "none";
 
   setTimeout(() => {
-    const [d, m, y] = entrada.split("/");
+    // Convertir a fecha
+    const [d, m, y] = entradaStr.split("/");
     const fechaEntrada = new Date(`${y}-${m}-${d}`);
-    const [ds, ms, ys] = salida.split("/");
+    const [ds, ms, ys] = salidaStr.split("/");
     const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
     const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
 
-    let minNoches, total = 0, precioNoche, descuento = 0;
+    let total = 0, descuento = 0;
+    let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
 
-    if (esTemporadaAlta(entrada)) {
-      minNoches = 4;
-      for (let i=0; i<noches; i++) {
-        const dia = new Date(fechaEntrada);
-        dia.setDate(dia.getDate() + i);
-        const dow = dia.getDay(); // 0-dom, 6-sáb
-        if (cabaña === "campanilla") precioNoche = 150;
-        else precioNoche = 140;
-        total += precioNoche;
-      }
-      if (noches >= 6) { descuento = total*0.10; total *= 0.90; }
-    } else { // temporada baja
-      minNoches = 2;
-      for (let i=0; i<noches; i++) {
-        const dia = new Date(fechaEntrada);
-        dia.setDate(dia.getDate() + i);
-        const dow = dia.getDay(); // 0-dom, 6-sáb
+    // Calcular precio noche por noche
+    for (let i=0; i<noches; i++) {
+      const dia = new Date(fechaEntrada);
+      dia.setDate(dia.getDate() + i);
+      const mes = dia.getMonth() + 1;
+      const diaNum = dia.getDate();
+      const dow = dia.getDay(); // 0-dom, 6-sáb
+      let precioNoche;
+
+      const alta = (mes === 7 || mes === 8) || (mes === 12 && diaNum >= 22) || (mes === 1 && diaNum <= 7);
+
+      if (alta) {
+        precioNoche = cabaña === "campanilla" ? 150 : 140;
+      } else { // temporada baja
         if (dow === 5 || dow === 6) { // viernes o sábado
           precioNoche = cabaña === "campanilla" ? 150 : 140;
         } else {
           precioNoche = cabaña === "campanilla" ? 115 : 110;
         }
-        total += precioNoche;
       }
-      if (noches >= 3) { descuento = total*0.10; total *= 0.90; }
+      total += precioNoche;
     }
 
+    // Aplicar descuentos
+    const tieneAlta = [...Array(noches).keys()].some(i => {
+      const dia = new Date(fechaEntrada);
+      dia.setDate(dia.getDate() + i);
+      return esTemporadaAlta(dia);
+    });
+
+    if (tieneAlta && noches >= 6) {
+      descuento = total * 0.10;
+      total *= 0.90;
+    } else if (!tieneAlta && noches >= 3) {
+      descuento = total * 0.10;
+      total *= 0.90;
+    }
+
+    // Verificar mínima estancia
     if (noches < minNoches) {
       alert(`Mínimo ${minNoches} noches en estas fechas`);
       spinner.style.display = "none";
       return;
     }
 
+    // Actualizar HTML
     document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
     document.getElementById("total").innerText = total.toFixed(2);
@@ -184,9 +169,8 @@ function calcularReserva() {
 
     spinner.style.display = "none";
     resultado.style.display = "block";
-  }, 500);
+  }, 300);
 }
-
 function reservar() {
   alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
