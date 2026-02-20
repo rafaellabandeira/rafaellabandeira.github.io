@@ -1,5 +1,4 @@
-/* Estilos globales - Mobile First */
-
+/* === ESTILOS GLOBALES - Mobile First === */
 * {
   box-sizing: border-box;
 }
@@ -130,9 +129,7 @@ body {
 
 /* Tablet */
 @media (min-width: 768px) {
-  .hamburger {
-    display: none;
-  }
+  .hamburger { display: none; }
 
   .nav-menu {
     display: flex;
@@ -143,9 +140,7 @@ body {
     box-shadow: none;
   }
 
-  .nav-menu li {
-    border-bottom: none;
-  }
+  .nav-menu li { border-bottom: none; }
 
   .nav-link {
     padding: 12px 20px;
@@ -250,24 +245,6 @@ header p {
   .hero { min-height: 360px; }
 }
 
-/* Header interno: botón Inicio + texto */
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.header-text {
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .header-text { }
-}
-
 section {
   padding: var(--spacing-lg) var(--spacing-md);
   background: white;
@@ -281,17 +258,9 @@ h1, h2, h3 {
   margin-bottom: 16px;
 }
 
-h1 {
-  font-size: 32px;
-}
-
-h2 {
-  font-size: 24px;
-}
-
-h3 {
-  font-size: 20px;
-}
+h1 { font-size: 32px; }
+h2 { font-size: 28px; }
+h3 { font-size: 22px; }
 
 p {
   margin: 0 0 16px 0;
@@ -306,9 +275,7 @@ a {
   transition: color 0.3s ease;
 }
 
-a:hover {
-  color: var(--color-dark);
-}
+a:hover { color: var(--color-dark); }
 
 ul, ol {
   margin: 0 0 16px 0;
@@ -340,9 +307,7 @@ footer a {
   transition: color 0.3s ease;
 }
 
-footer a:hover {
-  color: var(--color-secondary);
-}
+footer a:hover { color: var(--color-secondary); }
 
 /* WhatsApp Button */
 .whatsapp {
@@ -370,83 +335,66 @@ footer a:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.whatsapp:active {
-  transform: scale(0.95);
+.whatsapp:active { transform: scale(0.95); }
+
+/* -------------------------
+   CALENDARIO FLATPICKR PERSONALIZADO
+------------------------- */
+
+/* Base general del calendario */
+.flatpickr-calendar {
+  font-family: inherit !important;
 }
 
-/* Tablet y Desktop */
-@media (min-width: 768px) {
-  section {
-    max-width: 900px;
-    margin: auto;
-    margin-bottom: 20px;
-  }
-
-  header {
-    padding: var(--spacing-lg) 32px;
-  }
-
-  header h1 {
-    font-size: 36px;
-  }
-
-  h2 {
-    font-size: 28px;
-  }
-
-  h3 {
-    font-size: 22px;
-  }
+/* Base para todos los días */
+.flatpickr-day {
+  border-radius: 50% !important;
+  margin: 2px !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  transition: background-color 0.15s ease;
 }
-.aviso-fechas{
-  background-color: #ffe5e5;
-  color: #b30000;
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 10px;
-  font-weight: 500;
-  text-align: center;
-  border: 1px solid #ffb3b3;
+
+/* Verde suave por defecto para días libres */
+.flatpickr-day:not(.ocupado):not(.selected) {
+  background-color: #e6ffe6 !important;
+  color: #000 !important;
 }
-/* Días ocupados en el calendario */
+
+/* Rojo fuerte para días ocupados */
 .flatpickr-day.ocupado {
-  background-color: #ff4c4c; /* rojo fuerte */
-  color: green;
-  cursor: not-allowed;
+  background-color: #f44336 !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  cursor: pointer !important; /* permite clic, no bloqueado */
 }
 
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1000;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
+/* Día actual: borde amarillo */
+.flatpickr-day.today {
+  background: transparent !important;
+  border: 3px solid #FFD700 !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
 }
 
-#whatsappButton:hover {
-  transform: scale(1.1);
+/* Hover suave */
+.flatpickr-day:hover:not(.ocupado):not(.selected) {
+  background-color: #d4ffd4 !important;
+  cursor: pointer;
 }
 
-#whatsappButton img {
-  width: 100%;
-  height: 100%;
-  display: block;
+.flatpickr-day.ocupado:hover {
+  background-color: #e53935 !important;
 }
 
-.ocupado {
-  background-color: #ff4d4d !important; /* rojo */
-  color: green;
-}
-
-.resumen-reserva.campanilla {
-  background-color: #c6f5c6; /* verde */
-}
-
-.resumen-reserva.tejo {
-  background-color: #c6d7f5; /* azul */
+/* Header y días de la semana */
+.flatpickr-current-month,
+.flatpickr-weekdays {
+  background: #f8f9fa !important;
+  color: #333 !important;
 }
