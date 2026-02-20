@@ -1,6 +1,6 @@
 // main.js
 import flatpickr from "flatpickr";
-import { Spanish } from "flatpickr/dist/l10n/es.js"; // ✅ idioma REAL en español
+import { Spanish } from "flatpickr/dist/l10n/es.js"; // idioma español
 
 // ✅ Formateo en hora LOCAL (evita el bug del día anterior)
 function formatearLocal(fecha) {
@@ -62,28 +62,18 @@ function iniciarCalendarios(fechasOcupadas) {
     aviso.style.display = ocupado ? "block" : "none";
   }
 
-  // 🎨 Pintar cada día
   const marcarDias = (dayElem) => {
     const cabaña = document.getElementById("cabaña").value.toLowerCase();
     const fechaISO = formatearLocal(dayElem.dateObj);
-    const hoyISO = formatearLocal(new Date());
-
-    // Día actual
-    if (fechaISO === hoyISO) {
-      dayElem.style.setProperty("border", "3px solid #FFD700", "important");
-      dayElem.style.setProperty("border-radius", "50%", "important");
-    }
 
     if (fechasOcupadas[cabaña]?.includes(fechaISO)) {
-      // 🔴 OCUPADO
-      dayElem.style.setProperty("background", "#e53935", "important");
+      dayElem.style.setProperty("background", "#e53935", "important"); // rojo
       dayElem.style.setProperty("color", "#fff", "important");
-      dayElem.style.setProperty("border-radius", "6px", "important");
+      dayElem.style.setProperty("border-radius", "6px");
     } else {
-      // 🟢 LIBRE
-      dayElem.style.setProperty("background", "#e8f5e9", "important");
+      dayElem.style.setProperty("background", "#e8f5e9", "important"); // verde
       dayElem.style.setProperty("color", "#000", "important");
-      dayElem.style.setProperty("border-radius", "6px", "important");
+      dayElem.style.setProperty("border-radius", "6px");
     }
   };
 
@@ -91,10 +81,7 @@ function iniciarCalendarios(fechasOcupadas) {
     mode: "range",
     dateFormat: "d/m/Y",
     minDate: "today",
-    locale: {
-      ...Spanish,
-      firstDayOfWeek: 1
-    },
+    locale: { ...Spanish, firstDayOfWeek: 1 },
     onChange: actualizarAviso,
     onDayCreate: (dObj, dStr, fp, dayElem) => marcarDias(dayElem)
   };
@@ -112,16 +99,15 @@ function esTemporadaAlta(fecha) {
 }
 
 function calcularReserva() {
-  const cabaña = document.getElementById("cabaña").value.toLowerCase();
+  const cabaña = document.getElementById("cabaña").value;
   const entrada = document.getElementById("entrada").value;
   const salida = document.getElementById("salida").value;
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
-  const aviso = document.getElementById("avisoFechas");
 
-  if (!entrada || !salida) { alert("Selecciona fechas"); return; }
-  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
+  if(!entrada || !salida){ alert("Selecciona fechas"); return; }
+  if(!nombre || !telefono || !email){ alert("Completa todos los datos personales"); return; }
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
@@ -133,34 +119,35 @@ function calcularReserva() {
     const fechaEntrada = new Date(`${y}-${m}-${d}`);
     const [ds, ms, ys] = salida.split("/");
     const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
+    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
 
-    const noches = (fechaSalida - fechaEntrada) / (1000 * 60 * 60 * 24);
-
-    let minNoches, total = 0, descuento = 0;
+    let minNoches, total = 0, precioNoche, descuento = 0;
 
     if (esTemporadaAlta(entrada)) {
-      // 🔺 Temporada alta
       minNoches = 4;
-      for (let i = 0; i < noches; i++) {
-        const diaSemana = (fechaEntrada.getDay() + i) % 7; // 0-domingo ... 6-sábado
-        total += (cabaña === "campanilla") ? 150 : 140;
-      }
-      if (noches >= 6) { descuento = total * 0.1; total *= 0.9; }
-    } else {
-      // 🔹 Temporada baja
-      minNoches = 2;
-      for (let i = 0; i < noches; i++) {
+      for (let i=0; i<noches; i++) {
         const dia = new Date(fechaEntrada);
         dia.setDate(dia.getDate() + i);
-        const diaSemana = dia.getDay(); // 0-domingo ... 6-sábado
-
-        if (diaSemana === 5 || diaSemana === 6) { // viernes o sábado
-          total += (cabaña === "campanilla") ? 150 : 140;
-        } else {
-          total += (cabaña === "campanilla") ? 115 : 110;
-        }
+        const dow = dia.getDay(); // 0-dom, 6-sáb
+        if (cabaña === "campanilla") precioNoche = 150;
+        else precioNoche = 140;
+        total += precioNoche;
       }
-      if (noches >= 3) { descuento = total * 0.1; total *= 0.9; }
+      if (noches >= 6) { descuento = total*0.10; total *= 0.90; }
+    } else { // temporada baja
+      minNoches = 2;
+      for (let i=0; i<noches; i++) {
+        const dia = new Date(fechaEntrada);
+        dia.setDate(dia.getDate() + i);
+        const dow = dia.getDay(); // 0-dom, 6-sáb
+        if (dow === 5 || dow === 6) { // viernes o sábado
+          precioNoche = cabaña === "campanilla" ? 150 : 140;
+        } else {
+          precioNoche = cabaña === "campanilla" ? 115 : 110;
+        }
+        total += precioNoche;
+      }
+      if (noches >= 3) { descuento = total*0.10; total *= 0.90; }
     }
 
     if (noches < minNoches) {
@@ -169,13 +156,10 @@ function calcularReserva() {
       return;
     }
 
-    const resto = total - 50;
-
-    document.getElementById("cabañaSeleccionada").innerText = (cabaña === "campanilla") ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    resultado.className = "resumen-reserva " + (cabaña === "campanilla" ? "campanilla" : "tejo");
     document.getElementById("total").innerText = total.toFixed(2);
-    document.getElementById("resto").innerText = resto.toFixed(2);
     document.getElementById("descuento").innerText = descuento.toFixed(2);
-    resultado.className = "resumen-reserva " + ((cabaña === "campanilla") ? "campanilla" : "tejo");
 
     spinner.style.display = "none";
     resultado.style.display = "block";
