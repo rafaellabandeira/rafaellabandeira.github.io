@@ -398,3 +398,17 @@ footer a:hover { color: var(--color-secondary); }
   background: #f8f9fa !important;
   color: #333 !important;
 }
+/* ===== Botón flotante de WhatsApp ===== */
+#whatsappButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;   /* ajusta tamaño si quieres más grande o más pequeño */
+  height: 50px;
+  z-index: 1000;
+}
+
+#whatsappButton img {
+  width: 100%;
+  height: 100%;
+}
