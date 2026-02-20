@@ -1,77 +1,108 @@
 /* ===== MOTOR DE RESERVAS ===== */
 
-body {
-font-family: system-ui, Arial, sans-serif;
-background: #f7f7f5;
-}
-
-#reserva-online {
-padding: 60px 20px;
-}
-
 .reserva-box {
-max-width: 520px;
-margin: auto;
-background: #ffffff;
-padding: 30px;
-border-radius: 12px;
-box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-.reserva-box h2 {
-text-align: center;
-margin-bottom: 20px;
+  max-width: 520px;
+  margin: auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .reserva-box label {
-font-weight: 600;
-display: block;
-margin-top: 14px;
+  font-weight: 600;
+  margin-top: 12px;
+  display: block;
 }
 
 .reserva-box input,
 .reserva-box select {
-width: 100%;
-padding: 10px;
-margin-top: 6px;
-border: 1px solid #ccc;
-border-radius: 6px;
-font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
 }
 
 .reserva-box button {
-width: 100%;
-margin-top: 20px;
-padding: 12px;
-background: #5c7c4f;
-color: white;
-border: none;
-border-radius: 6px;
-font-size: 15px;
-cursor: pointer;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  background: #2e7d32;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .reserva-box button:hover {
-background: #4a653f;
+  background: #1b5e20;
+}
+
+/* ===== RESULTADO ===== */
+
+.resumen-reserva {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  border-left: 5px solid #2e7d32;
 }
 
 .spinner {
-display: none;
-margin: 20px auto;
-width: 30px;
-height: 30px;
-border: 4px solid #ddd;
-border-top: 4px solid #5c7c4f;
-border-radius: 50%;
-animation: girar 1s linear infinite;
+  display: none;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #2e7d32;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 15px auto;
 }
 
-@keyframes girar {
-to { transform: rotate(360deg); }
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.aviso-fechas {
-color: #c62828;
-font-weight: 600;
-margin-top: 10px;
+/* ===== CALENDARIO ===== */
+
+/* Día disponible (verde suave) */
+.flatpickr-day.disponible {
+  background: #e8f5e9 !important;
+  color: #000 !important;
+  border-radius: 6px;
+}
+
+/* Día ocupado (rojo) */
+.flatpickr-day.ocupado {
+  background: #e53935 !important;
+  color: #fff !important;
+  border-radius: 6px;
+}
+
+/* Día pasado (gris oscuro) */
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.pasado {
+  background: #212121 !important;
+  color: #aaa !important;
+}
+
+/* Hover solo en disponibles */
+.flatpickr-day.disponible:hover {
+  background: #66bb6a !important;
+  color: white !important;
+}
+
+/* Quitar selección en días ocupados */
+.flatpickr-day.ocupado:hover {
+  cursor: not-allowed;
+}
+
+/* Cabecera calendario */
+.flatpickr-months {
+  background: #2e7d32;
+  color: white;
 }
