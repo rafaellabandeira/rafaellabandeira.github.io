@@ -245,8 +245,39 @@
 <script>
   flatpickr("#entrada", { dateFormat: "d-m-Y" });
   flatpickr("#salida", { dateFormat: "d-m-Y" });
+
+  document.getElementById("btnCalcular").addEventListener("click", function() {
+    const cabana = document.getElementById("cabaña").value;
+    const entrada = document.getElementById("entrada").value;
+    const salida = document.getElementById("salida").value;
+
+    if (!entrada || !salida) {
+      alert("Selecciona las fechas de entrada y salida");
+      return;
+    }
+
+    const dateEntrada = new Date(entrada.split("-").reverse().join("-"));
+    const dateSalida = new Date(salida.split("-").reverse().join("-"));
+
+    if (dateSalida <= dateEntrada) {
+      alert("La fecha de salida debe ser posterior a la de entrada");
+      return;
+    }
+
+    const dias = (dateSalida - dateEntrada) / (1000 * 60 * 60 * 24);
+
+    const precios = { campanilla: 100, tejo: 80 };
+    const total = dias * precios[cabana];
+
+    const descuento = dias >= 7 ? total * 0.1 : 0;
+    const resto = total - 50;
+
+    document.getElementById("cabañaSeleccionada").textContent = cabana === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("total").textContent = total.toFixed(2);
+    document.getElementById("descuento").textContent = descuento.toFixed(2);
+    document.getElementById("resto").textContent = resto.toFixed(2);
+    document.getElementById("resultado").style.display = "block";
+  });
 </script>
-</body>
-</html>
 </body>
 </html>
