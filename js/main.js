@@ -1,6 +1,4 @@
-// main.js
-import flatpickr from "flatpickr";
-import { Spanish } from "flatpickr/dist/l10n/es.js"; // idioma español
+// Flatpickr ya viene del script CDN del HTML (modo clásico)
 
 // ✅ Formateo en hora LOCAL (evita el bug del día anterior)
 function formatearLocal(fecha) {
