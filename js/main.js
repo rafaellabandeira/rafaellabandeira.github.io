@@ -1,7 +1,9 @@
-// main.js
+// ================= MAIN.JS INTEGRADO =================
 
-// --------------------- UTILIDADES ---------------------
-// Formateo en d/m/Y para calendario y comparación
+// URL del backend que devuelve reservas sincronizadas (desde tu ical)
+const BACKEND_RESERVAS = "https://tu-backend.onrender.com/reservas"; // cambia por tu URL real
+
+// --------------------- FUNCIONES AUXILIARES ---------------------
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
@@ -9,58 +11,18 @@ function formatearLocal(fecha) {
   return `${d}/${m}/${y}`;
 }
 
-// Parse ical de Airbnb para obtener fechas ocupadas
-async function cargarICal(url) {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("No se pudo cargar iCal Airbnb");
-    const text = await res.text();
-    const lines = text.split(/\r?\n/);
-    const fechas = [];
-    lines.forEach(line => {
-      if (line.startsWith("DTSTART")) {
-        const fecha = line.match(/DTSTART(?:;[^:]+)?:([0-9]{8})/);
-        if (fecha) {
-          const y = fecha[1].substring(0,4);
-          const m = fecha[1].substring(4,6);
-          const d = fecha[1].substring(6,8);
-          fechas.push(`${d}/${m}/${y}`);
-        }
-      }
-    });
-    return fechas;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
+// Convierte fecha a ISO YYYY-MM-DD para comparar con iCal
+function fechaISO(fecha) {
+  return fecha.toISOString().slice(0, 10);
 }
 
-// --------------------- INICIALIZACIÓN ---------------------
-document.addEventListener("DOMContentLoaded", async () => {
-  initCarousel();
-  initHamburger();
-
-  const reservas = await cargarReservas();
-
-  // Cargar Airbnb iCal y combinar con reservas locales
-  const airbnb = await cargarICal("https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es");
-  if (!reservas.campanilla) reservas.campanilla = [];
-  if (!reservas.tejo) reservas.tejo = [];
-  reservas.campanilla = [...new Set([...reservas.campanilla, ...airbnb])];
-  reservas.tejo = [...new Set([...reservas.tejo, ...airbnb])];
-
-  iniciarCalendarios(reservas);
-
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
-});
-
-// --------------------- CARGAR RESERVAS LOCALES ---------------------
+// --------------------- CARGAR RESERVAS ---------------------
 async function cargarReservas() {
   try {
-    const res = await fetch("/reservas");
+    const res = await fetch(BACKEND_RESERVAS);
     if (!res.ok) throw new Error("No se pudieron cargar las reservas");
-    return await res.json();
+    const reservas = await res.json(); // { campanilla: [], tejo: [] }
+    return reservas;
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
@@ -68,6 +30,38 @@ async function cargarReservas() {
 }
 
 // --------------------- CALENDARIO ---------------------
+function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
+  days.forEach(dayElem => {
+    const fechaISOstr = fechaISO(dayElem.dateObj);
+
+    // Ignorar días de relleno (mes diferente)
+    if (!dayElem.classList.contains("flatpickr-disabled") && dayElem.dateObj.getMonth() === instance.currentMonth) {
+      // Reset estilos
+      dayElem.style.background = "";
+      dayElem.style.color = "";
+      dayElem.style.pointerEvents = "";
+
+      if (dayElem.dateObj < hoy) {
+        dayElem.style.background = "#212121";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      } else if (fechasOcupadas[cabana]?.includes(fechaISOstr)) {
+        dayElem.style.background = "#e53935";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      } else {
+        dayElem.style.background = "#e8f5e9";
+        dayElem.style.color = "#000";
+      }
+      dayElem.style.borderRadius = "6px";
+    }
+  });
+}
+
 function iniciarCalendarios(fechasOcupadas) {
   const aviso = document.getElementById("avisoFechas");
 
@@ -85,43 +79,14 @@ function iniciarCalendarios(fechasOcupadas) {
     let ocupado = false;
 
     while (actual < fin) {
-      const fechaISO = formatearLocal(actual);
-      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+      const fecha = formatearLocal(actual);
+      if (fechasOcupadas[cabana]?.includes(fecha)) {
         ocupado = true;
         break;
       }
       actual.setDate(actual.getDate() + 1);
     }
-
     aviso.style.display = ocupado ? "block" : "none";
-  }
-
-  function pintarDias(instance) {
-    const cabana = document.getElementById("cabaña").value.toLowerCase();
-    const hoy = new Date();
-    hoy.setHours(0,0,0,0);
-
-    const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
-    days.forEach(dayElem => {
-      const fechaISO = formatearLocal(dayElem.dateObj);
-
-      // Reset clases y estilos
-      dayElem.classList.remove("ocupado", "disponible", "pasado");
-      dayElem.style.pointerEvents = "";
-
-      // Solo aplicar a días del mes visible
-      if (!dayElem.classList.contains("prevMonthDay") && !dayElem.classList.contains("nextMonthDay")) {
-        if (dayElem.dateObj < hoy) {           // Días pasados
-          dayElem.classList.add("pasado");
-          dayElem.style.pointerEvents = "none";
-        } else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días ocupados
-          dayElem.classList.add("ocupado");
-          dayElem.style.pointerEvents = "none";
-        } else {                                 // Días disponibles
-          dayElem.classList.add("disponible");
-        }
-      }
-    });
   }
 
   const fpConfig = {
@@ -139,30 +104,30 @@ function iniciarCalendarios(fechasOcupadas) {
         longhand: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
       }
     },
+    onReady: (selectedDates, dateStr, instance) => pintarDiasFlatpickr(instance, fechasOcupadas, document.getElementById("cabaña").value.toLowerCase()),
+    onMonthChange: (selectedDates, dateStr, instance) => pintarDiasFlatpickr(instance, fechasOcupadas, document.getElementById("cabaña").value.toLowerCase()),
+    onChange: (selectedDates, dateStr, instance) => {
+      actualizarAviso(selectedDates);
+      pintarDiasFlatpickr(instance, fechasOcupadas, document.getElementById("cabaña").value.toLowerCase());
+    },
     disable: [
       function(date) {
         const cabana = document.getElementById("cabaña").value.toLowerCase();
-        const fechaISO = formatearLocal(date);
-        return fechasOcupadas[cabana]?.includes(fechaISO);
+        return fechasOcupadas[cabana]?.includes(formatearLocal(date));
       }
-    ],
-    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
-    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
-    onChange: (selectedDates, dateStr, instance) => {
-      actualizarAviso(selectedDates);
-      pintarDias(instance);
-    }
+    ]
   };
 
-  flatpickr("#entrada", fpConfig);
-  flatpickr("#salida", fpConfig);
+  const fpEntrada = flatpickr("#entrada", fpConfig);
+  const fpSalida  = flatpickr("#salida", fpConfig);
 
   document.getElementById("cabaña").addEventListener("change", () => {
-    document.querySelectorAll(".flatpickr-calendar").forEach(cal => cal._flatpickr?.redraw());
+    fpEntrada.redraw();
+    fpSalida.redraw();
   });
 }
 
-// --------------------- CÁLCULO DE RESERVA ---------------------
+// --------------------- CALCULO RESERVA ---------------------
 function esTemporadaAlta(fecha) {
   const mes = fecha.getMonth() + 1;
   const dia = fecha.getDate();
@@ -207,7 +172,6 @@ function calcularReserva() {
         if (dow === 5 || dow === 6) precio = cabaña === "campanilla" ? 150 : 140;
         else precio = cabaña === "campanilla" ? 115 : 110;
       }
-
       total += precio;
     }
 
@@ -238,5 +202,17 @@ function reservar() {
 }
 
 // --------------------- UI ---------------------
-function initCarousel() { /* Tu lógica del carrusel */ }
-function initHamburger() { /* Tu lógica del menú hamburguesa */ }
+function initCarousel() {}
+function initHamburger() {}
+
+// --------------------- INICIALIZACIÓN ---------------------
+document.addEventListener("DOMContentLoaded", async () => {
+  initCarousel();
+  initHamburger();
+
+  const reservas = await cargarReservas();
+  iniciarCalendarios(reservas);
+
+  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar").addEventListener("click", reservar);
+});
