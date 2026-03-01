@@ -23,22 +23,53 @@
   font-weight: 500;
 }
 
-/* ===== HERO ===== */
+/* ===== HERO (ARREGLADO) ===== */
 .hero {
-  background: url('../images/hero.jpg') center/cover no-repeat;
-  height: 400px;
+  background-image: url('../images/hero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  height: 420px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  position: relative;   /* ← ESTO FALTABA */
   color: #fff;
   text-align: center;
 }
-.hero-title {
-  font-size: 32px;
-  margin-bottom: 10px;
+
+/* Capa oscura para que el texto se vea */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
 }
+
+/* Contenido encima de la imagen */
+.header-inner {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  max-width: 900px;
+}
+
+.hero-title {
+  font-size: 34px;
+  margin-bottom: 10px;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+}
+
+.hero-title span {
+  color: #FFD54F;
+}
+
 .hero-sub {
   font-size: 18px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 
 /* ===== SECCIONES ===== */
@@ -47,17 +78,26 @@ section {
   max-width: 1200px;
   margin: auto;
 }
+
 .cabanias-grid {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
 }
+
 .cabin-card {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   flex: 1 1 300px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 1px solid #eee;
+  transition: 0.25s;
+}
+
+.cabin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
 /* ===== CARRUSEL ===== */
@@ -77,7 +117,7 @@ section {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.35);
   color: #fff;
   border: none;
   font-size: 24px;
@@ -85,8 +125,6 @@ section {
   padding: 8px 12px;
   border-radius: 50%;
 }
-.carousel-button.prev { left: 10px; }
-.carousel-button.next { right: 10px; }
 
 /* ===== MOTOR DE RESERVAS ===== */
 .reserva-box {
@@ -95,26 +133,32 @@ section {
   border-radius: 10px;
   max-width: 450px;
   margin: 20px auto;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  border: 1px solid #eee;
 }
+
 .reserva-box label {
   display: block;
   margin-top: 12px;
   font-weight: 500;
 }
-.reserva-box input, .reserva-box select {
+
+.reserva-box input,
+.reserva-box select {
   width: 100%;
   padding: 8px 10px;
   margin-top: 4px;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
+
 .reserva-box .resumen-reserva {
   margin-top: 12px;
   background: #f0f0f0;
   padding: 10px;
   border-radius: 6px;
 }
+
 .spinner {
   display: none;
   width: 40px;
@@ -125,15 +169,17 @@ section {
   animation: girar 1s linear infinite;
   margin: 10px auto;
 }
+
 @keyframes girar {
-  0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
-/* ===== CALENDARIO FLATPICKR ===== */
+/* ===== FLATPICKR (AISLADO PARA NO ROMPER LA WEB) ===== */
 .flatpickr-calendar {
-  font-family: Arial, sans-serif;
+  font-family: inherit;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
+
 .flatpickr-day {
   border-radius: 6px !important;
 }
@@ -146,6 +192,7 @@ footer {
   padding: 20px;
   margin-top: 40px;
 }
+
 footer a { color: #4caf50; }
 
 /* ===== BOTÓN WHATSAPP ===== */
@@ -157,6 +204,7 @@ footer a { color: #4caf50; }
   height: 60px;
   z-index: 1000;
 }
+
 #whatsappButton img {
   width: 100%;
   height: 100%;
@@ -166,4 +214,12 @@ footer a { color: #4caf50; }
 @media (max-width: 768px) {
   .cabanias-grid { flex-direction: column; }
   .nav-menu { flex-direction: column; gap: 10px; }
+
+  .hero {
+    height: 320px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+  }
 }
