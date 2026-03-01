@@ -95,10 +95,10 @@ function iniciarCalendarios(fechasOcupadas) {
   }
 
   const fpConfig = {
-    mode: "single",        // cada input individual
+    mode: "single",
     dateFormat: "d/m/Y",
     minDate: "today",
-    locale: "es",
+    locale: Spanish,  // ✅ Importante: es.js debe estar cargado antes en HTML
 
     disable: [
       function(date) {
