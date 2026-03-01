@@ -11,17 +11,27 @@
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="images/favicon.svg">
 
-<!-- Flatpickr Calendario -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-<!-- Tus CSS -->
+<!-- Estilos originales -->
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/index.css">
 <link rel="stylesheet" href="css/style.css">
 
-</head>
+<!-- Flatpickr desde CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+<style>
+/* Estilos específicos para Flatpickr y no afectar tu web */
+.flatpickr-calendar {
+  font-family: inherit;
+}
+.flatpickr-day {
+  border-radius: 6px;
+}
+</style>
+
+</head>
 <body>
+
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="nav-container">
@@ -38,6 +48,7 @@
 
 <!-- ===== HERO ===== -->
 <header class="hero">
+  <img src="images/hero.jpg" alt="Portada Cabañas Río Mundo" class="hero-bg">
   <div class="header-inner">
     <div class="header-text">
       <h1 class="hero-title">Casas rurales en Riópar · <span>Complejo El Lagunazo</span></h1>
@@ -66,6 +77,44 @@
       <h3>Cabaña El Tejo</h3>
       <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>
       <a class="boton" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Piscina en temporada de verano</h2>
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
+     convirtiendo la estancia en una experiencia única y refrescante.</p>
+  <div class="carousel-container small">
+    <div class="carousel">
+      <div class="carousel-slide"><img src="images/1000173041.jpg" alt="Piscina en verano - detalle"></div>
+      <div class="carousel-slide"><img src="images/1000173042.jpg" alt="Piscina en verano - detalle"></div>
+      <div class="carousel-slide"><img src="images/1000173044.jpg" alt="Piscina en verano - detalle"></div>
+    </div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Galería de Fotos</h2>
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-slide active"><img src="images/1000150795.jpg" alt="Exterior de las cabañas en Riópar"></div>
+      <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Exterior de las cabañas en Riópar"></div>
+      <div class="carousel-slide"><img src="images/1000150758.jpg" alt="Exterior de las cabañas en Riópar"></div>
+    </div>
+    <button class="carousel-button prev">❮</button>
+    <button class="carousel-button next">❯</button>
+    <div class="carousel-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
     </div>
   </div>
 </section>
@@ -131,15 +180,12 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<!-- Botón flotante WhatsApp -->
 <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
 </a>
 
-<!-- Flatpickr -->
+<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<!-- Tu main.js -->
 <script src="js/main.js"></script>
 
 </body>
