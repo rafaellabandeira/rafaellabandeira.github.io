@@ -25,7 +25,7 @@
 
 /* ===== HERO (ARREGLADO) ===== */
 .hero {
-  background-image: url('../images/hero.jpg');
+  background-image: url('../images/hero.jpg'); /* tu imagen de portada */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -36,7 +36,7 @@
   align-items: center;
   justify-content: center;
 
-  position: relative;   /* ← ESTO FALTABA */
+  position: relative;
   color: #fff;
   text-align: center;
 }
@@ -125,6 +125,8 @@ section {
   padding: 8px 12px;
   border-radius: 50%;
 }
+.carousel-button.prev { left: 10px; }
+.carousel-button.next { right: 10px; }
 
 /* ===== MOTOR DE RESERVAS ===== */
 .reserva-box {
@@ -174,14 +176,40 @@ section {
   100% { transform: rotate(360deg); }
 }
 
-/* ===== FLATPICKR (AISLADO PARA NO ROMPER LA WEB) ===== */
+/* ===== CALENDARIO FLATPICKR ===== */
 .flatpickr-calendar {
   font-family: inherit;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 1000;
 }
 
 .flatpickr-day {
   border-radius: 6px !important;
+}
+
+/* Días disponibles */
+.flatpickr-day.disponible {
+  background: #e8f5e9 !important;
+  color: #000 !important;
+}
+
+/* Días ocupados */
+.flatpickr-day.ocupado {
+  background: #e53935 !important;
+  color: #fff !important;
+}
+
+/* Días pasados */
+.flatpickr-day.pasado {
+  background: #212121 !important;
+  color: #fff !important;
+  pointer-events: none;
+}
+
+/* Hover solo en días disponibles */
+.flatpickr-day.disponible:hover {
+  background: #66bb6a !important;
+  color: #fff !important;
 }
 
 /* ===== FOOTER ===== */
