@@ -104,9 +104,9 @@
   </div>
   <p style="text-align:center; font-size:14px; color:#999; margin-top:16px;">Desliza o usa los botones para ver más fotos</p>
 </section>
+
    <!-- ===== MOTOR DE RESERVAS ===== -->
-<section>
-   <section id="reserva-online">
+<section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
     <label for="cabaña">Selecciona cabaña</label>
@@ -116,10 +116,10 @@
     </select>
 
     <label for="entrada">Fecha de entrada</label>
-    <input type="text" id="entrada" placeholder="Selecciona fecha">
+    <input type="text" id="entrada" placeholder="Selecciona fecha" readonly>
 
     <label for="salida">Fecha de salida</label>
-    <input type="text" id="salida" placeholder="Selecciona fecha">
+    <input type="text" id="salida" placeholder="Selecciona fecha" readonly>
 
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
@@ -145,8 +145,10 @@
       <p><strong>Reserva ahora:</strong> 50 €</p>
       <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
+    </div>
   </div>
 </section>
+
 <section id="contacto">
   <h2>Reservas personalizadas</h2>
   <p>A través del whatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
