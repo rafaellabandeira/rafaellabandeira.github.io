@@ -42,12 +42,196 @@ h1, h2, h3 {
   font-weight: 600;
 }
 
-/* Responsive general */
+/* ===== HERO PORTADA ===== */
+.hero {
+  position: relative;
+  height: 80vh; /* Ajusta según prefieras */
+  background: url('../images/hero.jpg') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  z-index: 1;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35); /* sombra oscura para mejorar contraste */
+  z-index: 1;
+}
+
+.header-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+.hero-title span {
+  color: #FFD700; /* Resaltar palabras si quieres */
+}
+
+.hero-sub {
+  font-size: 1.25rem;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ====================== SECCIONES ====================== */
+section {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ====================== CABAÑAS ====================== */
+.cabanias-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.cabin-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1 1 300px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.cabin-card h3 {
+  color: #333;
+}
+.cabin-card p {
+  color: #555;
+}
+.cabin-card .boton {
+  margin-top: 10px;
+}
+
+/* ====================== CARRUSEL ====================== */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+}
+.carousel {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+.carousel-slide img {
+  width: 100%;
+  border-radius: 8px;
+}
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 50%;
+}
+.carousel-button.prev { left: 10px; }
+.carousel-button.next { right: 10px; }
+
+/* ====================== MOTOR DE RESERVAS ====================== */
+.reserva-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 450px;
+  margin: 20px auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.reserva-box label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+}
+.reserva-box input, .reserva-box select {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.reserva-box .resumen-reserva {
+  margin-top: 12px;
+  background: #f0f0f0;
+  padding: 10px;
+  border-radius: 6px;
+}
+.spinner {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #4caf50;
+  border-radius: 50%;
+  animation: girar 1s linear infinite;
+  margin: 10px auto;
+}
+@keyframes girar {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ====================== CALENDARIO FLATPICKR ====================== */
+.flatpickr-calendar {
+  font-family: inherit;
+  z-index: 1000;
+}
+.flatpickr-day {
+  border-radius: 6px !important;
+}
+
+/* ====================== FOOTER ====================== */
+footer {
+  background: #212121;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+}
+footer a { color: #4caf50; }
+
+/* ====================== BOTÓN WHATSAPP ====================== */
+#whatsappButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  z-index: 1000;
+}
+#whatsappButton img {
+  width: 100%;
+  height: 100%;
+}
+
+/* ====================== RESPONSIVE ====================== */
 @media (max-width: 768px) {
-  body {
-    font-size: 14px;
-  }
-  h1 { font-size: 24px; }
-  h2 { font-size: 20px; }
-  h3 { font-size: 18px; }
+  .cabanias-grid { flex-direction: column; }
+  .nav-menu { flex-direction: column; gap: 10px; }
+  .hero-title { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; }
 }
