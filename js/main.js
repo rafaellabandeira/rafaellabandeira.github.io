@@ -1,6 +1,6 @@
 // main.js
 
-// ✅ Formateo en hora LOCAL (evita el bug del día anterior)
+// ✅ Formateo en hora LOCAL
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
@@ -66,9 +66,8 @@ function iniciarCalendarios(fechasOcupadas) {
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
 
-    instance.days.childNodes.forEach(dayElem => {
-      if (!dayElem.dateObj) return;
-
+    const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
+    days.forEach(dayElem => {
       const fechaISO = formatearLocal(dayElem.dateObj);
 
       // Reset estilos
@@ -76,20 +75,17 @@ function iniciarCalendarios(fechasOcupadas) {
       dayElem.style.color = "";
       dayElem.style.pointerEvents = "";
 
-      // Día pasado → negro
-      if (dayElem.dateObj < hoy) {
+      if (dayElem.dateObj < hoy) {           // Días pasados
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      // Día reservado → rojo bloqueado
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      // Día disponible → verde
-      else {
+      else {                                 // Días disponibles
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
       }
@@ -99,10 +95,10 @@ function iniciarCalendarios(fechasOcupadas) {
   }
 
   const fpConfig = {
-    mode: "range",
+    mode: "single",        // cada input individual
     dateFormat: "d/m/Y",
     minDate: "today",
-    locale: { ...Spanish, firstDayOfWeek: 1 },
+    locale: "es",
 
     disable: [
       function(date) {
@@ -123,7 +119,7 @@ function iniciarCalendarios(fechasOcupadas) {
   const fpEntrada = flatpickr("#entrada", fpConfig);
   const fpSalida  = flatpickr("#salida", fpConfig);
 
-  // 🔁 Si cambia la cabaña, repintar calendario
+  // 🔁 Cambiar cabaña repinta los calendarios
   document.getElementById("cabaña").addEventListener("change", () => {
     fpEntrada.redraw();
     fpSalida.redraw();
@@ -172,17 +168,13 @@ function calcularReserva() {
       if (esTemporadaAlta(dia)) {
         precio = cabaña === "campanilla" ? 150 : 150;
       } else {
-        if (dow === 5 || dow === 6) {
-          precio = cabaña === "campanilla" ? 150 : 140;
-        } else {
-          precio = cabaña === "campanilla" ? 115 : 110;
-        }
+        if (dow === 5 || dow === 6) precio = cabaña === "campanilla" ? 150 : 140;
+        else precio = cabaña === "campanilla" ? 115 : 110;
       }
 
       total += precio;
     }
 
-    // Aplicar descuentos
     if (esTemporadaAlta(fechaEntrada) && noches >= 6) descuento = total * 0.10;
     else if (!esTemporadaAlta(fechaEntrada) && noches >= 3) descuento = total * 0.10;
 
