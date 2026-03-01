@@ -14,14 +14,14 @@
 <!-- Flatpickr Calendario -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<!-- CSS personalizados -->
+<!-- Tus CSS -->
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/index.css">
 <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
-
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="nav-container">
@@ -70,46 +70,6 @@
   </div>
 </section>
 
-<section>
-  <h2>Piscina en temporada de verano</h2>
-  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos
-     convirtiendo la estancia en una experiencia única y refrescante.</p>
-  <div class="carousel-container small">
-    <div class="carousel">
-      <div class="carousel-slide"><img src="images/1000173041.jpg" alt="Piscina en verano - detalle"></div>
-      <div class="carousel-slide"><img src="images/1000173042.jpg" alt="Piscina en verano - detalle"></div>
-      <div class="carousel-slide"><img src="images/1000173044.jpg" alt="Piscina en verano - detalle"></div>
-    </div>
-    <button class="carousel-button prev">❮</button>
-    <button class="carousel-button next">❯</button>
-    <div class="carousel-indicators">
-      <div class="indicator active"></div>
-      <div class="indicator"></div>
-      <div class="indicator"></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <h2>Galería de Fotos</h2>
-  <div class="carousel-container">
-    <div class="carousel">
-      <div class="carousel-slide active"><img src="images/1000150795.jpg" alt="Exterior de las cabañas en Riópar"></div>
-      <div class="carousel-slide"><img src="images/1000150768.jpg" alt="Exterior de las cabañas en Riópar"></div>
-      <div class="carousel-slide"><img src="images/1000150758.jpg" alt="Exterior de las cabañas en Riópar"></div>
-      <!-- Resto de imágenes -->
-    </div>
-    <button class="carousel-button prev">❮</button>
-    <button class="carousel-button next">❯</button>
-    <div class="carousel-indicators">
-      <div class="indicator active"></div>
-      <div class="indicator"></div>
-      <div class="indicator"></div>
-    </div>
-  </div>
-  <p style="text-align:center; font-size:14px; color:#999; margin-top:16px;">Desliza o usa los botones para ver más fotos</p>
-</section>
-
 <!-- ===== MOTOR DE RESERVAS ===== -->
 <section id="reserva-online">
   <h2>Reserva Online</h2>
@@ -146,7 +106,7 @@
     <div id="resultado" class="resumen-reserva" style="display:none;">
       <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-      <p><strong>Descuento aplicado:</strong> <span id="descuento"></span> €</p>
+      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
       <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
@@ -171,15 +131,15 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<!-- Botón flotante de WhatsApp -->
+<!-- Botón flotante WhatsApp -->
 <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
 </a>
 
-<!-- ===== SCRIPTS ===== -->
+<!-- Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-<script src="js/ical-sync.js"></script> <!-- Para sincronizar reservas iCal -->
+
+<!-- Tu main.js -->
 <script src="js/main.js"></script>
 
 </body>
