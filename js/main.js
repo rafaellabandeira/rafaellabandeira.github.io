@@ -1,11 +1,11 @@
 // main.js
 
-// ✅ Formateo en hora LOCAL (d/m/Y)
+// --------------------- FORMATEO FECHAS ---------------------
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
-  return `${d}/${m}/${y}`;
+  return `${d}/${m}/${y}`;  // Formato d/m/Y
 }
 
 // --------------------- INICIALIZACIÓN ---------------------
@@ -70,22 +70,22 @@ function iniciarCalendarios(fechasOcupadas) {
     days.forEach(dayElem => {
       const fechaISO = formatearLocal(dayElem.dateObj);
 
-      // Reset estilos
+      // Resetear estilos
       dayElem.style.background = "";
       dayElem.style.color = "";
       dayElem.style.pointerEvents = "";
 
-      if (dayElem.dateObj < hoy) {           // Días pasados
+      if (dayElem.dateObj < hoy) {           // Días pasados en negro
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados
+      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados en rojo
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {                                 // Días disponibles
+      else {                                 // Días disponibles en verde
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
       }
