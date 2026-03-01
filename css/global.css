@@ -1,414 +1,53 @@
-/* === ESTILOS GLOBALES - Mobile First === */
+/* ================= GLOBAL.CSS ================= */
+
+/* Reset básico */
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-:root {
-  --color-primary: #2e5d43;
-  --color-secondary: #25D366;
-  --color-dark: #1a3a2a;
-  --color-light: #f4f4f4;
-  --color-text: #333;
-  --color-text-light: #666;
-  --spacing-sm: 12px;
-  --spacing-md: 20px;
-  --spacing-lg: 32px;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
+/* Body y tipografía */
 body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--color-light);
-  color: var(--color-text);
+  font-family: 'Arial', sans-serif;
+  background: #f5f5f5;
+  color: #212121;
   line-height: 1.6;
-  font-size: 16px;
 }
 
-/* Navegación */
-.navbar {
-  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-primary) 100%);
-  padding: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-}
-
-.nav-logo {
-  color: white;
-  font-size: 18px;
-  font-weight: 700;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: color 0.3s ease;
-}
-
-.nav-logo:hover {
-  color: var(--color-secondary);
-}
-
-.nav-menu {
-  display: none;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex-direction: column;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-primary) 100%);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-}
-
-.nav-menu.active {
-  display: flex;
-}
-
-.nav-menu li {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.nav-menu li:last-child {
-  border-bottom: none;
-}
-
-.nav-link {
-  color: white;
-  padding: 16px 20px;
-  display: block;
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.nav-link:hover {
-  background: rgba(37, 211, 102, 0.2);
-  color: var(--color-secondary);
-}
-
-.hamburger {
-  display: flex;
-  flex-direction: column;
-  cursor: pointer;
-  gap: 6px;
-}
-
-.hamburger span {
-  width: 25px;
-  height: 3px;
-  background: white;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-.hamburger.active span:nth-child(1) {
-  transform: rotate(45deg) translate(10px, 10px);
-}
-
-.hamburger.active span:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(8px, -8px);
-}
-
-/* Tablet */
-@media (min-width: 768px) {
-  .hamburger { display: none; }
-
-  .nav-menu {
-    display: flex;
-    flex-direction: row;
-    position: static;
-    width: auto;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .nav-menu li { border-bottom: none; }
-
-  .nav-link {
-    padding: 12px 20px;
-    border-bottom: 2px solid transparent;
-  }
-
-  .nav-link:hover {
-    background: transparent;
-    color: var(--color-secondary);
-    border-bottom-color: var(--color-secondary);
-  }
-}
-
-header {
-  background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-primary) 100%);
-  color: white;
-  padding: var(--spacing-lg) var(--spacing-md);
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-header h1 {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-header p {
-  margin: 8px 0 0 0;
-  font-size: 14px;
-  opacity: 1;
-  font-weight: 500;
-  color: white;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-/* Hero header para index */
-.hero {
-  background-image: linear-gradient(rgba(10,12,10,0.45), rgba(10,12,10,0.25)), url('../images/1000150795.jpg');
-  background-size: cover;
-  background-position: center;
-  color: white;
-  min-height: 260px;
-  display: flex;
-  align-items: center;
-}
-
-.hero .header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-.hero .header-text p {
-  margin: 0;
-  font-size: 18px;
-  color: rgba(255,255,255,0.95);
-  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
-}
-
-/* Hero title styling and animation */
-.hero-title {
-  font-size: 28px;
-  line-height: 1.05;
-  margin: 0 0 8px 0;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: white;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.45);
-  transform-origin: center;
-  animation: heroFadeUp 700ms cubic-bezier(.2,.9,.2,1) both;
-}
-
-.hero-title span {
-  display: inline-block;
-  background: linear-gradient(90deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
-  padding: 4px 10px;
-  border-radius: 999px;
-  margin-left: 8px;
-  font-weight: 700;
-  font-size: 0.8em;
-}
-
-.hero-sub {
-  margin-top: 6px;
-  opacity: 0.95;
-  font-size: 15px;
-  animation: heroFadeUp 900ms cubic-bezier(.2,.9,.2,1) 150ms both;
-}
-
-@keyframes heroFadeUp {
-  from { opacity: 0; transform: translateY(10px) scale(0.995); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@media (min-width: 768px) {
-  .hero-title { font-size: 42px; }
-  .hero-sub { font-size: 18px; }
-  .hero { min-height: 360px; }
-}
-
-section {
-  padding: var(--spacing-lg) var(--spacing-md);
-  background: white;
-  margin-bottom: 16px;
-}
-
-h1, h2, h3 {
-  color: var(--color-primary);
-  font-weight: 700;
-  margin-top: 24px;
-  margin-bottom: 16px;
-}
-
-h1 { font-size: 32px; }
-h2 { font-size: 28px; }
-h3 { font-size: 22px; }
-
-p {
-  margin: 0 0 16px 0;
-  color: var(--color-text-light);
-  line-height: 1.7;
-}
-
+/* Enlaces */
 a {
-  color: var(--color-primary);
   text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  color: inherit;
 }
 
-a:hover { color: var(--color-dark); }
-
-ul, ol {
-  margin: 0 0 16px 0;
-  padding-left: 20px;
-}
-
-ul li, ol li {
-  margin-bottom: 8px;
-  line-height: 1.8;
-}
-
-footer {
-  background: #2a2a2a;
-  color: white;
-  text-align: center;
-  padding: 24px var(--spacing-md);
-  margin-top: 32px;
-}
-
-footer p {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #ccc;
-}
-
-footer a {
+/* Botones */
+.boton, button {
+  display: inline-block;
+  background: #4caf50;
   color: #fff;
-  margin: 0 8px;
-  transition: color 0.3s ease;
-}
-
-footer a:hover { color: var(--color-secondary); }
-
-/* WhatsApp Button */
-.whatsapp {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--color-secondary);
-  color: white;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-  z-index: 999;
-  font-size: 28px;
-}
-
-.whatsapp:hover {
-  background: #1fa855;
-  transform: scale(1.1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.whatsapp:active { transform: scale(0.95); }
-
-/* -------------------------
-   CALENDARIO FLATPICKR PERSONALIZADO
-------------------------- */
-
-/* Base general del calendario */
-.flatpickr-calendar {
-  font-family: inherit !important;
-}
-
-/* Base para todos los días */
-.flatpickr-day {
-  border-radius: 50% !important;
-  margin: 2px !important;
-  width: 34px !important;
-  height: 34px !important;
-  line-height: 34px !important;
-  font-size: 14px !important;
-  text-align: center !important;
-  box-sizing: border-box !important;
-  background: transparent !important;
-  transition: background-color 0.15s ease;
-}
-
-/* Verde suave por defecto para días libres */
-.flatpickr-day:not(.ocupado):not(.selected) {
-  background-color: #e6ffe6 !important;
-  color: #000 !important;
-}
-
-/* Rojo fuerte para días ocupados */
-.flatpickr-day.ocupado {
-  background-color: #f44336 !important;
-  color: #fff !important;
-  font-weight: bold !important;
-  cursor: pointer !important; /* permite clic, no bloqueado */
-}
-
-/* Día actual: borde amarillo */
-.flatpickr-day.today {
-  background: yellow !important;
-  border: 3px solid #FFD700 !important;
-  border-radius: 50% !important;
-  box-sizing: border-box !important;
-}
-
-/* Hover suave */
-.flatpickr-day:hover:not(.ocupado):not(.selected) {
-  background-color: #d4ffd4 !important;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
+}
+.boton:hover, button:hover {
+  background: #43a047;
 }
 
-.flatpickr-day.ocupado:hover {
-  background-color: #e53935 !important;
+/* Titulares */
+h1, h2, h3 {
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
-/* Header y días de la semana */
-.flatpickr-current-month,
-.flatpickr-weekdays {
-  background: #f8f9fa !important;
-  color: #333 !important;
-}
-/* ===== Botón flotante de WhatsApp ===== */
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;   /* ajusta tamaño si quieres más grande o más pequeño */
-  height: 50px;
-  z-index: 1000;
-}
-
-#whatsappButton img {
-  width: 100%;
-  height: 100%;
+/* Responsive general */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
 }
