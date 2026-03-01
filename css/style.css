@@ -1,136 +1,41 @@
-/* ===== MOTOR DE RESERVAS ===== */
-
-.reserva-box {
-  max-width: 520px;
-  margin: auto;
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-.reserva-box label {
-  font-weight: 600;
-  margin-top: 12px;
-  display: block;
-}
-
-.reserva-box input,
-.reserva-box select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 15px;
-}
-
-.reserva-box button {
-  width: 100%;
-  margin-top: 18px;
-  padding: 12px;
-  background: #2e7d32;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.reserva-box button:hover {
-  background: #1b5e20;
-}
-
-/* ===== RESULTADO ===== */
-
-.resumen-reserva {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #f7f7f7;
-  border-left: 5px solid #2e7d32;
-}
-
-.spinner {
-  display: none;
-  width: 30px;
-  height: 30px;
-  border: 4px solid #ddd;
-  border-top: 4px solid #2e7d32;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 15px auto;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ===== CALENDARIO ===== */
-
-/* Día disponible (verde suave) */
-.flatpickr-day.disponible {
-  background: #e8f5e9 !important;
-  color: #000 !important;
-  border-radius: 6px;
-}
-
-/* Día ocupado (rojo) */
-.flatpickr-day.ocupado {
-  background: #e53935 !important;
-  color: #fff !important;
-  border-radius: 6px;
-}
-
-/* Día pasado (gris oscuro) */
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.pasado {
-  background: #212121 !important;
-  color: #aaa !important;
-}
-
-/* Hover solo en disponibles */
-.flatpickr-day.disponible:hover {
-  background: #66bb6a !important;
-  color: white !important;
-}
-
-/* Quitar selección en días ocupados */
-.flatpickr-day.ocupado:hover {
-  cursor: not-allowed;
-}
-
-/* Cabecera calendario */
-.flatpickr-months {
-  background: #2e7d32;
-  color: white;
-}
-
 /* ==============================
-   1️⃣ PORTADA HERO
+   1️⃣ HERO PORTADA
    ============================== */
 .hero {
-  position: relative;
-  height: 500px;
-  background: url("../images/hero-portada.jpg") center/cover no-repeat;
+  background-image: url('../images/hero.jpg'); /* Cambia a tu imagen real */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff; /* texto blanco */
+  position: relative;
+  z-index: 1;
+}
+
+.header-inner {
   text-align: center;
+  color: white;
+  padding: 0 20px;
 }
 
 .hero-title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: bold;
-  text-shadow: 2px 2px 8px rgba(0,0,0,0.6); /* sombra para visibilidad */
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+.hero-title span {
+  color: #FFD700;
 }
 
 .hero-sub {
-  font-size: 1.2rem;
-  margin-top: 10px;
-  text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+  font-size: 1.25rem;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 /* ==============================
@@ -141,21 +46,23 @@
   gap: 20px;
   flex-wrap: wrap;
   margin-top: 20px;
+  justify-content: center;
 }
 
 .cabin-card {
   flex: 1 1 300px;
-  border: 2px solid #ccc;
-  border-radius: 10px;
+  border: 2px solid #FFD700;
+  border-radius: 12px;
   padding: 16px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   background-color: #fff;
+  text-align: center;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .cabin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 .cabin-card h3 {
@@ -188,11 +95,11 @@
    ============================== */
 .reserva-box {
   border: 2px solid #4caf50;
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 25px;
   background-color: #f9f9f9;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  max-width: 520px;
   margin: 20px auto;
 }
 
@@ -208,84 +115,97 @@
   color: #333;
 }
 
-.reserva-box input, 
+.reserva-box input,
 .reserva-box select {
   width: 100%;
   padding: 8px;
-  margin-top: 4px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
   box-sizing: border-box;
 }
 
 .reserva-box button {
-  margin-top: 15px;
-  padding: 10px 16px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
   background-color: #4caf50;
-  color: #fff;
-  font-weight: bold;
+  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
 .reserva-box button:hover {
   background-color: #45a049;
 }
 
+/* Resultado de reserva */
+.resumen-reserva {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  border-left: 5px solid #4caf50;
+}
+
+.spinner {
+  display: none;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 15px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ==============================
    4️⃣ CALENDARIO FLATPICKR
    ============================== */
 .flatpickr-calendar {
-  z-index: 1000; /* para que quede sobre otros elementos */
+  z-index: 1000;
 }
 
 .flatpickr-day {
   border-radius: 6px;
 }
 
-/* ===== HERO PORTADA ===== */
-.hero {
-  background-image: url('../images/hero.jpg'); /* Cambia a tu imagen real */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 80vh; /* Ajusta según prefieras */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
+/* Días disponibles */
+.flatpickr-day.disponible {
+  background: #e8f5e9 !important;
+  color: #000 !important;
 }
 
-.header-inner {
-  text-align: center;
-  color: white; /* Letras blancas */
-  padding: 0 20px;
+/* Días ocupados */
+.flatpickr-day.ocupado {
+  background: #e53935 !important;
+  color: #fff !important;
+  cursor: not-allowed;
 }
 
-.hero-title {
-  font-size: 3rem; /* Ajusta tamaño */
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.5); /* Para que destaque sobre la imagen */
+/* Días pasados */
+.flatpickr-day.pasado,
+.flatpickr-day.prevMonthDay {
+  background: #212121 !important;
+  color: #aaa !important;
 }
 
-.hero-title span {
-  color: #FFD700; /* O cualquier color que quieras resaltar */
+/* Hover solo en días disponibles */
+.flatpickr-day.disponible:hover {
+  background: #66bb6a !important;
+  color: #fff !important;
 }
 
-.hero-sub {
-  font-size: 1.25rem;
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-  max-width: 700px;
-  margin: 0 auto;
+/* Cabecera calendario */
+.flatpickr-months {
+  background: #2e7d32;
+  color: white;
 }
-
-/* Si el hero sigue sin aparecer, fuerza visibilidad */
-.hero, .header-inner, .hero-title, .hero-sub {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-/* Días reservados se pintan dinámicamente en JS */
