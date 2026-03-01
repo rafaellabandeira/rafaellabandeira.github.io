@@ -14,10 +14,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
 
   const reservas = await cargarReservas();
-  const icalFechas = await cargarICal("https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es");
-  const todasReservas = {...reservas, airbnb: icalFechas};
-
-  iniciarCalendarios(todasReservas);
+  await cargarICal(reservas); // carga Airbnb iCal
+  iniciarCalendarios(reservas);
 
   document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
   document.getElementById("btnPagar").addEventListener("click", reservar);
@@ -36,36 +34,42 @@ async function cargarReservas() {
 }
 
 // --------------------- CARGAR ICAL Airbnb ---------------------
-async function cargarICal(url) {
+async function cargarICal(reservas) {
   try {
-    const res = await fetch(url);
+    const urlICal = "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es";
+    const res = await fetch(urlICal);
     if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
-    const text = await res.text();
+    const icalText = await res.text();
 
-    const fechas = [];
-    const lines = text.split("\n");
-    let start = null, end = null;
+    // Extraer fechas de bloqueo (entre DTSTART y DTEND)
+    const lineas = icalText.split(/\r?\n/);
+    let currentStart = null;
+    let currentEnd = null;
 
-    lines.forEach(line => {
-      if (line.startsWith("DTSTART")) start = new Date(line.split(":")[1]);
-      if (line.startsWith("DTEND")) {
-        end = new Date(line.split(":")[1]);
-        if (start && end) {
-          let actual = new Date(start);
-          while (actual < end) {
-            fechas.push(formatearLocal(actual));
-            actual.setDate(actual.getDate() + 1);
+    lineas.forEach(line => {
+      if (line.startsWith("DTSTART")) {
+        currentStart = line.split(":")[1].trim();
+      } else if (line.startsWith("DTEND")) {
+        currentEnd = line.split(":")[1].trim();
+      } else if (line.startsWith("END:VEVENT")) {
+        if (currentStart && currentEnd) {
+          // Convertir a Date
+          const start = new Date(currentStart.substr(0,4)+'-'+currentStart.substr(4,2)+'-'+currentStart.substr(6,2));
+          const end   = new Date(currentEnd.substr(0,4)+'-'+currentEnd.substr(4,2)+'-'+currentEnd.substr(6,2));
+          // Añadir todas las fechas entre start y end a las reservas de campanilla (puedes adaptarlo)
+          let d = new Date(start);
+          while (d < end) {
+            reservas.campanilla.push(formatearLocal(d));
+            d.setDate(d.getDate() + 1);
           }
         }
-        start = null;
-        end = null;
+        currentStart = null;
+        currentEnd = null;
       }
     });
 
-    return fechas;
-  } catch (err) {
-    console.error(err);
-    return [];
+  } catch(err) {
+    console.error("Error cargando iCal:", err);
   }
 }
 
@@ -88,7 +92,7 @@ function iniciarCalendarios(fechasOcupadas) {
 
     while (actual < fin) {
       const fechaISO = formatearLocal(actual);
-      if (fechasOcupadas[cabana]?.includes(fechaISO) || fechasOcupadas.airbnb?.includes(fechaISO)) {
+      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
         ocupado = true;
         break;
       }
@@ -99,6 +103,7 @@ function iniciarCalendarios(fechasOcupadas) {
   }
 
   function pintarDias(instance) {
+    const cabana = document.getElementById("cabaña").value.toLowerCase();
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
 
@@ -116,8 +121,7 @@ function iniciarCalendarios(fechasOcupadas) {
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else if (fechasOcupadas.airbnb?.includes(fechaISO) ||
-               fechasOcupadas[document.getElementById("cabaña").value.toLowerCase()]?.includes(fechaISO)) {
+      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días ocupados
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
@@ -133,7 +137,7 @@ function iniciarCalendarios(fechasOcupadas) {
 
   const fpConfig = {
     mode: "single",
-    dateFormat: "d/m/Y",
+    dateFormat: "d/m/Y", // ✅ día/mes/año
     minDate: "today",
     locale: {
       firstDayOfWeek: 1,
