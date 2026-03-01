@@ -106,3 +106,142 @@
   background: #2e7d32;
   color: white;
 }
+
+/* ==============================
+   1️⃣ PORTADA HERO
+   ============================== */
+.hero {
+  position: relative;
+  height: 500px;
+  background: url("../images/hero-portada.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff; /* texto blanco */
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.6); /* sombra para visibilidad */
+}
+
+.hero-sub {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+}
+
+/* ==============================
+   2️⃣ TARJETAS DE CABAÑAS
+   ============================== */
+.cabanias-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.cabin-card {
+  flex: 1 1 300px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background-color: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cabin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.cabin-card h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.cabin-card p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.cabin-card .boton {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.cabin-card .boton:hover {
+  background-color: #45a049;
+}
+
+/* ==============================
+   3️⃣ MOTOR DE RESERVAS
+   ============================== */
+.reserva-box {
+  border: 2px solid #4caf50;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.reserva-box h2 {
+  color: #4caf50;
+  margin-top: 0;
+}
+
+.reserva-box label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+.reserva-box input, 
+.reserva-box select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.reserva-box button {
+  margin-top: 15px;
+  padding: 10px 16px;
+  background-color: #4caf50;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reserva-box button:hover {
+  background-color: #45a049;
+}
+
+/* ==============================
+   4️⃣ CALENDARIO FLATPICKR
+   ============================== */
+.flatpickr-calendar {
+  z-index: 1000; /* para que quede sobre otros elementos */
+}
+
+.flatpickr-day {
+  border-radius: 6px;
+}
+
+/* Días reservados se pintan dinámicamente en JS */
