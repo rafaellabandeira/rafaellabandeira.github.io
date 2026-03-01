@@ -1,11 +1,11 @@
 // main.js
 
-// --------------------- FORMATEO FECHAS ---------------------
+// ✅ Formateo en hora LOCAL (d/m/Y)
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
-  return `${d}/${m}/${y}`;  // Formato d/m/Y
+  return `${d}/${m}/${y}`;
 }
 
 // --------------------- INICIALIZACIÓN ---------------------
@@ -14,7 +14,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
 
   const reservas = await cargarReservas();
-  iniciarCalendarios(reservas);
+  const icalFechas = await cargarICal("https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es");
+  const todasReservas = {...reservas, airbnb: icalFechas};
+
+  iniciarCalendarios(todasReservas);
 
   document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
   document.getElementById("btnPagar").addEventListener("click", reservar);
@@ -29,6 +32,40 @@ async function cargarReservas() {
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
+  }
+}
+
+// --------------------- CARGAR ICAL Airbnb ---------------------
+async function cargarICal(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
+    const text = await res.text();
+
+    const fechas = [];
+    const lines = text.split("\n");
+    let start = null, end = null;
+
+    lines.forEach(line => {
+      if (line.startsWith("DTSTART")) start = new Date(line.split(":")[1]);
+      if (line.startsWith("DTEND")) {
+        end = new Date(line.split(":")[1]);
+        if (start && end) {
+          let actual = new Date(start);
+          while (actual < end) {
+            fechas.push(formatearLocal(actual));
+            actual.setDate(actual.getDate() + 1);
+          }
+        }
+        start = null;
+        end = null;
+      }
+    });
+
+    return fechas;
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 }
 
@@ -51,7 +88,7 @@ function iniciarCalendarios(fechasOcupadas) {
 
     while (actual < fin) {
       const fechaISO = formatearLocal(actual);
-      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+      if (fechasOcupadas[cabana]?.includes(fechaISO) || fechasOcupadas.airbnb?.includes(fechaISO)) {
         ocupado = true;
         break;
       }
@@ -62,7 +99,6 @@ function iniciarCalendarios(fechasOcupadas) {
   }
 
   function pintarDias(instance) {
-    const cabana = document.getElementById("cabaña").value.toLowerCase();
     const hoy = new Date();
     hoy.setHours(0,0,0,0);
 
@@ -70,22 +106,23 @@ function iniciarCalendarios(fechasOcupadas) {
     days.forEach(dayElem => {
       const fechaISO = formatearLocal(dayElem.dateObj);
 
-      // Resetear estilos
+      // Reset estilos
       dayElem.style.background = "";
       dayElem.style.color = "";
       dayElem.style.pointerEvents = "";
 
-      if (dayElem.dateObj < hoy) {           // Días pasados en negro
+      if (dayElem.dateObj < hoy) {           // Días pasados
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados en rojo
+      else if (fechasOcupadas.airbnb?.includes(fechaISO) ||
+               fechasOcupadas[document.getElementById("cabaña").value.toLowerCase()]?.includes(fechaISO)) {
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {                                 // Días disponibles en verde
+      else {                                 // Días disponibles
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
       }
@@ -109,13 +146,6 @@ function iniciarCalendarios(fechasOcupadas) {
         longhand: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
       }
     },
-    disable: [
-      function(date) {
-        const cabana = document.getElementById("cabaña").value.toLowerCase();
-        const fechaISO = formatearLocal(date);
-        return fechasOcupadas[cabana]?.includes(fechaISO);
-      }
-    ],
     onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
     onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
     onChange: (selectedDates, dateStr, instance) => {
