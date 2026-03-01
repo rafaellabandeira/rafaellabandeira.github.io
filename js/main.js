@@ -98,7 +98,7 @@ function iniciarCalendarios(fechasOcupadas) {
     mode: "single",
     dateFormat: "d/m/Y",
     minDate: "today",
-    locale: Spanish,  // ✅ Importante: es.js debe estar cargado antes en HTML
+    locale: Flatpickr.l10ns.es,  // ✅ Cambio crucial
 
     disable: [
       function(date) {
