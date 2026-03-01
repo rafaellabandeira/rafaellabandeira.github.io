@@ -1,11 +1,11 @@
-// main.js
+// main.js adaptado a d/m/Y completo
 
-// ✅ Formateo en hora LOCAL
-function formatearLocal(fecha) {
-  const y = fecha.getFullYear();
-  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+// ✅ Formateo DÍA/MES/AÑO
+function formatearDMY(fecha) {
   const d = String(fecha.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const y = fecha.getFullYear();
+  return `${d}/${m}/${y}`;
 }
 
 // --------------------- INICIALIZACIÓN ---------------------
@@ -25,7 +25,15 @@ async function cargarReservas() {
   try {
     const res = await fetch("/reservas");
     if (!res.ok) throw new Error("No se pudieron cargar las reservas");
-    return await res.json();
+    // Convertimos todas las fechas a d/m/Y directamente
+    const data = await res.json();
+    for (let cab in data) {
+      data[cab] = data[cab].map(f => {
+        const [y,m,d] = f.split("-"); // si vienen YYYY-MM-DD
+        return `${d}/${m}/${y}`;
+      });
+    }
+    return data;
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
@@ -45,13 +53,15 @@ function iniciarCalendarios(fechasOcupadas) {
     }
 
     const cabana = document.getElementById("cabaña").value.toLowerCase();
-    let actual = new Date(entrada);
-    const fin = new Date(salida);
+    let actual = entrada;
+    actual.setHours(0,0,0,0);
+    const fin = salida;
+    fin.setHours(0,0,0,0);
     let ocupado = false;
 
     while (actual < fin) {
-      const fechaISO = formatearLocal(actual);
-      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+      const fechaDMY = formatearDMY(actual);
+      if (fechasOcupadas[cabana]?.includes(fechaDMY)) {
         ocupado = true;
         break;
       }
@@ -68,24 +78,23 @@ function iniciarCalendarios(fechasOcupadas) {
 
     const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
     days.forEach(dayElem => {
-      const fechaISO = formatearLocal(dayElem.dateObj);
+      const fechaDMY = formatearDMY(dayElem.dateObj);
 
-      // Reset estilos
       dayElem.style.background = "";
       dayElem.style.color = "";
       dayElem.style.pointerEvents = "";
 
-      if (dayElem.dateObj < hoy) {           // Días pasados
+      if (dayElem.dateObj < hoy) {
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados
+      else if (fechasOcupadas[cabana]?.includes(fechaDMY)) {
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {                                 // Días disponibles
+      else {
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
       }
@@ -96,18 +105,16 @@ function iniciarCalendarios(fechasOcupadas) {
 
   const fpConfig = {
     mode: "single",
-    dateFormat: "d/m/Y",
+    dateFormat: "d/m/Y", // ✅ Día/mes/año
     minDate: "today",
-    locale: Flatpickr.l10ns.es,  // ✅ Cambio crucial
-
+    locale: "es",
     disable: [
       function(date) {
         const cabana = document.getElementById("cabaña").value.toLowerCase();
-        const fechaISO = formatearLocal(date);
-        return fechasOcupadas[cabana]?.includes(fechaISO);
+        const fechaDMY = formatearDMY(date);
+        return fechasOcupadas[cabana]?.includes(fechaDMY);
       }
     ],
-
     onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
     onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
     onChange: (selectedDates, dateStr, instance) => {
@@ -116,13 +123,11 @@ function iniciarCalendarios(fechasOcupadas) {
     }
   };
 
-  const fpEntrada = flatpickr("#entrada", fpConfig);
-  const fpSalida  = flatpickr("#salida", fpConfig);
+  flatpickr("#entrada", fpConfig);
+  flatpickr("#salida", fpConfig);
 
-  // 🔁 Cambiar cabaña repinta los calendarios
   document.getElementById("cabaña").addEventListener("change", () => {
-    fpEntrada.redraw();
-    fpSalida.redraw();
+    document.querySelectorAll(".flatpickr-calendar").forEach(cal => cal._flatpickr.redraw());
   });
 }
 
@@ -150,10 +155,10 @@ function calcularReserva() {
   resultado.style.display = "none";
 
   setTimeout(() => {
-    const [d, m, y] = entradaStr.split("/");
-    const fechaEntrada = new Date(`${y}-${m}-${d}`);
-    const [ds, ms, ys] = salidaStr.split("/");
-    const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
+    const [d,m,y] = entradaStr.split("/");
+    const fechaEntrada = new Date(y, m-1, d);
+    const [ds,ms,ys] = salidaStr.split("/");
+    const fechaSalida = new Date(ys, ms-1, ds);
     const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
 
     let total = 0, descuento = 0;
