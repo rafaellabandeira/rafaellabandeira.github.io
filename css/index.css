@@ -22,15 +22,14 @@
   color: #212121;
   font-weight: 500;
 }
-
-/* ===== HERO ===== */
+/* ===== HERO DEFINITIVO ===== */
 .hero {
-  background-image: url('/images/1000173073.jpg') !important;
+  background-image: url('/images/1000173073.jpg') !important; /* Ruta correcta */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  height: clamp(250px, 30vh, 350px); /* altura mínima 250px, máxima 350px, se ajusta al 30% del viewport */
+  height: clamp(180px, 25vh, 250px); /* Altura adaptable: mínima 180px, máxima 250px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,25 +39,26 @@
   text-align: center;
 }
 
-/* Capa oscura */
+/* Capa oscura para contraste */
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.35);
+  z-index: 1;
 }
 
-/* Contenido */
+/* Contenido sobre la imagen */
 .header-inner {
   position: relative;
   z-index: 2;
-  padding: 20px;
+  padding: 15px 20px;
   max-width: 900px;
 }
 
 .hero-title {
-  font-size: clamp(24px, 4vw, 34px); /* tamaño adaptable según pantalla */
-  margin-bottom: 10px;
+  font-size: clamp(22px, 4vw, 28px); /* Tamaño adaptable */
+  margin-bottom: 8px;
   text-shadow: 0 3px 10px rgba(0,0,0,0.6);
 }
 
@@ -70,6 +70,26 @@
   font-size: clamp(14px, 2.5vw, 18px);
   text-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hero {
+    height: clamp(150px, 25vh, 180px);
+  }
+
+  .hero-title {
+    font-size: clamp(18px, 5vw, 22px);
+  }
+
+  .hero-sub {
+    font-size: clamp(12px, 3vw, 16px);
+  }
+
+  .header-inner {
+    padding: 10px 15px;
+  }
+}
+
 /* ===== SECCIONES ===== */
 section {
   padding: 40px 20px;
