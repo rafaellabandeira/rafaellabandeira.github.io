@@ -25,7 +25,7 @@
 
 /* ===== HERO ===== */
 .hero {
-  background-image: url('../images/hero.jpg');
+  background-image: url('/images/1000173073.jpg'); /* ← RUTA CORRECTA */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -34,7 +34,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;   /* necesario para la capa oscura */
+  position: relative;
+
   color: #fff;
   text-align: center;
 }
