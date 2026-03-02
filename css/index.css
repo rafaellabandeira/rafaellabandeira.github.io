@@ -23,6 +23,7 @@
   font-weight: 500;
 }
 /* ===== HERO DEFINITIVO ===== */
+/* ===== HERO DEFINITIVO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg') !important; /* Ruta correcta */
   background-size: cover;
@@ -89,7 +90,6 @@
     padding: 10px 15px;
   }
 }
-
 /* ===== SECCIONES ===== */
 section {
   padding: 40px 20px;
