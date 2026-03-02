@@ -415,3 +415,48 @@ footer a { color: #4caf50; }
     font-size: 26px;
   }
 }
+
+/* ===== MARCO MOTOR DE RESERVAS ===== */
+#reserva-online {
+  padding: 40px 20px !important;
+}
+
+/* Caja del motor */
+.reserva-box {
+  max-width: 720px !important;
+  margin: 0 auto !important;
+
+  background: #ffffff !important;
+
+  /* 👉 CERCO VERDE */
+  border: 3px solid #4caf50 !important;
+  border-radius: 14px !important;
+
+  /* sombra suave natural */
+  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18) !important;
+
+  padding: 28px 26px !important;
+
+  transition: 0.3s ease !important;
+}
+
+/* pequeño efecto al pasar (queda muy fino) */
+.reserva-box:hover {
+  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28) !important;
+}
+
+/* Inputs más integrados con el marco */
+.reserva-box input,
+.reserva-box select {
+  border-radius: 6px !important;
+  border: 1px solid #ddd !important;
+  padding: 10px !important;
+  margin-bottom: 14px !important;
+  width: 100% !important;
+}
+
+/* Botón alineado con el estilo */
+.reserva-box button {
+  margin-top: 10px !important;
+}
+
