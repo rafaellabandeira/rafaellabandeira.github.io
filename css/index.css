@@ -1,490 +1,269 @@
-/* ================= INDEX.CSS DEFINITIVO ================= */
+// ================= MAIN.JS COMPLETO =================
 
-/* ===== NAVBAR MÁS DELGADO ===== */
-.navbar {
-  background: #fff !important;
-  padding: 6px 20px !important; /* menos altura */
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1000 !important;
+// ===== FORMATEO FECHA LOCAL (d/m/Y) =====
+function formatearLocal(fecha) {
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${d}/${m}/${y}`;
 }
 
-.nav-logo {
-  font-weight: bold !important;
-  font-size: 20px !important; /* mantiene tamaño logo */
-}
+// ===== CARGAR RESERVAS DESDE AIRBNB =====
+const ICAL_URL = "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es";
 
-.nav-menu {
-  list-style: none !important;
-  display: flex !important;
-  gap: 15px !important;
-}
+async function cargarReservasAirbnb() {
+  try {
+    const res = await fetch(ICAL_URL);
+    if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
+    const text = await res.text();
 
-.nav-link {
-  color: #212121 !important;
-  font-weight: 500 !important;
-  padding: 6px 8px !important; /* reduce altura de los links */
-}
-/* ===== HERO AJUSTADO ===== */
-.hero {
-  background-image: url('/images/1000173073.jpg') !important;
-  background-size: cover !important;
-  background-position: bottom center !important; /* siempre muestra parte inferior */
-  background-repeat: no-repeat !important;
+    const fechas = [];
+    const lines = text.split("\n");
+    let currentEvent = {};
+    for (let line of lines) {
+      if (line.startsWith("DTSTART")) currentEvent.start = line.split(":")[1];
+      if (line.startsWith("DTEND")) {
+        currentEvent.end = line.split(":")[1];
+        const start = new Date(currentEvent.start.slice(0,4)+'-'+currentEvent.start.slice(4,6)+'-'+currentEvent.start.slice(6,8));
+        const end = new Date(currentEvent.end.slice(0,4)+'-'+currentEvent.end.slice(4,6)+'-'+currentEvent.end.slice(6,8));
+        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) fechas.push(formatearLocal(new Date(d)));
+        currentEvent = {};
+      }
+    }
 
-  height: 70vh !important; /* más grande que antes */
-  min-height: 350px !important;
-
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-
-  color: #fff !important;
-  text-align: center !important;
-}
-
-.hero::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  background: rgba(0,0,0,0.35) !important;
-}
-
-.header-inner {
-  position: relative !important;
-  z-index: 2 !important;
-  padding: 20px !important;
-  max-width: 900px !important;
-}
-
-/* Texto principal del Hero */
-.hero-title-top {
-  font-size: 32px !important;
-  color: #ffffff !important; /* blanco */
-  font-weight: 600 !important;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
-  margin-bottom: 6px !important;
-}
-
-.hero-title-bottom {
-  font-size: 28px !important;
-  color: #FFD54F !important; /* amarillo */
-  font-weight: 600 !important;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
-}
-
-/* Hero responsive */
-@media (max-width: 768px) {
-  .hero { height: 55vh !important; }
-
-  .hero-title-top { font-size: 24px !important; }
-  .hero-title-bottom { font-size: 20px !important; }
-}
-/* ===== SECCIONES ===== */
-section {
-  padding: 40px 20px !important;
-  max-width: 1200px !important;
-  margin: auto !important;
-}
-.cabanias-grid {
-  display: flex !important;
-  gap: 20px !important;
-  flex-wrap: wrap !important;
-}
-
-.cabin-card {
-  background: #fff !important;
-  padding: 16px !important;              /* un poco menos de padding */
-  border-radius: 10px !important;
-  flex: 1 1 280px !important;            /* un poco más estrecha */
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important; /* sombra verde suave */
-  border: 2px solid #4caf50 !important;  /* borde verde */
-  transition: 0.25s !important;
-}
-
-.cabin-card:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(76, 175, 80, 0.4) !important; /* sombra verde más intensa al pasar */
-}
-
-/* ===== CARRUSEL ===== */
-.carousel-container {
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-.carousel {
-  display: flex !important;
-  transition: transform 0.3s ease-in-out !important;
-}
-
-.carousel-slide img {
-  width: 100% !important;
-  border-radius: 8px !important;
-}
-
-.carousel-button {
-  position: absolute !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  background: rgba(0,0,0,0.35) !important;
-  color: #fff !important;
-  border: none !important;
-  font-size: 24px !important;
-  cursor: pointer !important;
-  padding: 8px 12px !important;
-  border-radius: 50% !important;
-}
-
-/* ===== MOTOR DE RESERVAS ===== */
-.reserva-box {
-  background: #fff !important;
-  padding: 20px !important;
-  border-radius: 10px !important;
-  max-width: 450px !important;
-  margin: 20px auto !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
-  border: 1px solid #eee !important;
-}
-
-.reserva-box label {
-  display: block !important;
-  margin-top: 12px !important;
-  font-weight: 500 !important;
-}
-
-.reserva-box input,
-.reserva-box select {
-  width: 100% !important;
-  padding: 8px 10px !important;
-  margin-top: 4px !important;
-  border: 1px solid #ccc !important;
-  border-radius: 6px !important;
-}
-
-.reserva-box .resumen-reserva {
-  margin-top: 12px !important;
-  background: #f0f0f0 !important;
-  padding: 10px !important;
-  border-radius: 6px !important;
-}
-
-.spinner {
-  display: none !important;
-  width: 40px !important;
-  height: 40px !important;
-  border: 4px solid #ccc !important;
-  border-top: 4px solid #4caf50 !important;
-  border-radius: 50% !important;
-  animation: girar 1s linear infinite !important;
-  margin: 10px auto !important;
-}
-
-@keyframes girar {
-  100% { transform: rotate(360deg) !important; }
-}
-
-/* ===== FLATPICKR ===== */
-.flatpickr-calendar {
-  font-family: inherit !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-}
-
-.flatpickr-day {
-  border-radius: 6px !important;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  background: #212121 !important;
-  color: #fff !important;
-  text-align: center !important;
-  padding: 20px !important;
-  margin-top: 40px !important;
-}
-
-footer a {
-  color: #4caf50 !important;
-}
-
-/* ===== BOTÓN WHATSAPP ===== */
-#whatsappButton {
-  position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
-  width: 60px !important;
-  height: 60px !important;
-  z-index: 1000 !important;
-}
-
-#whatsappButton img {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .cabanias-grid { flex-direction: column !important; }
-  .nav-menu { flex-direction: column !important; gap: 10px !important; }
-
-  .hero {
-    height: 50vh !important;
-  }
-
-  .hero-title { font-size: 26px !important; }
-  .hero-sub { font-size: 16px !important; }
-}
-
-/* ===== SECCIONES ===== */
-section {
-  padding: 40px 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-.cabanias-grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.cabin-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1 1 300px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border: 1px solid #eee;
-  transition: 0.25s;
-}
-
-.cabin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-}
-
-/* ===== CARRUSEL ===== */
-.carousel-container {
-  position: relative;
-  overflow: hidden;
-}
-.carousel {
-  display: flex;
-  transition: transform 0.3s ease-in-out;
-}
-.carousel-slide img {
-  width: 100%;
-  border-radius: 8px;
-}
-.carousel-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.35);
-  color: #fff;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 50%;
-}
-
-/* ===== MOTOR DE RESERVAS ===== */
-.reserva-box {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 450px;
-  margin: 20px auto;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-  border: 1px solid #eee;
-}
-
-.reserva-box label {
-  display: block;
-  margin-top: 12px;
-  font-weight: 500;
-}
-
-.reserva-box input,
-.reserva-box select {
-  width: 100%;
-  padding: 8px 10px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.reserva-box .resumen-reserva {
-  margin-top: 12px;
-  background: #f0f0f0;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.spinner {
-  display: none;
-  width: 40px;
-  height: 40px;
-  border: 4px solid #ccc;
-  border-top: 4px solid #4caf50;
-  border-radius: 50%;
-  animation: girar 1s linear infinite;
-  margin: 10px auto;
-}
-
-@keyframes girar {
-  100% { transform: rotate(360deg); }
-}
-
-/* ===== FLATPICKR ===== */
-.flatpickr-calendar {
-  font-family: inherit;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  z-index: 1000;
-}
-
-.flatpickr-day {
-  border-radius: 6px !important;
-}
-
-/* Días disponibles */
-.flatpickr-day.disponible {
-  background: #e8f5e9 !important;
-  color: #000 !important;
-}
-
-/* Días ocupados */
-.flatpickr-day.ocupado {
-  background: #e53935 !important;
-  color: #fff !important;
-  cursor: not-allowed;
-}
-
-/* Días pasados */
-.flatpickr-day.pasado {
-  background: #212121 !important;
-  color: #fff !important;
-  cursor: not-allowed;
-}
-
-/* Hover solo días disponibles */
-.flatpickr-day.disponible:hover {
-  background: #66bb6a !important;
-  color: #fff !important;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  background: #212121;
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-}
-
-footer a { color: #4caf50; }
-
-/* ===== BOTÓN WHATSAPP ===== */
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1000;
-}
-
-#whatsappButton img {
-  width: 100%;
-  height: 100%;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .cabanias-grid { flex-direction: column; }
-  .nav-menu { flex-direction: column; gap: 10px; }
-
-  .hero {
-    height: 320px;
-  }
-
-  .hero-title {
-    font-size: 26px;
+    return { campanilla: fechas, tejo: fechas };
+  } catch (err) {
+    console.error(err);
+    return { campanilla: [], tejo: [] };
   }
 }
 
-/* ===== MARCO MOTOR DE RESERVAS ===== */
-#reserva-online {
-  padding: 40px 20px !important;
+// ===== CARGAR RESERVAS DESDE BACKEND (simulado) =====
+async function cargarReservasBackend() {
+  // Ejemplo de backend; reemplazar URL real
+  try {
+    const res = await fetch("https://tu-backend.onrender.com/reservas");
+    if (!res.ok) throw new Error("No se pudieron cargar las reservas del backend");
+    const data = await res.json();
+    // Convertir a d/m/Y
+    const convertidas = {};
+    for (const cabana in data) {
+      convertidas[cabana] = data[cabana].map(f => {
+        const fecha = new Date(f);
+        return formatearLocal(fecha);
+      });
+    }
+    return convertidas;
+  } catch (err) {
+    console.error(err);
+    return { campanilla: [], tejo: [] };
+  }
 }
 
-/* Caja del motor */
-.reserva-box {
-  max-width: 720px !important;
-  margin: 0 auto !important;
+// ===== INICIALIZACIÓN =====
+document.addEventListener("DOMContentLoaded", async () => {
+  initCarousel();
+  initHamburger();
 
-  background: #ffffff !important;
+  // Combinar reservas de Airbnb y Backend
+  const reservasAirbnb = await cargarReservasAirbnb();
+  const reservasBackend = await cargarReservasBackend();
+  const reservas = { campanilla: [], tejo: [] };
 
-  /* 👉 CERCO VERDE */
-  border: 3px solid #4caf50 !important;
-  border-radius: 14px !important;
+  for (const cabana of ["campanilla","tejo"]) {
+    reservas[cabana] = [...new Set([...(reservasAirbnb[cabana]||[]), ...(reservasBackend[cabana]||[])])];
+  }
 
-  /* sombra suave natural */
-  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18) !important;
+  iniciarCalendarios(reservas);
 
-  padding: 28px 26px !important;
+  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar").addEventListener("click", reservar);
+});
 
-  transition: 0.3s ease !important;
+// ===== CALENDARIO CON FLATPICKR MEJORADO =====
+function iniciarCalendarios(fechasOcupadas) {
+  const aviso = document.getElementById("avisoFechas");
+
+  function actualizarAviso(selectedDates) {
+    const entrada = selectedDates[0];
+    const salida = selectedDates[1];
+    if (!entrada || !salida) {
+      aviso.style.display = "none";
+      return;
+    }
+    const cabana = document.getElementById("cabaña").value.toLowerCase();
+    let actual = new Date(entrada);
+    const fin = new Date(salida);
+    let ocupado = false;
+    while (actual < fin) {
+      const fechaISO = formatearLocal(actual);
+      if (fechasOcupadas[cabana]?.includes(fechaISO)) { ocupado = true; break; }
+      actual.setDate(actual.getDate() + 1);
+    }
+    aviso.style.display = ocupado ? "block" : "none";
+  }
+
+  function pintarDias(instance) {
+    const cabana = document.getElementById("cabaña").value.toLowerCase();
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+
+    const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
+    days.forEach(dayElem => {
+      const fechaISO = formatearLocal(dayElem.dateObj);
+      dayElem.style.borderRadius = "6px";
+
+      // Días de relleno (prevMonthDay/nextMonthDay)
+      if (dayElem.classList.contains("prevMonthDay") || dayElem.classList.contains("nextMonthDay")) {
+        dayElem.style.background = "#f0fdf4";
+        dayElem.style.color = "#333";
+        dayElem.style.pointerEvents = "";
+        if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+          dayElem.style.background = "#e53935";
+          dayElem.style.color = "#fff";
+          dayElem.style.pointerEvents = "none";
+        }
+        return;
+      }
+
+      // Días pasados
+      if (dayElem.dateObj < hoy) {
+        dayElem.style.background = "#212121";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      }
+      // Días ocupados
+      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+        dayElem.style.background = "#e53935";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      }
+      // Días disponibles
+      else {
+        dayElem.style.background = "#e8f5e9";
+        dayElem.style.color = "#000";
+        dayElem.style.pointerEvents = "";
+      }
+    });
+  }
+
+  const fpConfig = {
+    mode: "single",
+    dateFormat: "d/m/Y",
+    minDate: "today",
+    showDaysInNextAndPreviousMonths: true,
+    enable: [date => true],
+    locale: {
+      firstDayOfWeek: 1,
+      weekdays: {
+        shorthand: ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+        longhand: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado']
+      },
+      months: {
+        shorthand: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        longhand: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+      }
+    },
+    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
+    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
+    onChange: (selectedDates, dateStr, instance) => {
+      actualizarAviso(selectedDates);
+      pintarDias(instance);
+    },
+    disable: [
+      function(date) {
+        const cabana = document.getElementById("cabaña").value.toLowerCase();
+        const fechaISO = formatearLocal(date);
+        return fechasOcupadas[cabana]?.includes(fechaISO);
+      }
+    ]
+  };
+
+  flatpickr("#entrada", fpConfig);
+  flatpickr("#salida", fpConfig);
+
+  document.getElementById("cabaña").addEventListener("change", () => {
+    const fpEntrada = flatpickr("#entrada");
+    const fpSalida = flatpickr("#salida");
+    pintarDias(fpEntrada);
+    pintarDias(fpSalida);
+  });
 }
 
-/* pequeño efecto al pasar (queda muy fino) */
-.reserva-box:hover {
-  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28) !important;
+// ===== CÁLCULO RESERVA =====
+function esTemporadaAlta(fecha) {
+  const mes = fecha.getMonth() + 1;
+  const dia = fecha.getDate();
+  return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
 }
 
-/* Inputs más integrados con el marco */
-.reserva-box input,
-.reserva-box select {
-  border-radius: 6px !important;
-  border: 1px solid #ddd !important;
-  padding: 10px !important;
-  margin-bottom: 14px !important;
-  width: 100% !important;
+function calcularReserva() {
+  const cabaña = document.getElementById("cabaña").value;
+  const entradaStr = document.getElementById("entrada").value;
+  const salidaStr = document.getElementById("salida").value;
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if (!entradaStr || !salidaStr) { alert("Selecciona fechas"); return; }
+  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
+
+  const spinner = document.getElementById("spinner");
+  const resultado = document.getElementById("resultado");
+  spinner.style.display = "block";
+  resultado.style.display = "none";
+
+  setTimeout(() => {
+    const [d, m, y] = entradaStr.split("/");
+    const fechaEntrada = new Date(`${y}-${m}-${d}`);
+    const [ds, ms, ys] = salidaStr.split("/");
+    const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
+    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
+
+    let total = 0, descuento = 0;
+    let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
+
+    for (let i=0; i<noches; i++) {
+      const dia = new Date(fechaEntrada);
+      dia.setDate(dia.getDate() + i);
+      const dow = dia.getDay();
+      let precio;
+
+      if (esTemporadaAlta(dia)) {
+        precio = 150;
+      } else {
+        if (dow === 5 || dow === 6) precio = cabaña === "campanilla" ? 150 : 140;
+        else precio = cabaña === "campanilla" ? 115 : 110;
+      }
+
+      total += precio;
+    }
+
+    if (esTemporadaAlta(fechaEntrada) && noches >= 6) descuento = total * 0.10;
+    else if (!esTemporadaAlta(fechaEntrada) && noches >= 3) descuento = total * 0.10;
+
+    total -= descuento;
+
+    if (noches < minNoches) {
+      alert(`Mínimo ${minNoches} noches en estas fechas`);
+      spinner.style.display = "none";
+      return;
+    }
+
+    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
+    document.getElementById("resto").innerText = (total - 50).toFixed(2);
+
+    spinner.style.display = "none";
+    resultado.style.display = "block";
+  }, 300);
 }
 
-/* Botón alineado con el estilo */
-.reserva-box button {
-  margin-top: 10px !important;
-}
-/* ===== DÍAS FUERA DEL MES SUAVIZADOS (ANTES Y DESPUÉS) ===== */
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay {
-  background: #f0fdf4 !important;  /* verde muy suave */
-  color: #333 !important;           /* número visible */
-  opacity: 1 !important;            /* quitar gris apagado */
-  border: 1px solid transparent !important;
+// ===== RESERVAR =====
+function reservar() {
+  alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
 }
 
-/* Hover igual que días normales */
-.flatpickr-day.prevMonthDay:hover,
-.flatpickr-day.nextMonthDay:hover {
-  background: #4caf50 !important;
-  color: #fff !important;
-}
-
-/* Selección igual que días normales */
-.flatpickr-day.prevMonthDay.selected,
-.flatpickr-day.nextMonthDay.selected {
-  background: #4caf50 !important;
-  color: #fff !important;
-}
-
-/* Dentro de un rango seleccionado */
-.flatpickr-day.prevMonthDay.inRange,
-.flatpickr-day.nextMonthDay.inRange {
-  background: #d9f2e6 !important;
-  color: #333 !important;
-}
+// ===== UI =====
+function initCarousel() {}
+function initHamburger() {}
