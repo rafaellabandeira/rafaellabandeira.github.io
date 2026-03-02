@@ -1,61 +1,4 @@
-// ================= MAIN.JS COMPLETO =================
-
-// ===== FORMATEO FECHA LOCAL (d/m/Y) =====
-function formatearLocal(fecha) {
-  const y = fecha.getFullYear();
-  const m = String(fecha.getMonth() + 1).padStart(2, "0");
-  const d = String(fecha.getDate()).padStart(2, "0");
-  return `${d}/${m}/${y}`;
-}
-
-// ===== CARGAR RESERVAS DESDE AIRBNB =====
-const ICAL_URL = "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es";
-
-async function cargarReservasAirbnb() {
-  try {
-    const res = await fetch(ICAL_URL);
-    if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
-    const text = await res.text();
-
-    const fechas = [];
-    const lines = text.split("\n");
-    let currentEvent = {};
-    for (let line of lines) {
-      if (line.startsWith("DTSTART")) {
-        currentEvent.start = line.split(":")[1];
-      }
-      if (line.startsWith("DTEND")) {
-        currentEvent.end = line.split(":")[1];
-        // Convertir rango a días
-        const start = new Date(currentEvent.start.slice(0,4)+'-'+currentEvent.start.slice(4,6)+'-'+currentEvent.start.slice(6,8));
-        const end = new Date(currentEvent.end.slice(0,4)+'-'+currentEvent.end.slice(4,6)+'-'+currentEvent.end.slice(6,8));
-        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
-          fechas.push(formatearLocal(new Date(d)));
-        }
-        currentEvent = {};
-      }
-    }
-
-    return { campanilla: fechas, tejo: fechas }; // mismo array para ambas cabañas
-  } catch (err) {
-    console.error(err);
-    return { campanilla: [], tejo: [] };
-  }
-}
-
-// ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded", async () => {
-  initCarousel();
-  initHamburger();
-
-  const reservas = await cargarReservasAirbnb();
-  iniciarCalendarios(reservas);
-
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
-});
-
-// ===== CALENDARIO CON FLATPICKR =====
+// ===== INICIALIZACIÓN DE CALENDARIO MEJORADO =====
 function iniciarCalendarios(fechasOcupadas) {
   const aviso = document.getElementById("avisoFechas");
 
@@ -91,29 +34,31 @@ function iniciarCalendarios(fechasOcupadas) {
 
     const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
     days.forEach(dayElem => {
-      // Solo aplicar estilos a días visibles del mes actual
+      const fechaISO = formatearLocal(dayElem.dateObj);
+      dayElem.style.borderRadius = "6px";
+
+      // Días fuera del mes → aplicar estilo suave y seleccionable
       if (dayElem.classList.contains("prevMonthDay") || dayElem.classList.contains("nextMonthDay")) {
-        dayElem.style.background = "";
-        dayElem.style.color = "";
+        dayElem.style.background = "#f0fdf4";
+        dayElem.style.color = "#333";
         dayElem.style.pointerEvents = "";
         return;
       }
 
-      const fechaISO = formatearLocal(dayElem.dateObj);
-
-      dayElem.style.borderRadius = "6px";
-
-      if (dayElem.dateObj < hoy) {           // Días pasados
+      // Días pasados
+      if (dayElem.dateObj < hoy) {
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados
+      // Días ocupados
+      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {                                 // Días disponibles
+      // Días disponibles
+      else {
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
         dayElem.style.pointerEvents = "";
@@ -125,6 +70,8 @@ function iniciarCalendarios(fechasOcupadas) {
     mode: "single",
     dateFormat: "d/m/Y",
     minDate: "today",
+    showDaysInNextAndPreviousMonths: true, // MUY IMPORTANTE
+    enable: [date => true],                 // todos los días habilitados
     locale: {
       firstDayOfWeek: 1,
       weekdays: {
@@ -136,105 +83,30 @@ function iniciarCalendarios(fechasOcupadas) {
         longhand: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
       }
     },
+    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
+    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
+    onChange: (selectedDates, dateStr, instance) => {
+      actualizarAviso(selectedDates);
+      pintarDias(instance);
+    },
     disable: [
       function(date) {
         const cabana = document.getElementById("cabaña").value.toLowerCase();
         const fechaISO = formatearLocal(date);
         return fechasOcupadas[cabana]?.includes(fechaISO);
       }
-    ],
-    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
-    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
-    onChange: (selectedDates, dateStr, instance) => {
-      actualizarAviso(selectedDates);
-      pintarDias(instance);
-    }
+    ]
   };
 
+  // Inicializar flatpickr en ambos inputs
   flatpickr("#entrada", fpConfig);
   flatpickr("#salida", fpConfig);
 
+  // Cambiar cabaña actual → repintar calendario
   document.getElementById("cabaña").addEventListener("change", () => {
-    fpConfig.onMonthChange([], "", flatpickr("#entrada"));
-    fpConfig.onMonthChange([], "", flatpickr("#salida"));
+    const fpEntrada = flatpickr("#entrada");
+    const fpSalida = flatpickr("#salida");
+    pintarDias(fpEntrada);
+    pintarDias(fpSalida);
   });
 }
-
-// ===== CÁLCULO RESERVA =====
-function esTemporadaAlta(fecha) {
-  const mes = fecha.getMonth() + 1;
-  const dia = fecha.getDate();
-  return (mes === 7 || mes === 8) || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
-}
-
-function calcularReserva() {
-  const cabaña = document.getElementById("cabaña").value;
-  const entradaStr = document.getElementById("entrada").value;
-  const salidaStr = document.getElementById("salida").value;
-  const nombre = document.getElementById("nombre").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const email = document.getElementById("email").value.trim();
-
-  if (!entradaStr || !salidaStr) { alert("Selecciona fechas"); return; }
-  if (!nombre || !telefono || !email) { alert("Completa todos los datos personales"); return; }
-
-  const spinner = document.getElementById("spinner");
-  const resultado = document.getElementById("resultado");
-  spinner.style.display = "block";
-  resultado.style.display = "none";
-
-  setTimeout(() => {
-    const [d, m, y] = entradaStr.split("/");
-    const fechaEntrada = new Date(`${y}-${m}-${d}`);
-    const [ds, ms, ys] = salidaStr.split("/");
-    const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
-    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
-
-    let total = 0, descuento = 0;
-    let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
-
-    for (let i=0; i<noches; i++) {
-      const dia = new Date(fechaEntrada);
-      dia.setDate(dia.getDate() + i);
-      const dow = dia.getDay();
-      let precio;
-
-      if (esTemporadaAlta(dia)) {
-        precio = cabaña === "campanilla" ? 150 : 150;
-      } else {
-        if (dow === 5 || dow === 6) precio = cabaña === "campanilla" ? 150 : 140;
-        else precio = cabaña === "campanilla" ? 115 : 110;
-      }
-
-      total += precio;
-    }
-
-    if (esTemporadaAlta(fechaEntrada) && noches >= 6) descuento = total * 0.10;
-    else if (!esTemporadaAlta(fechaEntrada) && noches >= 3) descuento = total * 0.10;
-
-    total -= descuento;
-
-    if (noches < minNoches) {
-      alert(`Mínimo ${minNoches} noches en estas fechas`);
-      spinner.style.display = "none";
-      return;
-    }
-
-    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
-    document.getElementById("total").innerText = total.toFixed(2);
-    document.getElementById("descuento").innerText = descuento.toFixed(2);
-    document.getElementById("resto").innerText = (total - 50).toFixed(2);
-
-    spinner.style.display = "none";
-    resultado.style.display = "block";
-  }, 300);
-}
-
-// ===== RESERVAR =====
-function reservar() {
-  alert("Aquí se conectará el pago de 50 € (Square o pasarela elegida).");
-}
-
-// ===== UI =====
-function initCarousel() {}
-function initHamburger() {}
