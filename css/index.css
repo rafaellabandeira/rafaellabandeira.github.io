@@ -25,17 +25,12 @@
 
 /* ===== HERO ===== */
 .hero {
-  background-image: url('/images/1000173073.jpg'); /* ← RUTA CORRECTA */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
+  background: url('/images/1000173073.jpg') center center / cover no-repeat !important;
   height: 420px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-
   color: #fff;
   text-align: center;
 }
@@ -71,6 +66,20 @@
   text-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 
+/* ===== RESPONSIVE HERO ===== */
+@media (max-width: 768px) {
+  .hero {
+    height: 320px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+  }
+}
 /* ===== SECCIONES ===== */
 section {
   padding: 40px 20px;
