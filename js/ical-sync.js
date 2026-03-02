@@ -4,8 +4,7 @@
 const BACKEND_RESERVAS = "https://tu-backend.onrender.com/reservas"; // Cambia por tu URL
 
 /**
- * Carga las fechas ocupadas desde el backend
- * y devuelve un objeto { campanilla: [], tejo: [] }
+ * Carga las fechas ocupadas desde el backend y devuelve un objeto { campanilla: [], tejo: [] }
  */
 export async function cargarReservas() {
   try {
@@ -20,8 +19,10 @@ export async function cargarReservas() {
 }
 
 /**
- * Función para marcar días ocupados y pasados en Flatpickr
- * Se usa desde main.js en iniciarCalendarios()
+ * Pinta los días de Flatpickr con estilos según disponibilidad
+ * @param {FlatpickrInstance} instance - Instancia de flatpickr
+ * @param {Object} fechasOcupadas - { campanilla: [], tejo: [] }
+ * @param {string} cabana - "campanilla" o "tejo"
  */
 export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
   const hoy = new Date();
@@ -37,6 +38,15 @@ export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
     dayElem.style.color = "";
     dayElem.style.pointerEvents = "";
 
+    // Días fuera del mes actual
+    if (dayElem.classList.contains("prevMonthDay") || dayElem.classList.contains("nextMonthDay")) {
+      dayElem.style.background = "#f0fdf4";  // verde suave
+      dayElem.style.color = "#333";
+      dayElem.style.pointerEvents = "";
+      dayElem.style.borderRadius = "6px";
+      return;
+    }
+
     // Días pasados
     if (dayElem.dateObj < hoy) {
       dayElem.classList.add("pasado");
@@ -44,7 +54,7 @@ export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
       dayElem.style.color = "#fff";
       dayElem.style.pointerEvents = "none";
     }
-    // Días ocupados según iCal/backend
+    // Días ocupados según backend
     else if (fechasOcupadas[cabana]?.includes(fechaISO)) {
       dayElem.classList.add("ocupado");
       dayElem.style.background = "#e53935";
@@ -56,6 +66,7 @@ export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
       dayElem.classList.add("disponible");
       dayElem.style.background = "#e8f5e9";
       dayElem.style.color = "#000";
+      dayElem.style.pointerEvents = "";
     }
 
     dayElem.style.borderRadius = "6px";
