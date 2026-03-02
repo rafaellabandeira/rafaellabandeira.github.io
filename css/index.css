@@ -83,12 +83,6 @@ section {
   max-width: 1200px !important;
   margin: auto !important;
 }
-
-.cabanias-grid {
-  display: flex !important;
-  gap: 20px !important;
-  flex-wrap: wrap !important;
-}
 .cabanias-grid {
   display: flex !important;
   gap: 20px !important;
