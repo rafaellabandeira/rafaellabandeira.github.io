@@ -459,4 +459,32 @@ footer a { color: #4caf50; }
 .reserva-box button {
   margin-top: 10px !important;
 }
+/* ===== DÍAS DE OTRO MES SUAVIZADOS ===== */
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  background: #f0fdf4 !important;  /* verde muy suave, parecido al branding */
+  color: #333 !important;
+  opacity: 1 !important;
+  border: 1px solid transparent !important;
+}
 
+/* Hover como días normales */
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover {
+  background: #4caf50 !important;
+  color: #fff !important;
+}
+
+/* Selección de rango/fecha */
+.flatpickr-day.prevMonthDay.selected,
+.flatpickr-day.nextMonthDay.selected {
+  background: #4caf50 !important;
+  color: #fff !important;
+}
+
+/* Días dentro de un rango seleccionado */
+.flatpickr-day.prevMonthDay.inRange,
+.flatpickr-day.nextMonthDay.inRange {
+  background: #d9f2e6 !important; /* verde suave de rango */
+  color: #333 !important;
+}
