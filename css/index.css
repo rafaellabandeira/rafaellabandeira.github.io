@@ -26,16 +26,15 @@
   font-weight: 500 !important;
   padding: 6px 8px !important; /* reduce altura de los links */
 }
-
-/* ===== HERO ===== */
+/* ===== HERO AJUSTADO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg') !important;
   background-size: cover !important;
   background-position: bottom center !important; /* siempre muestra parte inferior */
   background-repeat: no-repeat !important;
 
-  height: 60vh !important; /* ajustable, ocupa la mitad de la pantalla */
-  min-height: 300px !important; /* no se quede demasiado pequeño */
+  height: 70vh !important; /* más grande que antes */
+  min-height: 350px !important;
 
   display: flex !important;
   align-items: center !important;
@@ -46,7 +45,6 @@
   text-align: center !important;
 }
 
-/* Capa oscura para resaltar texto */
 .hero::before {
   content: "" !important;
   position: absolute !important;
@@ -54,7 +52,6 @@
   background: rgba(0,0,0,0.35) !important;
 }
 
-/* Contenido sobre la imagen */
 .header-inner {
   position: relative !important;
   z-index: 2 !important;
@@ -62,21 +59,29 @@
   max-width: 900px !important;
 }
 
-.hero-title {
-  font-size: 34px !important;
-  margin-bottom: 10px !important;
+/* Texto principal del Hero */
+.hero-title-top {
+  font-size: 32px !important;
+  color: #ffffff !important; /* blanco */
+  font-weight: 600 !important;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
+  margin-bottom: 6px !important;
+}
+
+.hero-title-bottom {
+  font-size: 28px !important;
+  color: #FFD54F !important; /* amarillo */
+  font-weight: 600 !important;
   text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
 }
 
-.hero-title span {
-  color: #FFD54F !important;
-}
+/* Hero responsive */
+@media (max-width: 768px) {
+  .hero { height: 55vh !important; }
 
-.hero-sub {
-  font-size: 18px !important;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6) !important;
+  .hero-title-top { font-size: 24px !important; }
+  .hero-title-bottom { font-size: 20px !important; }
 }
-
 /* ===== SECCIONES ===== */
 section {
   padding: 40px 20px !important;
@@ -91,21 +96,18 @@ section {
 
 .cabin-card {
   background: #fff !important;
-  padding: 20px !important;
+  padding: 16px !important;              /* un poco menos de padding */
   border-radius: 10px !important;
-  flex: 1 1 300px !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-  border: 1px solid #eee !important;
+  flex: 1 1 280px !important;            /* un poco más estrecha */
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important; /* sombra verde suave */
+  border: 2px solid #4caf50 !important;  /* borde verde */
   transition: 0.25s !important;
 }
 
 .cabin-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 18px rgba(76, 175, 80, 0.4) !important; /* sombra verde más intensa al pasar */
 }
-
-
-
 
 /* ===== CARRUSEL ===== */
 .carousel-container {
