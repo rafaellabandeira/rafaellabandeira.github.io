@@ -1,90 +1,81 @@
 /* ================= INDEX.CSS ================= */
 /* ===== NAVBAR ULTRA COMPACTO ===== */
 .navbar {
-  background: #fff;
-  padding: 4px 20px;          /* mínimo espacio vertical */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+  background: #fff !important;
+  padding: 4px 16px !important; /* mínimo espacio */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
 }
 
+/* Mantener tamaño del logo */
 .nav-logo {
-  font-weight: bold;
-  font-size: 20px;           /* se mantiene el tamaño original */
-}
-
-.nav-menu {
-  list-style: none;
-  display: flex;
-  gap: 12px;                 /* menos separación entre links */
-}
-
-.nav-link {
-  color: #212121;
-  font-weight: 500;
+  font-weight: bold !important;
+  font-size: 20px !important;
 }
 
 /* ===== HERO ULTRA COMPACTO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg') !important;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 
-  height: 55vh;              /* mucho más compacto, ocupa la mitad de la pantalla */
-  min-height: 220px;         /* evita que quede demasiado pequeño en móviles */
+  height: 35vh !important;   /* ocupa solo 35% de la altura de la ventana */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-
-  color: #fff;
-  text-align: center;
+  color: #fff !important;
+  text-align: center !important;
 }
 
-/* Capa oscura */
+/* Capa oscura para que el texto destaque */
 .hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.35) !important;
 }
 
 /* Contenido sobre la imagen */
 .header-inner {
-  position: relative;
-  z-index: 2;
-  padding: 8px 20px;       /* padding más compacto */
-  max-width: 900px;
+  position: relative !important;
+  z-index: 2 !important;
+  padding: 10px !important;
+  max-width: 900px !important;
 }
 
 .hero-title {
-  font-size: 32px;           /* ligeramente más pequeño para encajar */
-  margin-bottom: 6px;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+  font-size: 28px !important;
+  margin-bottom: 6px !important;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6) !important;
 }
 
 .hero-title span {
-  color: #FFD54F;
+  color: #FFD54F !important;
 }
 
 .hero-sub {
-  font-size: 15px;           /* más compacto */
-  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  font-size: 14px !important;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6) !important;
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 2px 12px !important;
+  }
   .hero {
-    height: 50vh;
+    height: 30vh !important;  /* más compacto en móvil */
   }
   .hero-title {
-    font-size: 24px;
+    font-size: 22px !important;
   }
   .hero-sub {
-    font-size: 13px;
+    font-size: 12px !important;
   }
 }
 /* ===== SECCIONES ===== */
