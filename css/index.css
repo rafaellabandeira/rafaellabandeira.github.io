@@ -1,9 +1,9 @@
 /* ================= INDEX.CSS ================= */
-/* ===== NAVBAR ===== */
+/* ===== NAVBAR ULTRA COMPACTO ===== */
 .navbar {
   background: #fff;
-  padding: 6px 20px; /* aún más compacto */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 4px 20px;          /* mínimo espacio vertical */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -11,23 +11,30 @@
 
 .nav-logo {
   font-weight: bold;
-  font-size: 20px; /* logo mantiene su tamaño */
+  font-size: 20px;           /* se mantiene el tamaño original */
 }
 
 .nav-menu {
   list-style: none;
   display: flex;
-  gap: 16px;
+  gap: 12px;                 /* menos separación entre links */
 }
 
-/* ===== HERO COMPACTO ===== */
+.nav-link {
+  color: #212121;
+  font-weight: 500;
+}
+
+/* ===== HERO ULTRA COMPACTO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg') !important;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  height: 180px; /* más reducido */
+  height: 55vh;              /* mucho más compacto, ocupa la mitad de la pantalla */
+  min-height: 220px;         /* evita que quede demasiado pequeño en móviles */
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,14 +56,14 @@
 .header-inner {
   position: relative;
   z-index: 2;
-  padding: 5px 15px; /* compacto */
+  padding: 8px 20px;       /* padding más compacto */
   max-width: 900px;
 }
 
 .hero-title {
-  font-size: 22px; /* más pequeño */
-  margin-bottom: 4px;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  font-size: 32px;           /* ligeramente más pequeño para encajar */
+  margin-bottom: 6px;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
 }
 
 .hero-title span {
@@ -64,29 +71,22 @@
 }
 
 .hero-sub {
-  font-size: 14px; /* más compacto */
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  font-size: 15px;           /* más compacto */
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .hero {
-    height: 140px;
+    height: 50vh;
   }
-
   .hero-title {
-    font-size: 18px;
+    font-size: 24px;
   }
-
   .hero-sub {
-    font-size: 12px;
-  }
-
-  .nav-menu {
-    gap: 8px;
+    font-size: 13px;
   }
 }
-
 /* ===== SECCIONES ===== */
 section {
   padding: 40px 20px;
