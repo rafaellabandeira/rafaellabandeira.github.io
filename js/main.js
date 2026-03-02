@@ -1,69 +1,4 @@
-// ================= MAIN.JS COMPLETO MEJORADO =================
-
-// ===== FORMATEO FECHA LOCAL (d/m/Y) =====
-function formatearLocal(fecha) {
-  const y = fecha.getFullYear();
-  const m = String(fecha.getMonth() + 1).padStart(2, "0");
-  const d = String(fecha.getDate()).padStart(2, "0");
-  return `${d}/${m}/${y}`;
-}
-
-// ===== CARGAR RESERVAS DESDE AIRBNB =====
-const ICAL_URL = "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es";
-
-async function cargarReservasAirbnb() {
-  try {
-    const res = await fetch(ICAL_URL);
-    if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
-    const text = await res.text();
-
-    const fechas = [];
-    const lines = text.split("\n");
-    let currentEvent = {};
-    for (let line of lines) {
-      if (line.startsWith("DTSTART")) currentEvent.start = line.split(":")[1];
-      if (line.startsWith("DTEND")) {
-        currentEvent.end = line.split(":")[1];
-        const start = new Date(`${currentEvent.start.slice(0,4)}-${currentEvent.start.slice(4,6)}-${currentEvent.start.slice(6,8)}`);
-        const end = new Date(`${currentEvent.end.slice(0,4)}-${currentEvent.end.slice(4,6)}-${currentEvent.end.slice(6,8)}`);
-        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
-          fechas.push(formatearLocal(new Date(d)));
-        }
-        currentEvent = {};
-      }
-    }
-
-    return { campanilla: fechas, tejo: fechas };
-  } catch (err) {
-    console.error(err);
-    return { campanilla: [], tejo: [] };
-  }
-}
-
-// ===== IMPORTAR RESERVAS BACKEND =====
-import { cargarReservas as cargarReservasBackend } from './ical-sync.js';
-
-// ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded", async () => {
-  initCarousel();
-  initHamburger();
-
-  const reservasAirbnb = await cargarReservasAirbnb();
-  const reservasBackend = await cargarReservasBackend();
-
-  // Combinar Airbnb + Backend
-  const reservas = {
-    campanilla: [...new Set([...reservasAirbnb.campanilla, ...reservasBackend.campanilla])],
-    tejo: [...new Set([...reservasAirbnb.tejo, ...reservasBackend.tejo])]
-  };
-
-  iniciarCalendarios(reservas);
-
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
-});
-
-// ===== CALENDARIO MEJORADO CON FLATPICKR =====
+// ===== INICIALIZACIÓN DE CALENDARIO MEJORADO =====
 function iniciarCalendarios(fechasOcupadas) {
   const aviso = document.getElementById("avisoFechas");
 
@@ -102,16 +37,11 @@ function iniciarCalendarios(fechasOcupadas) {
       const fechaISO = formatearLocal(dayElem.dateObj);
       dayElem.style.borderRadius = "6px";
 
-      // Días fuera del mes → verde si libres, rojo si ocupados
+      // Días fuera del mes → aplicar estilo suave y seleccionable
       if (dayElem.classList.contains("prevMonthDay") || dayElem.classList.contains("nextMonthDay")) {
-        dayElem.style.background = "#e8f5e9";
-        dayElem.style.color = "#000";
+        dayElem.style.background = "#f0fdf4";
+        dayElem.style.color = "#333";
         dayElem.style.pointerEvents = "";
-        if (fechasOcupadas[cabana]?.includes(fechaISO)) {
-          dayElem.style.background = "#e53935";
-          dayElem.style.color = "#fff";
-          dayElem.style.pointerEvents = "none";
-        }
         return;
       }
 
@@ -140,8 +70,8 @@ function iniciarCalendarios(fechasOcupadas) {
     mode: "single",
     dateFormat: "d/m/Y",
     minDate: "today",
-    showDaysInNextAndPreviousMonths: true,
-    enable: [date => true],
+    showDaysInNextAndPreviousMonths: true, // MUY IMPORTANTE
+    enable: [date => true],                 // todos los días habilitados
     locale: {
       firstDayOfWeek: 1,
       weekdays: {
@@ -180,10 +110,3 @@ function iniciarCalendarios(fechasOcupadas) {
     pintarDias(fpSalida);
   });
 }
-
-// ===== CÁLCULO RESERVA =====
-// (Aquí va tu código actual de calcularReserva() y reservar())
-// No se cambia nada, se mantiene tal cual
-
-// ===== UI =====
-// initCarousel() y initHamburger() siguen igual
