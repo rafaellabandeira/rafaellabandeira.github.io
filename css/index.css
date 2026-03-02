@@ -89,20 +89,25 @@ section {
   gap: 20px !important;
   flex-wrap: wrap !important;
 }
+.cabanias-grid {
+  display: flex !important;
+  gap: 20px !important;
+  flex-wrap: wrap !important;
+}
 
 .cabin-card {
   background: #fff !important;
-  padding: 20px !important;
+  padding: 16px !important;              /* un poco menos de padding */
   border-radius: 10px !important;
-  flex: 1 1 300px !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-  border: 1px solid #eee !important;
+  flex: 1 1 280px !important;            /* un poco más estrecha */
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important; /* sombra verde suave */
+  border: 2px solid #4caf50 !important;  /* borde verde */
   transition: 0.25s !important;
 }
 
 .cabin-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 18px rgba(76, 175, 80, 0.4) !important; /* sombra verde más intensa al pasar */
 }
 
 /* ===== CARRUSEL ===== */
