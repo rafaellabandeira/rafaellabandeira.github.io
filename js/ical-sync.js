@@ -1,17 +1,38 @@
-// js/ical-sync.js
+// ================= ICAL-SYNC.JS MEJORADO =================
 
 // URL de tu backend que devuelve las reservas sincronizadas
 const BACKEND_RESERVAS = "https://tu-backend.onrender.com/reservas"; // Cambia por tu URL
 
 /**
- * Carga las fechas ocupadas desde el backend y devuelve un objeto { campanilla: [], tejo: [] }
+ * Formatea una fecha a d/m/Y
+ */
+function formatearLocal(fecha) {
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${d}/${m}/${y}`;
+}
+
+/**
+ * Carga las fechas ocupadas desde el backend
+ * y devuelve un objeto { campanilla: [], tejo: [] } en d/m/Y
  */
 export async function cargarReservas() {
   try {
     const res = await fetch(BACKEND_RESERVAS);
     if (!res.ok) throw new Error("No se pudieron cargar las reservas");
     const reservas = await res.json(); // { campanilla: [], tejo: [] }
-    return reservas;
+
+    // Convertir todas las fechas a d/m/Y
+    const convertidas = {};
+    for (const cabana in reservas) {
+      convertidas[cabana] = reservas[cabana].map(f => {
+        const fecha = new Date(f);
+        return formatearLocal(fecha);
+      });
+    }
+
+    return convertidas;
   } catch (err) {
     console.error("Error cargando reservas:", err);
     return { campanilla: [], tejo: [] };
@@ -19,10 +40,8 @@ export async function cargarReservas() {
 }
 
 /**
- * Pinta los días de Flatpickr con estilos según disponibilidad
- * @param {FlatpickrInstance} instance - Instancia de flatpickr
- * @param {Object} fechasOcupadas - { campanilla: [], tejo: [] }
- * @param {string} cabana - "campanilla" o "tejo"
+ * Función para marcar días ocupados y pasados en Flatpickr
+ * Se usa desde main.js en iniciarCalendarios()
  */
 export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
   const hoy = new Date();
@@ -30,7 +49,7 @@ export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
 
   const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
   days.forEach(dayElem => {
-    const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
+    const fechaISO = formatearLocal(dayElem.dateObj);
 
     // Reset estilos
     dayElem.classList.remove("disponible", "ocupado", "pasado");
@@ -38,11 +57,16 @@ export function pintarDiasFlatpickr(instance, fechasOcupadas, cabana) {
     dayElem.style.color = "";
     dayElem.style.pointerEvents = "";
 
-    // Días fuera del mes actual
+    // Días fuera del mes → verde si libres, rojo si ocupados
     if (dayElem.classList.contains("prevMonthDay") || dayElem.classList.contains("nextMonthDay")) {
-      dayElem.style.background = "#f0fdf4";  // verde suave
-      dayElem.style.color = "#333";
+      dayElem.style.background = "#e8f5e9";
+      dayElem.style.color = "#000";
       dayElem.style.pointerEvents = "";
+      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+        dayElem.style.background = "#e53935";
+        dayElem.style.color = "#fff";
+        dayElem.style.pointerEvents = "none";
+      }
       dayElem.style.borderRadius = "6px";
       return;
     }
