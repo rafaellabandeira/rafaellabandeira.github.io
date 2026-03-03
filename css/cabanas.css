@@ -1,1 +1,62 @@
 
+.cabana-box {
+  border: 1.5px solid #3f8f3f;
+  border-radius: 24px;
+  padding: 50px;
+  margin: 60px auto;
+  max-width: 1100px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+/* Detalle decorativo superior */
+.cabana-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 40px;
+  width: 90px;
+  height: 4px;
+  background: #3f8f3f;
+  border-radius: 4px;
+}
+
+.cabana-box h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  position: relative;
+  font-weight: 600;
+}
+
+.cabana-box h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background-color: #4caf50;
+}
+
+.caracteristicas ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.caracteristicas li {
+  padding-left: 28px;
+  margin-bottom: 10px;
+  position: relative;
+  font-weight: 500;
+}
+
+.caracteristicas li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #4caf50;
+  font-weight: bold;
+}
