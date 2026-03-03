@@ -217,3 +217,43 @@
 .carousel-indicators div.active {
   background: #4caf50; /* verde principal */
 }
+/* Contenedor del header de la cabaña */
+.cabana-header {
+  border: 2px solid #4caf50;  /* verde */
+  background-color: #e8f5e9;  /* verde muy claro */
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Caja de descripción */
+.cabana-descripcion {
+  border: 2px solid #4caf50;
+  background-color: #f0fdf4;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px; /* espacio entre cajas */
+}
+
+/* Caja de características */
+.cabana-caracteristicas {
+  border: 2px solid #4caf50;
+  background-color: #f0fdf4;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px; /* espacio debajo si quieres añadir más secciones */
+}
+
+/* H2 dentro de estas cajas */
+.cabana-descripcion h2,
+.cabana-caracteristicas h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2e7d32; /* verde oscuro */
+}
+
+/* Lista dentro de características */
+.cabana-caracteristicas ul {
+  padding-left: 20px;
+}
