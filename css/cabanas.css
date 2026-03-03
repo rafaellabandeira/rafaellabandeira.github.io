@@ -1,62 +1,219 @@
-
+/* ===== CABANA BOX GENERAL ===== */
 .cabana-box {
-  border: 1.5px solid #3f8f3f;
-  border-radius: 24px;
-  padding: 50px;
-  margin: 60px auto;
-  max-width: 1100px;
-  background: #ffffff;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-  position: relative;
+  border: 2px solid #2e7d32; /* verde */
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 1000px;
+  background: #f9fff9; /* fondo muy clarito */
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3); /* sombra verde suave */
 }
 
-/* Detalle decorativo superior */
-.cabana-box::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 40px;
-  width: 90px;
-  height: 4px;
-  background: #3f8f3f;
-  border-radius: 4px;
-}
-
-.cabana-box h2 {
-  font-size: 1.6rem;
+/* ===== HEADER DE LA CABANA ===== */
+.cabana-header {
+  text-align: center;
   margin-bottom: 20px;
-  padding-bottom: 10px;
-  position: relative;
-  font-weight: 600;
 }
 
-.cabana-box h2::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 50px;
-  height: 2px;
-  background-color: #4caf50;
+.cabana-header h1 {
+  font-size: 2rem;
+  color: #2e7d32;
+  margin-bottom: 8px;
 }
 
-.caracteristicas ul {
-  list-style: none;
-  padding: 0;
+.cabana-header p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* ===== SECCIONES DE DESCRIPCIÓN Y CARACTERÍSTICAS ===== */
+.cabana-descripcion,
+.cabana-caracteristicas {
+  border: 1px solid #2e7d32;
+  border-radius: 10px;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  background: #f0fff0; /* fondo muy clarito */
+}
+
+.cabana-descripcion h2,
+.cabana-caracteristicas h2 {
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+
+.cabana-caracteristicas ul {
+  list-style: disc inside;
+  padding-left: 0;
   margin: 0;
 }
 
-.caracteristicas li {
-  padding-left: 28px;
-  margin-bottom: 10px;
-  position: relative;
-  font-weight: 500;
+.cabana-caracteristicas li {
+  margin-bottom: 6px;
 }
 
-.caracteristicas li::before {
-  content: "✓";
+/* ===== GALERÍA / CARRUSEL ===== */
+.cabana-galeria {
+  margin-bottom: 20px;
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #2e7d32;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(46, 125, 50, 0.3);
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 10px;
+}
+
+.carousel-button {
   position: absolute;
-  left: 0;
-  color: #4caf50;
-  font-weight: bold;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(46, 125, 50, 0.7);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.carousel-button.prev {
+  left: 10px;
+}
+
+.carousel-button.next {
+  right: 10px;
+}
+
+.carousel-button:hover {
+  background: #2e7d32;
+}
+
+.carousel-indicators {
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* ===== UBICACIÓN ===== */
+.cabana-ubicacion {
+  border: 1px solid #2e7d32;
+  border-radius: 10px;
+  padding: 15px 20px;
+  background: #f0fff0;
+  margin-bottom: 20px;
+}
+
+/* ===== CONTACTO ===== */
+.cabana-contacto {
+  border: 1px solid #2e7d32;
+  border-radius: 10px;
+  padding: 15px 20px;
+  background: #f0fff0;
+  margin-bottom: 20px;
+}
+
+.cabana-contacto a.boton {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: #2e7d32;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: 0.25s;
+}
+
+.cabana-contacto a.boton:hover {
+  background: #1b4f20;
+}
+/* ===== CARRUSEL RESPONSIVO ===== */
+.carousel-container {
+  max-width: 100%;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  display: none;
+  width: 100%;
+  height: 500px; /* altura máxima para escritorio */
+}
+
+.carousel-slide.active {
+  display: block;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* mantiene proporción y recorta si es necesario */
+  border-radius: 10px;
+}
+
+/* Ajuste en móvil */
+@media (max-width: 768px) {
+  .carousel-slide {
+    height: 300px; /* menos altura en móvil */
+  }
+}
+
+/* ===== CARRUSEL BOTONES E INDICADORES ===== */
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(76, 175, 80, 0.7); /* verde semitransparente */
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 5;
+  transition: 0.3s;
+}
+
+.carousel-button:hover {
+  background: rgba(76, 175, 80, 1); /* verde sólido al pasar el ratón */
+}
+
+.carousel-button.prev {
+  left: 10px;
+}
+
+.carousel-button.next {
+  right: 10px;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.carousel-indicators div {
+  width: 12px;
+  height: 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.carousel-indicators div.active {
+  background: #4caf50; /* verde principal */
 }
