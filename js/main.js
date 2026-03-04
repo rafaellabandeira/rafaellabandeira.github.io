@@ -49,10 +49,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
 
   const reservas = await cargarReservasAirbnb();
-  iniciarCalendarios(reservas);
 
-  document.getElementById("btnCalcular").addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar").addEventListener("click", reservar);
+  // Solo inicializar calendario si existen los elementos
+  if (document.getElementById("cabaña") &&
+      document.getElementById("entrada") &&
+      document.getElementById("salida") &&
+      document.getElementById("avisoFechas")) {
+    iniciarCalendarios(reservas);
+  }
+
+  // Botones de cálculo y pago
+  const btnCalcular = document.getElementById("btnCalcular");
+  if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
+
+  const btnPagar = document.getElementById("btnPagar");
+  if (btnPagar) btnPagar.addEventListener("click", reservar);
 });
 
 // ===== CALENDARIO CON FLATPICKR =====
@@ -91,7 +102,6 @@ function iniciarCalendarios(fechasOcupadas) {
 
     const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
     days.forEach(dayElem => {
-      // Solo aplicar estilos a días visibles del mes actual
       if (dayElem.classList.contains("prevMonthDay") || dayElem.classList.contains("nextMonthDay")) {
         dayElem.style.background = "";
         dayElem.style.color = "";
@@ -100,20 +110,19 @@ function iniciarCalendarios(fechasOcupadas) {
       }
 
       const fechaISO = formatearLocal(dayElem.dateObj);
-
       dayElem.style.borderRadius = "6px";
 
-      if (dayElem.dateObj < hoy) {           // Días pasados
+      if (dayElem.dateObj < hoy) {           
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {  // Días reservados
+      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {                                 // Días disponibles
+      else {                                 
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
         dayElem.style.pointerEvents = "";
@@ -271,9 +280,3 @@ function initCarousel() {
     showSlide(currentIndex);
   });
 }
-
-
-// ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded", function() {
-  initCarousel();
-});
