@@ -26,7 +26,6 @@ async function cargarReservasAirbnb() {
       }
       if (line.startsWith("DTEND")) {
         currentEvent.end = line.split(":")[1];
-        // Convertir rango a días
         const start = new Date(currentEvent.start.slice(0,4)+'-'+currentEvent.start.slice(4,6)+'-'+currentEvent.start.slice(6,8));
         const end = new Date(currentEvent.end.slice(0,4)+'-'+currentEvent.end.slice(4,6)+'-'+currentEvent.end.slice(6,8));
         for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
@@ -50,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const reservas = await cargarReservasAirbnb();
 
-  // Solo inicializar calendario si existen los elementos
   if (document.getElementById("cabaña") &&
       document.getElementById("entrada") &&
       document.getElementById("salida") &&
@@ -58,7 +56,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     iniciarCalendarios(reservas);
   }
 
-  // Botones de cálculo y pago
   const btnCalcular = document.getElementById("btnCalcular");
   if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
 
@@ -254,10 +251,13 @@ function initCarousel() {
     const slides = container.querySelectorAll('.carousel-slide');
     const nextBtn = container.querySelector('.next');
     const prevBtn = container.querySelector('.prev');
-    const indicators = container.querySelectorAll('.indicator');
     let currentIndex = 0;
 
     if (!slides.length) return;
+
+    // Tomar indicadores de forma dinámica (index principal o cabañas)
+    const indicatorsContainer = container.querySelector('.carousel-indicators');
+    const indicators = indicatorsContainer ? Array.from(indicatorsContainer.children) : [];
 
     function showSlide(index) {
       slides.forEach(slide => slide.classList.remove('active'));
@@ -283,28 +283,25 @@ function initCarousel() {
       });
     }
 
-    if (indicators.length) {
-      indicators.forEach((ind, idx) => {
-        ind.addEventListener('click', () => {
-          currentIndex = idx;
-          showSlide(currentIndex);
-        });
+    // Click en indicadores
+    indicators.forEach((ind, i) => {
+      ind.addEventListener('click', () => {
+        currentIndex = i;
+        showSlide(currentIndex);
       });
-    }
+    });
 
     showSlide(currentIndex);
   });
 }
 
-// ---------- HAMBURGER MENU ----------
+// ---------- HAMBURGER ----------
 function initHamburger() {
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('navMenu');
-
-  if (!hamburger || !navMenu) return;
-
-  hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    hamburger.classList.toggle('active');
-  });
+  if (hamburger) {
+    hamburger.addEventListener('click', () => {
+      navMenu.classList.toggle('nav-menu-active');
+    });
+  }
 }
