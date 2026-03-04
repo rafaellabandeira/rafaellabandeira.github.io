@@ -1,4 +1,4 @@
-// ================= MAIN.JS COMPLETO =================
+// ================= MAIN.JS UNIFICADO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
 function formatearLocal(fecha) {
@@ -21,12 +21,9 @@ async function cargarReservasAirbnb() {
     const lines = text.split("\n");
     let currentEvent = {};
     for (let line of lines) {
-      if (line.startsWith("DTSTART")) {
-        currentEvent.start = line.split(":")[1];
-      }
+      if (line.startsWith("DTSTART")) currentEvent.start = line.split(":")[1];
       if (line.startsWith("DTEND")) {
         currentEvent.end = line.split(":")[1];
-        // Convertir rango a días
         const start = new Date(currentEvent.start.slice(0,4)+'-'+currentEvent.start.slice(4,6)+'-'+currentEvent.start.slice(6,8));
         const end = new Date(currentEvent.end.slice(0,4)+'-'+currentEvent.end.slice(4,6)+'-'+currentEvent.end.slice(6,8));
         for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
@@ -36,7 +33,7 @@ async function cargarReservasAirbnb() {
       }
     }
 
-    return { campanilla: fechas, tejo: fechas }; // mismo array para ambas cabañas
+    return { campanilla: fechas, tejo: fechas };
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
@@ -45,20 +42,21 @@ async function cargarReservasAirbnb() {
 
 // ===== INICIALIZACIÓN =====
 document.addEventListener("DOMContentLoaded", async () => {
-  initCarousel();
   initHamburger();
 
-  const reservas = await cargarReservasAirbnb();
+  // Carrusel solo si existe
+  if (document.querySelector(".carousel-container")) initCarousel();
 
-  // Solo inicializar calendario si existen los elementos
-  if (document.getElementById("cabaña") &&
-      document.getElementById("entrada") &&
-      document.getElementById("salida") &&
-      document.getElementById("avisoFechas")) {
+  // Calendario solo si existen los elementos
+  if (document.querySelector("#cabaña") &&
+      document.querySelector("#entrada") &&
+      document.querySelector("#salida") &&
+      document.querySelector("#avisoFechas")) {
+    const reservas = await cargarReservasAirbnb();
     iniciarCalendarios(reservas);
   }
 
-  // Botones de cálculo y pago
+  // Botones de cálculo y pago solo si existen
   const btnCalcular = document.getElementById("btnCalcular");
   if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
 
@@ -97,8 +95,7 @@ function iniciarCalendarios(fechasOcupadas) {
 
   function pintarDias(instance) {
     const cabana = document.getElementById("cabaña").value.toLowerCase();
-    const hoy = new Date();
-    hoy.setHours(0,0,0,0);
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
 
     const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
     days.forEach(dayElem => {
@@ -112,7 +109,7 @@ function iniciarCalendarios(fechasOcupadas) {
       const fechaISO = formatearLocal(dayElem.dateObj);
       dayElem.style.borderRadius = "6px";
 
-      if (dayElem.dateObj < hoy) {           
+      if (dayElem.dateObj < hoy) {
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
@@ -122,7 +119,7 @@ function iniciarCalendarios(fechasOcupadas) {
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {                                 
+      else {
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
         dayElem.style.pointerEvents = "";
@@ -278,5 +275,16 @@ function initCarousel() {
     }
 
     showSlide(currentIndex);
+  });
+}
+
+// ---------- HAMBURGER ----------
+function initHamburger() {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  if (!hamburger || !navMenu) return;
+
+  hamburger.addEventListener("click", () => {
+    navMenu.classList.toggle("active");
   });
 }
