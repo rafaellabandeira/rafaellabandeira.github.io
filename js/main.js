@@ -236,5 +236,50 @@ function reservar() {
 }
 
 // ===== UI =====
-function initCarousel() {}
-function initHamburger() {}
+
+// ---------- CARRUSEL ----------
+function initCarousel() {
+  const carousels = document.querySelectorAll('.carousel-container');
+
+  carousels.forEach(container => {
+    const slides = container.querySelectorAll('.carousel-slide');
+    const nextBtn = container.querySelector('.next');
+    const prevBtn = container.querySelector('.prev');
+    let currentIndex = 0;
+
+    if (!slides.length) return;
+
+    function showSlide(index) {
+      slides.forEach(slide => {
+        slide.style.display = "none";
+      });
+
+      slides[index].style.display = "block";
+    }
+
+    // Botón siguiente
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % slides.length;
+        showSlide(currentIndex);
+      });
+    }
+
+    // Botón anterior
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(currentIndex);
+      });
+    }
+
+    // Inicializar
+    showSlide(currentIndex);
+  });
+}
+
+
+// ===== INICIALIZACIÓN =====
+document.addEventListener("DOMContentLoaded", function() {
+  initCarousel();
+});
