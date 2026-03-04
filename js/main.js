@@ -1,4 +1,4 @@
-// ================= MAIN.JS UNIFICADO =================
+// ================= MAIN.JS COMPLETO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
 function formatearLocal(fecha) {
@@ -21,9 +21,12 @@ async function cargarReservasAirbnb() {
     const lines = text.split("\n");
     let currentEvent = {};
     for (let line of lines) {
-      if (line.startsWith("DTSTART")) currentEvent.start = line.split(":")[1];
+      if (line.startsWith("DTSTART")) {
+        currentEvent.start = line.split(":")[1];
+      }
       if (line.startsWith("DTEND")) {
         currentEvent.end = line.split(":")[1];
+        // Convertir rango a días
         const start = new Date(currentEvent.start.slice(0,4)+'-'+currentEvent.start.slice(4,6)+'-'+currentEvent.start.slice(6,8));
         const end = new Date(currentEvent.end.slice(0,4)+'-'+currentEvent.end.slice(4,6)+'-'+currentEvent.end.slice(6,8));
         for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
@@ -33,7 +36,7 @@ async function cargarReservasAirbnb() {
       }
     }
 
-    return { campanilla: fechas, tejo: fechas };
+    return { campanilla: fechas, tejo: fechas }; // mismo array para ambas cabañas
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
@@ -42,21 +45,20 @@ async function cargarReservasAirbnb() {
 
 // ===== INICIALIZACIÓN =====
 document.addEventListener("DOMContentLoaded", async () => {
+  initCarousel();
   initHamburger();
 
-  // Carrusel solo si existe
-  if (document.querySelector(".carousel-container")) initCarousel();
+  const reservas = await cargarReservasAirbnb();
 
-  // Calendario solo si existen los elementos
-  if (document.querySelector("#cabaña") &&
-      document.querySelector("#entrada") &&
-      document.querySelector("#salida") &&
-      document.querySelector("#avisoFechas")) {
-    const reservas = await cargarReservasAirbnb();
+  // Solo inicializar calendario si existen los elementos
+  if (document.getElementById("cabaña") &&
+      document.getElementById("entrada") &&
+      document.getElementById("salida") &&
+      document.getElementById("avisoFechas")) {
     iniciarCalendarios(reservas);
   }
 
-  // Botones de cálculo y pago solo si existen
+  // Botones de cálculo y pago
   const btnCalcular = document.getElementById("btnCalcular");
   if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
 
@@ -95,7 +97,8 @@ function iniciarCalendarios(fechasOcupadas) {
 
   function pintarDias(instance) {
     const cabana = document.getElementById("cabaña").value.toLowerCase();
-    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
 
     const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
     days.forEach(dayElem => {
@@ -109,7 +112,7 @@ function iniciarCalendarios(fechasOcupadas) {
       const fechaISO = formatearLocal(dayElem.dateObj);
       dayElem.style.borderRadius = "6px";
 
-      if (dayElem.dateObj < hoy) {
+      if (dayElem.dateObj < hoy) {           
         dayElem.style.background = "#212121";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
@@ -119,7 +122,7 @@ function iniciarCalendarios(fechasOcupadas) {
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
       }
-      else {
+      else {                                 
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
         dayElem.style.pointerEvents = "";
@@ -251,6 +254,7 @@ function initCarousel() {
     const slides = container.querySelectorAll('.carousel-slide');
     const nextBtn = container.querySelector('.next');
     const prevBtn = container.querySelector('.prev');
+    const indicators = container.querySelectorAll('.indicator');
     let currentIndex = 0;
 
     if (!slides.length) return;
@@ -258,6 +262,11 @@ function initCarousel() {
     function showSlide(index) {
       slides.forEach(slide => slide.classList.remove('active'));
       slides[index].classList.add('active');
+
+      if (indicators.length) {
+        indicators.forEach(ind => ind.classList.remove('active'));
+        if (indicators[index]) indicators[index].classList.add('active');
+      }
     }
 
     if (nextBtn) {
@@ -274,17 +283,28 @@ function initCarousel() {
       });
     }
 
+    if (indicators.length) {
+      indicators.forEach((ind, idx) => {
+        ind.addEventListener('click', () => {
+          currentIndex = idx;
+          showSlide(currentIndex);
+        });
+      });
+    }
+
     showSlide(currentIndex);
   });
 }
 
-// ---------- HAMBURGER ----------
+// ---------- HAMBURGER MENU ----------
 function initHamburger() {
-  const hamburger = document.getElementById("hamburger");
-  const navMenu = document.getElementById("navMenu");
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('navMenu');
+
   if (!hamburger || !navMenu) return;
 
-  hamburger.addEventListener("click", () => {
-    navMenu.classList.toggle("active");
+  hamburger.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    hamburger.classList.toggle('active');
   });
 }
