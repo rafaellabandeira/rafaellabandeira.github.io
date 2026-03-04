@@ -26,14 +26,11 @@ async function cargarReservasAirbnb() {
         currentEvent.end = line.split(":")[1];
         const start = new Date(currentEvent.start.slice(0,4)+'-'+currentEvent.start.slice(4,6)+'-'+currentEvent.start.slice(6,8));
         const end = new Date(currentEvent.end.slice(0,4)+'-'+currentEvent.end.slice(4,6)+'-'+currentEvent.end.slice(6,8));
-        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
-          fechas.push(formatearLocal(new Date(d)));
-        }
+        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) fechas.push(formatearLocal(new Date(d)));
         currentEvent = {};
       }
     }
-
-    return { campanilla: fechas, tejo: fechas }; // mismo array para ambas cabañas
+    return { campanilla: fechas, tejo: fechas };
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
@@ -42,12 +39,12 @@ async function cargarReservasAirbnb() {
 
 // ===== INICIALIZACIÓN =====
 document.addEventListener("DOMContentLoaded", async () => {
-  initCarousel();
+  initCarouselCabanas();
+  initCarouselIndex();
   initHamburger();
 
   const reservas = await cargarReservasAirbnb();
 
-  // Inicializar calendario si existen elementos
   if (document.getElementById("cabaña") &&
       document.getElementById("entrada") &&
       document.getElementById("salida") &&
@@ -55,7 +52,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     iniciarCalendarios(reservas);
   }
 
-  // Botones de cálculo y pago
   const btnCalcular = document.getElementById("btnCalcular");
   if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
 
@@ -70,10 +66,7 @@ function iniciarCalendarios(fechasOcupadas) {
   function actualizarAviso(selectedDates) {
     const entrada = selectedDates[0];
     const salida = selectedDates[1];
-    if (!entrada || !salida) {
-      aviso.style.display = "none";
-      return;
-    }
+    if (!entrada || !salida) { aviso.style.display = "none"; return; }
 
     const cabana = document.getElementById("cabaña").value.toLowerCase();
     let actual = new Date(entrada);
@@ -243,15 +236,13 @@ function reservar() {
 
 // ===== UI =====
 
-// ---------- CARRUSEL ----------
-function initCarousel() {
-  const carousels = document.querySelectorAll('.carousel-container');
-
+// ---------- CARRUSEL CABAÑAS ----------
+function initCarouselCabanas() {
+  const carousels = document.querySelectorAll('.cabana-galeria .carousel-container');
   carousels.forEach(container => {
     const slides = container.querySelectorAll('.carousel-slide');
     const nextBtn = container.querySelector('.next');
     const prevBtn = container.querySelector('.prev');
-    const indicators = container.querySelectorAll('.indicator');
     let currentIndex = 0;
 
     if (!slides.length) return;
@@ -259,49 +250,68 @@ function initCarousel() {
     function showSlide(index) {
       slides.forEach(slide => slide.classList.remove('active'));
       slides[index].classList.add('active');
-
-      // actualizar indicadores si existen
-      if (indicators.length) {
-        indicators.forEach(ind => ind.classList.remove('active'));
-        if (indicators[index]) indicators[index].classList.add('active');
-      }
     }
 
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex + 1) % slides.length;
-        showSlide(currentIndex);
-      });
-    }
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    });
 
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        showSlide(currentIndex);
-      });
-    }
-
-    // indicadores clicables
-    indicators.forEach((ind, idx) => {
-      ind.addEventListener('click', () => {
-        currentIndex = idx;
-        showSlide(currentIndex);
-      });
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
     });
 
     showSlide(currentIndex);
   });
 }
 
+// ---------- CARRUSEL INDEX PRINCIPAL ----------
+function initCarouselIndex() {
+  const container = document.querySelector('section .carousel-container');
+  if (!container) return;
+
+  const slides = container.querySelectorAll('.carousel-slide');
+  const nextBtn = container.querySelector('.next');
+  const prevBtn = container.querySelector('.prev');
+  const indicators = container.querySelectorAll('.indicator');
+  let currentIndex = 0;
+
+  if (!slides.length) return;
+
+  function showSlide(index) {
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[index].classList.add('active');
+    indicators.forEach(ind => ind.classList.remove('active'));
+    if (indicators[index]) indicators[index].classList.add('active');
+  }
+
+  nextBtn?.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    showSlide(currentIndex);
+  });
+
+  prevBtn?.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+    showSlide(currentIndex);
+  });
+
+  indicators.forEach((ind, i) => {
+    ind.addEventListener('click', () => {
+      currentIndex = i;
+      showSlide(currentIndex);
+    });
+  });
+
+  showSlide(currentIndex);
+}
+
 // ---------- HAMBURGER ----------
 function initHamburger() {
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("navMenu");
-
-  if (!hamburger || !navMenu) return;
-
-  hamburger.addEventListener("click", () => {
+  hamburger?.addEventListener("click", () => {
+    navMenu?.classList.toggle("active");
     hamburger.classList.toggle("active");
-    navMenu.classList.toggle("active");
   });
 }
