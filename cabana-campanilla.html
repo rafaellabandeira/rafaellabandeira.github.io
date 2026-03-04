@@ -107,7 +107,26 @@
     <div class="carousel-indicators"></div>
   </div>
 </section>
+  
+<!-- RESERVAS / CALENDARIO -->
+<section class="cabana-reservas">
+  <h2>Reserva tu estancia</h2>
+  <label for="cabaña">Cabaña:</label>
+  <select id="cabaña">
+    <option value="campanilla">Cabaña Campanilla</option>
+    <option value="tejo">Cabaña El Tejo</option>
+  </select>
 
+  <label for="entrada">Entrada:</label>
+  <input type="text" id="entrada" placeholder="Selecciona fecha de entrada">
+
+  <label for="salida">Salida:</label>
+  <input type="text" id="salida" placeholder="Selecciona fecha de salida">
+
+  <div id="avisoFechas" style="display:none; color:red; margin-top:5px;">
+    ¡Estas fechas están ocupadas!
+  </div>
+</section>
 <!-- UBICACIÓN -->
 <section class="cabana-ubicacion">
   <h2>Ubicación</h2>
