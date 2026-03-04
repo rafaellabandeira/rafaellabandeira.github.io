@@ -250,14 +250,10 @@ function initCarousel() {
     if (!slides.length) return;
 
     function showSlide(index) {
-      slides.forEach(slide => {
-        slide.style.display = "none";
-      });
-
-      slides[index].style.display = "block";
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[index].classList.add('active');
     }
 
-    // Botón siguiente
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         currentIndex = (currentIndex + 1) % slides.length;
@@ -265,7 +261,6 @@ function initCarousel() {
       });
     }
 
-    // Botón anterior
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
         currentIndex = (currentIndex - 1 + slides.length) % slides.length;
@@ -273,7 +268,6 @@ function initCarousel() {
       });
     }
 
-    // Inicializar
     showSlide(currentIndex);
   });
 }
