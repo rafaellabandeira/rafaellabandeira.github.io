@@ -275,24 +275,29 @@ function initHamburger() {
   });
 }
 
-// ===== CARRUSEL GENERAL PARA EL INDEX =====
-function initCarouselGeneral() {
-  const containers = document.querySelectorAll(".carousel-container-general");
+// ===== CARRUSELES FUNCIONALES =====
+function initCarousel(containerSelector, slideSelector, prevSelector, nextSelector, indicatorSelector) {
+  const containers = document.querySelectorAll(containerSelector);
 
   containers.forEach(container => {
-    const slides = container.querySelectorAll(".carousel-slide-general");
-    const prevBtn = container.querySelector(".prev-general");
-    const nextBtn = container.querySelector(".next-general");
-    const indicators = container.querySelectorAll(".indicator-general");
+    const slides = container.querySelectorAll(slideSelector);
+    const prevBtn = container.querySelector(prevSelector);
+    const nextBtn = container.querySelector(nextSelector);
+    const indicators = container.querySelectorAll(indicatorSelector);
     let currentIndex = 0;
 
     if (!slides.length) return;
 
     function showSlide(index) {
-      slides.forEach(slide => slide.classList.remove("active"));
-      slides[index].classList.add("active");
-      indicators.forEach(ind => ind.classList.remove("active"));
-      if (indicators[index]) indicators[index].classList.add("active");
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === index);
+      });
+
+      if (indicators.length) {
+        indicators.forEach((ind, i) => {
+          ind.classList.toggle("active", i === index);
+        });
+      }
     }
 
     nextBtn?.addEventListener("click", () => {
@@ -317,47 +322,9 @@ function initCarouselGeneral() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Inicializa carruseles de cabañas (el que ya funcionaba)
-  const carousels = document.querySelectorAll(".carousel-container");
-  carousels.forEach(container => {
-    const slides = container.querySelectorAll(".carousel-slide");
-    const prevBtn = container.querySelector(".prev");
-    const nextBtn = container.querySelector(".next");
-    const indicators = container.querySelectorAll(".indicator");
-    let currentIndex = 0;
+  // Carrusel de cabañas
+  initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
 
-    if (!slides.length) return;
-
-    function showSlide(index) {
-      slides.forEach(slide => slide.classList.remove("active"));
-      slides[index].classList.add("active");
-
-      if (indicators.length) {
-        indicators.forEach(ind => ind.classList.remove("active"));
-        if (indicators[index]) indicators[index].classList.add("active");
-      }
-    }
-
-    nextBtn?.addEventListener("click", () => {
-      currentIndex = (currentIndex + 1) % slides.length;
-      showSlide(currentIndex);
-    });
-
-    prevBtn?.addEventListener("click", () => {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      showSlide(currentIndex);
-    });
-
-    indicators.forEach((ind, i) => {
-      ind.addEventListener("click", () => {
-        currentIndex = i;
-        showSlide(currentIndex);
-      });
-    });
-
-    showSlide(currentIndex);
-  });
-
-  // Inicializa carruseles generales del Index
-  initCarouselGeneral();
+  // Carruseles generales del index (incluye piscina)
+  initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 });
