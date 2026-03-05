@@ -1,138 +1,122 @@
-/* =================================================
-   PRIORIDAD ALTA PARA ESTE CSS
-   ================================================= */
+/* =====================================
+   CONTENEDOR DE CARRUSELES
+   (mismo tamaño que cabañas)
+===================================== */
 
-body .carousel-container,
-body .carousel-container-general,
-body .cabin-card,
-body #contacto,
-body section iframe,
-body section:has(iframe) {
-    border: 2px solid #2e7d32 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 8px rgba(46,125,50,0.35) !important;
-    padding: 15px !important;
-    margin-top: 20px !important;
-    margin-bottom: 20px !important;
-    background: white !important;
+.carousel-container,
+.carousel-container-general{
+    max-width: 900px;
+    margin: 25px auto;
+    border: 2px solid #2e7d32;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    overflow: hidden;
+    position: relative;
 }
 
-/* =================================================
-   SEPARACIÓN ENTRE SECCIONES
-   ================================================= */
-
-body section {
-    margin-bottom: 20px !important;
-}
-
-/* =================================================
-   CARRUSELES (MISMO TAMAÑO PARA LOS DOS)
-   ================================================= */
-
-body .carousel-container,
-body .carousel-container-general {
-    width: 100% !important;
-    max-width: 900px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    overflow: hidden !important;
-}
-
-/* =================================================
-   CONTENEDOR INTERNO
-   ================================================= */
-
-body .carousel,
-body .carousel-general-slides {
-    display: flex !important;
-    transition: transform 0.5s ease !important;
-}
-
-/* =================================================
+/* =====================================
    SLIDES
-   ================================================= */
+===================================== */
 
-body .carousel-slide,
-body .carousel-slide-general {
-    min-width: 100% !important;
-    box-sizing: border-box !important;
+.carousel,
+.carousel-general-slides{
+    display:flex;
 }
 
-/* =================================================
-   IMÁGENES SIEMPRE HORIZONTALES
-   ================================================= */
+/* cada imagen ocupa todo el carrusel */
 
-body .carousel-slide img,
-body .carousel-slide-general img {
-    width: 100% !important;
-    height: 420px !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    border-radius: 10px !important;
+.carousel-slide,
+.carousel-slide-general{
+    min-width:100%;
 }
 
-/* =================================================
-   BOTONES
-   ================================================= */
+/* =====================================
+   IMÁGENES (horizontal como cabañas)
+===================================== */
 
-body .carousel-button,
-body .carousel-button-general {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    background: rgba(0,0,0,0.45) !important;
-    border: none !important;
-    color: white !important;
-    font-size: 28px !important;
-    padding: 10px 16px !important;
-    cursor: pointer !important;
-    border-radius: 6px !important;
-    z-index: 10 !important;
+.carousel-slide img,
+.carousel-slide-general img{
+    width:100%;
+    height:420px;
+    object-fit:cover;
+    object-position:center;
+    display:block;
 }
 
-body .carousel-button.prev,
-body .carousel-button-general.prev-general {
-    left: 10px !important;
+/* =====================================
+   BOTONES SOLO DENTRO DEL CARRUSEL
+===================================== */
+
+.carousel-container .carousel-button,
+.carousel-container-general .carousel-button-general{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    background:rgba(0,0,0,0.45);
+    color:white;
+    border:none;
+    font-size:28px;
+    padding:10px 14px;
+    cursor:pointer;
+    border-radius:6px;
 }
 
-body .carousel-button.next,
-body .carousel-button-general.next-general {
-    right: 10px !important;
+/* posiciones */
+
+.carousel-button.prev,
+.prev-general{
+    left:10px;
 }
 
-/* =================================================
+.carousel-button.next,
+.next-general{
+    right:10px;
+}
+
+/* =====================================
    INDICADORES
-   ================================================= */
+===================================== */
 
-body .carousel-indicators,
-body .carousel-indicators-general {
-    text-align: center !important;
-    margin-top: 10px !important;
+.carousel-indicators,
+.carousel-indicators-general{
+    text-align:center;
+    padding:10px 0;
 }
 
-body .indicator,
-body .indicator-general {
-    display: inline-block !important;
-    width: 10px !important;
-    height: 10px !important;
-    margin: 5px !important;
-    background: #ccc !important;
-    border-radius: 50% !important;
+.indicator,
+.indicator-general{
+    display:inline-block;
+    width:10px;
+    height:10px;
+    margin:4px;
+    border-radius:50%;
+    background:#ccc;
 }
 
-body .indicator.active,
-body .indicator-general.active {
-    background: #2e7d32 !important;
+.indicator.active,
+.indicator-general.active{
+    background:#2e7d32;
 }
 
-/* =================================================
-   CABINAS (BORDE INDIVIDUAL)
-   ================================================= */
+/* =====================================
+   BORDES VERDES DE SECCIONES
+===================================== */
 
-body .cabin-card {
-    transition: transform 0.2s ease !important;
+.cabin-card,
+#contacto,
+#ubicacion{
+    border:2px solid #2e7d32;
+    border-radius:12px;
+    box-shadow:0 0 8px rgba(0,0,0,0.15);
+    margin-top:20px;
+    margin-bottom:20px;
 }
 
-body .cabin-card:hover {
-    transform: translateY(-4px) !important;
+/* =====================================
+   QUITAR BORDE INTERIOR GOOGLE MAPS
+===================================== */
+
+#ubicacion iframe{
+    border:none;
+    box-shadow:none;
 }
