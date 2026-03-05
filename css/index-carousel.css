@@ -1,121 +1,108 @@
 /* =================================================
-   CARRUSELES (mismo tamaño que cabañas)
+COLOR VERDE IGUAL QUE MOTOR DE RESERVAS
+================================================= */
+
+:root{
+  --verde-borde:#4CAF50;
+}
+
+/* =================================================
+CABAÑAS
+================================================= */
+
+.cabin-card{
+  border:3px solid var(--verde-borde);
+  border-radius:14px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+  padding:20px;
+}
+
+/* =================================================
+CARRUSELES
 ================================================= */
 
 .carousel-container,
 .carousel-container-general{
-    max-width:750px;
-    margin:30px auto;
-    border:2px solid #2e7d32;
-    border-radius:12px;
-    box-shadow:0 0 12px rgba(0,0,0,0.25);
-    overflow:hidden;
-    position:relative;
+  max-width:750px;
+  margin:30px auto;
+  border:3px solid var(--verde-borde);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
+  position:relative;
 }
 
-/* NO tocamos el display del carrusel para no romper el JS */
+/* imágenes horizontales */
 
 .carousel-slide img,
 .carousel-slide-general img{
-    width:100%;
-    height:420px;
-    object-fit:cover;
-    object-position:center;
-    display:block;
+  width:100%;
+  height:420px;
+  object-fit:cover;
+  object-position:center;
+  display:block;
 }
 
 /* =================================================
-   BOTONES DEL CARRUSEL
+BOTONES CARRUSEL
 ================================================= */
 
 .carousel-button,
 .carousel-button-general{
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    background:rgba(0,0,0,0.45);
-    color:white;
-    border:none;
-    font-size:26px;
-    padding:10px 14px;
-    cursor:pointer;
-    border-radius:6px;
-    z-index:10;
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:rgba(0,0,0,0.4);
+  color:white;
+  border:none;
+  font-size:26px;
+  padding:10px 14px;
+  border-radius:6px;
+  cursor:pointer;
+  z-index:10;
 }
 
 .prev,
 .prev-general{
-    left:10px;
+  left:10px;
 }
 
 .next,
 .next-general{
-    right:10px;
+  right:10px;
 }
 
 /* =================================================
-   INDICADORES
+CONTACTO
 ================================================= */
-
-.carousel-indicators,
-.carousel-indicators-general{
-    text-align:center;
-    padding:10px 0;
-}
-
-.indicator,
-.indicator-general{
-    width:10px;
-    height:10px;
-    margin:4px;
-    border-radius:50%;
-    background:#ccc;
-    display:inline-block;
-}
-
-.indicator.active,
-.indicator-general.active{
-    background:#2e7d32;
-}
-
-/* =================================================
-   BORDES VERDES SOMBREADOS
-================================================= */
-
-/* cabañas */
-
-.cabin-card{
-    border:2px solid #2e7d32;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-}
-
-/* contacto */
 
 #contacto{
-    border:2px solid #2e7d32;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-    padding:20px;
+  border:3px solid var(--verde-borde);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
 }
 
-/* ubicación */
-
-section iframe{
-    border-radius:10px;
-}
-
-/* contenedor ubicación */
+/* =================================================
+UBICACIÓN
+================================================= */
 
 section:has(iframe){
-    border:2px solid #2e7d32;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.2);
-    padding:20px;
+  border:3px solid var(--verde-borde);
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.15);
 }
 
-/* separación vertical */
+iframe{
+  border:none;
+  border-radius:10px;
+}
+
+/* =================================================
+SEPARACIÓN ENTRE SECCIONES
+================================================= */
 
 section{
-    margin-bottom:25px;
+  margin-bottom:30px;
 }
