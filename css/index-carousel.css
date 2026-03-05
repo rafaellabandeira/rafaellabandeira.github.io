@@ -1,38 +1,19 @@
-/* =====================================
-   CONTENEDOR DE CARRUSELES
-   (mismo tamaño que cabañas)
-===================================== */
+/* =================================================
+   CARRUSELES (mismo tamaño que cabañas)
+================================================= */
 
 .carousel-container,
 .carousel-container-general{
-    max-width: 900px;
-    margin: 25px auto;
-    border: 2px solid #2e7d32;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-    overflow: hidden;
-    position: relative;
+    max-width:750px;
+    margin:30px auto;
+    border:2px solid #2e7d32;
+    border-radius:12px;
+    box-shadow:0 0 12px rgba(0,0,0,0.25);
+    overflow:hidden;
+    position:relative;
 }
 
-/* =====================================
-   SLIDES
-===================================== */
-
-.carousel,
-.carousel-general-slides{
-    display:flex;
-}
-
-/* cada imagen ocupa todo el carrusel */
-
-.carousel-slide,
-.carousel-slide-general{
-    min-width:100%;
-}
-
-/* =====================================
-   IMÁGENES (horizontal como cabañas)
-===================================== */
+/* NO tocamos el display del carrusel para no romper el JS */
 
 .carousel-slide img,
 .carousel-slide-general img{
@@ -43,39 +24,38 @@
     display:block;
 }
 
-/* =====================================
-   BOTONES SOLO DENTRO DEL CARRUSEL
-===================================== */
+/* =================================================
+   BOTONES DEL CARRUSEL
+================================================= */
 
-.carousel-container .carousel-button,
-.carousel-container-general .carousel-button-general{
+.carousel-button,
+.carousel-button-general{
     position:absolute;
     top:50%;
     transform:translateY(-50%);
     background:rgba(0,0,0,0.45);
     color:white;
     border:none;
-    font-size:28px;
+    font-size:26px;
     padding:10px 14px;
     cursor:pointer;
     border-radius:6px;
+    z-index:10;
 }
 
-/* posiciones */
-
-.carousel-button.prev,
+.prev,
 .prev-general{
     left:10px;
 }
 
-.carousel-button.next,
+.next,
 .next-general{
     right:10px;
 }
 
-/* =====================================
+/* =================================================
    INDICADORES
-===================================== */
+================================================= */
 
 .carousel-indicators,
 .carousel-indicators-general{
@@ -85,12 +65,12 @@
 
 .indicator,
 .indicator-general{
-    display:inline-block;
     width:10px;
     height:10px;
     margin:4px;
     border-radius:50%;
     background:#ccc;
+    display:inline-block;
 }
 
 .indicator.active,
@@ -98,25 +78,44 @@
     background:#2e7d32;
 }
 
-/* =====================================
-   BORDES VERDES DE SECCIONES
-===================================== */
+/* =================================================
+   BORDES VERDES SOMBREADOS
+================================================= */
 
-.cabin-card,
-#contacto,
-#ubicacion{
+/* cabañas */
+
+.cabin-card{
     border:2px solid #2e7d32;
-    border-radius:12px;
-    box-shadow:0 0 8px rgba(0,0,0,0.15);
-    margin-top:20px;
-    margin-bottom:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
 }
 
-/* =====================================
-   QUITAR BORDE INTERIOR GOOGLE MAPS
-===================================== */
+/* contacto */
 
-#ubicacion iframe{
-    border:none;
-    box-shadow:none;
+#contacto{
+    border:2px solid #2e7d32;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+    padding:20px;
+}
+
+/* ubicación */
+
+section iframe{
+    border-radius:10px;
+}
+
+/* contenedor ubicación */
+
+section:has(iframe){
+    border:2px solid #2e7d32;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+    padding:20px;
+}
+
+/* separación vertical */
+
+section{
+    margin-bottom:25px;
 }
