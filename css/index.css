@@ -1,9 +1,9 @@
-/* ================= INDEX.CSS DEFINITIVO ================= */
+/* ================= INDEX.CSS LIMPIO ================= */
 
 /* ===== NAVBAR MÁS DELGADO ===== */
 .navbar {
   background: #fff !important;
-  padding: 6px 20px !important; /* menos altura */
+  padding: 6px 20px !important;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
   position: sticky !important;
   top: 0 !important;
@@ -12,7 +12,7 @@
 
 .nav-logo {
   font-weight: bold !important;
-  font-size: 20px !important; /* mantiene tamaño logo */
+  font-size: 20px !important;
 }
 
 .nav-menu {
@@ -24,23 +24,21 @@
 .nav-link {
   color: #212121 !important;
   font-weight: 500 !important;
-  padding: 6px 8px !important; /* reduce altura de los links */
+  padding: 6px 8px !important;
 }
+
 /* ===== HERO AJUSTADO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg') !important;
   background-size: cover !important;
-  background-position: bottom center !important; /* siempre muestra parte inferior */
+  background-position: bottom center !important;
   background-repeat: no-repeat !important;
-
-  height: 70vh !important; /* más grande que antes */
+  height: 70vh !important;
   min-height: 350px !important;
-
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   position: relative !important;
-
   color: #fff !important;
   text-align: center !important;
 }
@@ -59,10 +57,9 @@
   max-width: 900px !important;
 }
 
-/* Texto principal del Hero */
 .hero-title-top {
   font-size: 32px !important;
-  color: #ffffff !important; /* blanco */
+  color: #ffffff !important;
   font-weight: 600 !important;
   text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
   margin-bottom: 6px !important;
@@ -70,24 +67,19 @@
 
 .hero-title-bottom {
   font-size: 28px !important;
-  color: #FFD54F !important; /* amarillo */
+  color: #FFD54F !important;
   font-weight: 600 !important;
   text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
 }
 
-/* Hero responsive */
-@media (max-width: 768px) {
-  .hero { height: 55vh !important; }
-
-  .hero-title-top { font-size: 24px !important; }
-  .hero-title-bottom { font-size: 20px !important; }
-}
 /* ===== SECCIONES ===== */
 section {
   padding: 40px 20px !important;
   max-width: 1200px !important;
   margin: auto !important;
 }
+
+/* ===== CABAÑAS GRID ===== */
 .cabanias-grid {
   display: flex !important;
   gap: 20px !important;
@@ -96,17 +88,17 @@ section {
 
 .cabin-card {
   background: #fff !important;
-  padding: 16px !important;              /* un poco menos de padding */
+  padding: 20px !important;
   border-radius: 10px !important;
-  flex: 1 1 280px !important;            /* un poco más estrecha */
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3) !important; /* sombra verde suave */
-  border: 2px solid #4caf50 !important;  /* borde verde */
+  flex: 1 1 300px !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+  border: 1px solid #eee !important;
   transition: 0.25s !important;
 }
 
 .cabin-card:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(76, 175, 80, 0.4) !important; /* sombra verde más intensa al pasar */
+  transform: translateY(-4px) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
 }
 
 /* ===== CARRUSEL ===== */
@@ -140,13 +132,18 @@ section {
 
 /* ===== MOTOR DE RESERVAS ===== */
 .reserva-box {
-  background: #fff !important;
-  padding: 20px !important;
-  border-radius: 10px !important;
-  max-width: 450px !important;
-  margin: 20px auto !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12) !important;
-  border: 1px solid #eee !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  background: #ffffff !important;
+  border: 3px solid #4caf50 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18) !important;
+  padding: 28px 26px !important;
+  transition: 0.3s ease !important;
+}
+
+.reserva-box:hover {
+  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28) !important;
 }
 
 .reserva-box label {
@@ -157,11 +154,11 @@ section {
 
 .reserva-box input,
 .reserva-box select {
-  width: 100% !important;
-  padding: 8px 10px !important;
-  margin-top: 4px !important;
-  border: 1px solid #ccc !important;
   border-radius: 6px !important;
+  border: 1px solid #ddd !important;
+  padding: 10px !important;
+  margin-bottom: 14px !important;
+  width: 100% !important;
 }
 
 .reserva-box .resumen-reserva {
@@ -169,6 +166,10 @@ section {
   background: #f0f0f0 !important;
   padding: 10px !important;
   border-radius: 6px !important;
+}
+
+.reserva-box button {
+  margin-top: 10px !important;
 }
 
 .spinner {
@@ -190,10 +191,37 @@ section {
 .flatpickr-calendar {
   font-family: inherit !important;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+  z-index: 1000 !important;
 }
 
 .flatpickr-day {
   border-radius: 6px !important;
+}
+
+/* Días disponibles */
+.flatpickr-day.disponible {
+  background: #e8f5e9 !important;
+  color: #000 !important;
+}
+
+/* Días ocupados */
+.flatpickr-day.ocupado {
+  background: #e53935 !important;
+  color: #fff !important;
+  cursor: not-allowed !important;
+}
+
+/* Días pasados */
+.flatpickr-day.pasado {
+  background: #212121 !important;
+  color: #fff !important;
+  cursor: not-allowed !important;
+}
+
+/* Hover solo días disponibles */
+.flatpickr-day.disponible:hover {
+  background: #66bb6a !important;
+  color: #fff !important;
 }
 
 /* ===== FOOTER ===== */
@@ -229,233 +257,12 @@ footer a {
   .cabanias-grid { flex-direction: column !important; }
   .nav-menu { flex-direction: column !important; gap: 10px !important; }
 
-  .hero {
-    height: 50vh !important;
-  }
-
+  .hero { height: 50vh !important; }
   .hero-title { font-size: 26px !important; }
   .hero-sub { font-size: 16px !important; }
-}
-
-/* ===== SECCIONES ===== */
-section {
-  padding: 40px 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-.cabanias-grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.cabin-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1 1 300px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border: 1px solid #eee;
-  transition: 0.25s;
-}
-
-.cabin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-}
-
-/* ===== CARRUSEL ===== */
-.carousel-container {
-  position: relative;
-  overflow: hidden;
-}
-.carousel {
-  display: flex;
-  transition: transform 0.3s ease-in-out;
-}
-.carousel-slide img {
-  width: 100%;
-  border-radius: 8px;
-}
-.carousel-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.35);
-  color: #fff;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 50%;
-}
-
-/* ===== MOTOR DE RESERVAS ===== */
-.reserva-box {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 450px;
-  margin: 20px auto;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-  border: 1px solid #eee;
-}
-
-.reserva-box label {
-  display: block;
-  margin-top: 12px;
-  font-weight: 500;
-}
-
-.reserva-box input,
-.reserva-box select {
-  width: 100%;
-  padding: 8px 10px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.reserva-box .resumen-reserva {
-  margin-top: 12px;
-  background: #f0f0f0;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.spinner {
-  display: none;
-  width: 40px;
-  height: 40px;
-  border: 4px solid #ccc;
-  border-top: 4px solid #4caf50;
-  border-radius: 50%;
-  animation: girar 1s linear infinite;
-  margin: 10px auto;
-}
-
-@keyframes girar {
-  100% { transform: rotate(360deg); }
-}
-
-/* ===== FLATPICKR ===== */
-.flatpickr-calendar {
-  font-family: inherit;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  z-index: 1000;
-}
-
-.flatpickr-day {
-  border-radius: 6px !important;
-}
-
-/* Días disponibles */
-.flatpickr-day.disponible {
-  background: #e8f5e9 !important;
-  color: #000 !important;
-}
-
-/* Días ocupados */
-.flatpickr-day.ocupado {
-  background: #e53935 !important;
-  color: #fff !important;
-  cursor: not-allowed;
-}
-
-/* Días pasados */
-.flatpickr-day.pasado {
-  background: #212121 !important;
-  color: #fff !important;
-  cursor: not-allowed;
-}
-
-/* Hover solo días disponibles */
-.flatpickr-day.disponible:hover {
-  background: #66bb6a !important;
-  color: #fff !important;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  background: #212121;
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-}
-
-footer a { color: #4caf50; }
-
-/* ===== BOTÓN WHATSAPP ===== */
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1000;
-}
-
-#whatsappButton img {
-  width: 100%;
-  height: 100%;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .cabanias-grid { flex-direction: column; }
-  .nav-menu { flex-direction: column; gap: 10px; }
-
-  .hero {
-    height: 320px;
-  }
-
-  .hero-title {
-    font-size: 26px;
-  }
 }
 
 /* ===== MARCO MOTOR DE RESERVAS ===== */
 #reserva-online {
   padding: 40px 20px !important;
-}
-
-/* Caja del motor */
-.reserva-box {
-  max-width: 720px !important;
-  margin: 0 auto !important;
-
-  background: #ffffff !important;
-
-  /* 👉 CERCO VERDE */
-  border: 3px solid #4caf50 !important;
-  border-radius: 14px !important;
-
-  /* sombra suave natural */
-  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18) !important;
-
-  padding: 28px 26px !important;
-
-  transition: 0.3s ease !important;
-}
-
-/* pequeño efecto al pasar (queda muy fino) */
-.reserva-box:hover {
-  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28) !important;
-}
-
-/* Inputs más integrados con el marco */
-.reserva-box input,
-.reserva-box select {
-  border-radius: 6px !important;
-  border: 1px solid #ddd !important;
-  padding: 10px !important;
-  margin-bottom: 14px !important;
-  width: 100% !important;
-}
-
-/* Botón alineado con el estilo */
-.reserva-box button {
-  margin-top: 10px !important;
 }
