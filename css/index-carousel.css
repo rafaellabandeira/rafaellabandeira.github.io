@@ -1,154 +1,154 @@
-/* ================= INDEX-CAROUSEL.CSS - AUTO HEIGHT ================= */
+/* ================= INDEX-CAROUSEL.CSS - AJUSTE FINAL ================= */
 
-/* ---------- BLOQUES GENERALES (cabañas, carruseles, ubicación, contacto) ---------- */
-.cabanias-block,
-.carousel-block,
-#reserva-online,
+/* ---------- BLOQUES GENERALES (excepto motor de reservas) ---------- */
+.cabanias-grid,
+.cabin-card,
+.carousel-container,
+.carousel-container-general,
 #contacto,
 section#ubicacion {
-  border: 3px solid #4caf50;       /* reborde verde */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* sombra suave */
-  border-radius: 12px;
-  padding: 20px;
-  margin: 15px 0;                  /* separación vertical */
-  background-color: #fff;
+  border: 3px solid #4caf50 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  margin: 15px 0 !important;
+  background-color: #fff !important;
+  box-sizing: border-box !important;
 }
 
 /* ---------- GRID DE CABAÑAS ---------- */
 .cabanias-grid {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  display: flex !important;
+  gap: 15px !important;
+  flex-wrap: wrap !important;
 }
 
 .cabin-card {
-  flex: 1 1 300px;
-  border: 2px solid #4caf50;
-  border-radius: 10px;
-  padding: 15px;
-  background-color: #fefefe;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex: 1 1 300px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
 }
 
 /* ---------- BOTONES ---------- */
 .boton {
-  text-decoration: none;
-  text-align: center;
-  background-color: #4caf50;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: 0.3s;
+  text-decoration: none !important;
+  text-align: center !important;
+  background-color: #4caf50 !important;
+  color: #fff !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-weight: bold !important;
+  transition: 0.3s !important;
 }
 
 .boton:hover {
-  background-color: #43a047;
+  background-color: #43a047 !important;
 }
 
-/* ---------- CARRUSEL GENERAL Y PISCINA ---------- */
+/* ---------- CARRUSELES (general y piscina) ---------- */
 .carousel-container,
 .carousel-container-general {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  max-width: 100%;
-  margin: 20px 0;
-  border-radius: 10px;
-  border: 2px solid #4caf50;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 20px 0 !important;
+  border-radius: 10px !important;
+  border: 2px solid #4caf50 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 400px !important;   /* altura fija para todos los carruseles */
+  box-sizing: border-box !important;
 }
 
+/* ---------- SLIDES ---------- */
 .carousel,
 .carousel-general-slides {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
+  display: flex !important;
+  transition: transform 0.5s ease-in-out !important;
 }
 
 .carousel-slide,
 .carousel-slide-general {
-  min-width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
+  min-width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
 }
 
-/* ---------- IMÁGENES AUTO HEIGHT ---------- */
+/* ---------- IMÁGENES ---------- */
 .carousel-slide img,
 .carousel-slide-general img {
-  width: auto;
-  max-width: 100%;
-  height: auto;
-  max-height: 400px;           /* altura máxima para no estirar demasiado */
-  object-fit: contain;
-  display: block;
+  width: auto !important;
+  max-width: 100% !important;
+  height: 100% !important;         
+  object-fit: contain !important;   /* mantiene ratio horizontal */
+  display: block !important;
 }
 
 /* ---------- BOTONES DEL CARRUSEL ---------- */
 .carousel-button,
 .carousel-button-general {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(0,0,0,0.4);
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 20px;
-  z-index: 10;
-  transition: 0.3s;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background-color: rgba(0,0,0,0.4) !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+  border-radius: 50% !important;
+  font-size: 20px !important;
+  z-index: 10 !important;
+  transition: 0.3s !important;
 }
 
 .carousel-button:hover,
 .carousel-button-general:hover {
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0,0,0,0.7) !important;
 }
 
 .prev, .prev-general {
-  left: 10px;
+  left: 10px !important;
 }
 
 .next, .next-general {
-  right: 10px;
+  right: 10px !important;
 }
 
 /* ---------- INDICADORES ---------- */
 .carousel-indicators,
 .carousel-indicators-general {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 8px;
+  position: absolute !important;
+  bottom: 10px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  gap: 8px !important;
 }
 
 .indicator,
 .indicator-general {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: rgba(255,255,255,0.5);
-  cursor: pointer;
-  transition: 0.3s;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background-color: rgba(255,255,255,0.5) !important;
+  cursor: pointer !important;
+  transition: 0.3s !important;
 }
 
 .indicator.active,
 .indicator-general.active {
-  background-color: #4caf50;
+  background-color: #4caf50 !important;
 }
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
-  .carousel-slide img,
-  .carousel-slide-general img {
-    max-height: 250px;
+  .carousel-container,
+  .carousel-container-general {
+    height: 250px !important;
   }
 }
