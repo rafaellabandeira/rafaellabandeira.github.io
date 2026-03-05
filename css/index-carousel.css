@@ -1,103 +1,129 @@
-/* ===============================
-   INDEX CAROUSEL Y BORDES VERDES
-   =============================== */
+/* =======================
+   INDEX CAROUSEL & CONTAINERS
+   ======================= */
 
-/* --- Bordes verdes y sombra para todos los containers --- */
-.cabania-card, /* cabañas */
-.carousel-container, /* carruseles de cabañas */
-.carousel-container-general, /* carruseles generales */
-#contacto, /* contacto */
-#reserva-online, /* opcional si quieres sombra, pero dejamos sin borde */
-#ubicacion-container, /* ubicación */
-#ubicacion { /* si tienes otra capa interna para maps */
-  border: 2px solid #4CAF50;
-  box-shadow: 0 2px 8px rgba(0, 128, 0, 0.3);
+/* -----------------------
+   BORDES VERDES SOMBREADOS
+   ----------------------- */
+
+/* Cabañas */
+.cabin-card {
+  border: 2px solid #4CAF50 !important; /* verde */
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
-  margin: 15px 0; /* separación vertical */
-  padding: 10px;
-  background-color: #fff; /* opcional para que se vea bien la sombra */
+  padding: 1rem;
+  margin-bottom: 1rem; /* separación vertical */
+  background-color: #fff;
 }
 
-/* --- Carruseles: contenedor de slides --- */
-.carousel, .carousel-general-slides {
-  display: flex;
+/* Carruseles (general y piscina) */
+.carousel-container,
+.carousel-container-general {
+  border: 2px solid #4CAF50 !important;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+  border-radius: 8px;
   overflow: hidden;
-  width: 100%;
+  max-width: 600px; /* tamaño igual al de las cabañas */
+  margin: 1rem auto; /* centrado y separación vertical */
+}
+
+/* Contenedor de ubicación */
+section iframe {
+  border: 2px solid #4CAF50 !important;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
+  display: block;
+  width: 100%;
+  max-width: 600px; /* igual tamaño cabañas */
+  margin: 0 auto 1rem auto; /* separación debajo y centrado */
 }
 
-/* --- Cada slide --- */
-.carousel-slide, .carousel-slide-general {
-  min-width: 100%;
-  transition: transform 0.5s ease-in-out;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Sección de contacto */
+#contacto {
+  border: 2px solid #4CAF50 !important;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+  border-radius: 8px;
+  padding: 1rem;
+  max-width: 600px;
+  margin: 0 auto 1rem auto;
+  background-color: #fff;
 }
 
-.carousel-slide img, .carousel-slide-general img {
-  max-width: 100%;
-  height: auto;
-  object-fit: contain; /* mantiene el ratio horizontal */
+/* -----------------------
+   IMÁGENES DEL CARRUSEL
+   ----------------------- */
+
+/* Ajuste horizontal de las imágenes, mismo tamaño que cabañas */
+.carousel-slide img,
+.carousel-slide-general img {
+  width: 100%;
+  height: 350px; /* fijo para uniformidad */
+  object-fit: cover; /* centra la imagen y mantiene ratio */
   display: block;
 }
 
-/* --- Botones de navegación --- */
+/* -----------------------
+   BOTONES DEL CARRUSEL
+   ----------------------- */
+
+/* Posición sobre el borde del carrusel, centrados verticalmente */
 .carousel-button,
 .carousel-button-general {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(0, 128, 0, 0.6);
-  color: white;
+  background: rgba(76, 175, 80, 0.8);
+  color: #fff;
   border: none;
-  padding: 8px 12px;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  border-radius: 50%;
+  font-size: 1.5rem;
+  border-radius: 4px;
   z-index: 10;
 }
 
-.carousel-button:hover,
-.carousel-button-general:hover {
-  background-color: rgba(0, 128, 0, 0.9);
-}
-
-.carousel-button.prev,
-.carousel-button-general.prev-general {
+/* Botón izquierdo */
+.prev, .prev-general {
   left: 10px;
 }
 
-.carousel-button.next,
-.carousel-button-general.next-general {
+/* Botón derecho */
+.next, .next-general {
   right: 10px;
 }
 
-/* --- Indicadores --- */
-.carousel-indicators, .carousel-indicators-general {
+/* -----------------------
+   INDICADORES
+   ----------------------- */
+.carousel-indicators,
+.carousel-indicators-general {
   display: flex;
   justify-content: center;
-  margin-top: 8px;
-  gap: 5px;
+  margin-top: 0.5rem;
 }
 
-.indicator, .indicator-general {
+.indicator,
+.indicator-general {
   width: 12px;
   height: 12px;
-  background-color: #ccc;
   border-radius: 50%;
+  background-color: #ccc;
+  margin: 0 4px;
   cursor: pointer;
 }
 
-.indicator.active, .indicator-general.active {
+.indicator.active,
+.indicator-general.active {
   background-color: #4CAF50;
 }
 
-/* --- Separación entre secciones --- */
-section {
-  margin-bottom: 20px;
-}
-
-/* --- Ajuste para que las imágenes siempre estén centradas horizontalmente --- */
-.carousel-slide img, .carousel-slide-general img {
-  margin: 0 auto;
+/* -----------------------
+   AJUSTES ADICIONALES
+   ----------------------- */
+.carousel-container,
+.carousel-container-general,
+.cabin-card,
+section iframe,
+#contacto {
+  box-sizing: border-box;
 }
