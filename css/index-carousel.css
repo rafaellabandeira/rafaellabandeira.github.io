@@ -58,3 +58,11 @@
 .indicator-general.active {
   background: #333;
 }
+
+.cabin-card {
+  border: 2px solid #4caf50; /* el verde que quieras */
+  border-radius: 10px;
+  padding: 16px;
+  background-color: #fff;
+  transition: transform 0.3s;
+}
