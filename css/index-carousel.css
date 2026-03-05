@@ -127,3 +127,16 @@ section iframe,
 #contacto {
   box-sizing: border-box;
 }
+
+/* Contenedor de las slides para que se desplacen horizontalmente */
+.carousel-general-slides {
+  display: flex;
+  transition: transform 0.5s ease;
+  width: 100%;
+}
+
+/* Cada slide ocupa el 100% del contenedor */
+.carousel-slide-general {
+  min-width: 100%;
+  box-sizing: border-box;
+}
