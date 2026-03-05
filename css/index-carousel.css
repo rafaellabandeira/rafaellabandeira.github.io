@@ -1,103 +1,107 @@
-/* ================= RECUADROS VERDES PARA TODAS LAS SECCIONES ================= */
-
-/* Contenedores de cabañas */
-.cabanias-grid .cabin-card,
-.reserva-box,
-section .carousel-container,
-.carousel-container-general {
-  border: 2px solid #4CAF50 !important; /* borde verde */
-  border-radius: 12px !important;
-  padding: 15px !important;
-  box-sizing: border-box !important;
-  overflow: hidden !important;
+/* ================== RECUADROS VERDES PARA TODAS LAS SECCIONES ================== */
+section {
+  border: 2px solid #4caf50; /* verde */
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 15px; /* separación entre secciones */
+  box-sizing: border-box;
 }
 
-/* Mantener reborde verde en carruseles */
-.carousel-container,
-.carousel-container-general {
-  margin: 20px auto !important;
-  position: relative !important;
+/* ================== CARRUSEL GENERAL ================== */
+.carousel-container-general,
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%; /* se adapta al contenedor */
+  height: 300px; /* altura fija igual que cabañas */
+  margin: 0 auto 20px auto;
 }
 
-/* Slides de carrusel */
-.carousel-slide img,
-.carousel-slide-general img {
-  width: 100% !important;
-  height: 400px !important;
-  object-fit: cover !important; /* mantiene formato horizontal */
+.carousel-general-slides,
+.carousel {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 100%;
 }
 
-/* Botones de carrusel */
-.carousel-button,
-.carousel-button-general {
-  position: absolute !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  background-color: rgba(76, 175, 80, 0.8) !important;
-  border: none !important;
-  color: #fff !important;
-  font-size: 2rem !important;
-  padding: 10px !important;
-  cursor: pointer !important;
-  border-radius: 50% !important;
-  z-index: 10 !important;
+.carousel-slide-general,
+.carousel-slide {
+  min-width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
-.carousel-button.prev,
-.carousel-button-general.prev-general { left: 10px !important; }
-.carousel-button.next,
-.carousel-button-general.next-general { right: 10px !important; }
-
-/* Indicadores carrusel */
-.carousel-indicators,
-.carousel-indicators-general {
-  position: absolute !important;
-  bottom: 10px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  gap: 8px !important;
-  z-index: 11 !important;
+.carousel-slide-general img,
+.carousel-slide img {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain; /* centra y mantiene proporción horizontal */
 }
 
-.indicator,
-.indicator-general {
-  width: 12px !important;
-  height: 12px !important;
-  background-color: #fff !important;
-  border-radius: 50% !important;
-  opacity: 0.5 !important;
-  cursor: pointer !important;
-  border: 1px solid #4CAF50 !important;
+/* ================== BOTONES ================== */
+.carousel-button-general,
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(76, 175, 80, 0.7);
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 10;
 }
 
-.indicator.active,
-.indicator-general.active {
-  opacity: 1 !important;
-  background-color: #4CAF50 !important;
+.carousel-button-general.prev-general,
+.carousel-button.prev {
+  left: 10px;
 }
 
-/* Ajuste responsive para imágenes */
-@media (max-width: 768px) {
-  .carousel-slide img,
-  .carousel-slide-general img {
-    height: 250px !important;
-  }
+.carousel-button-general.next-general,
+.carousel-button.next {
+  right: 10px;
 }
 
-/* ================= AJUSTE MINI PARA CENTRAR IMÁGENES ================= */
-.carousel-slide img,
-.carousel-slide-general img {
-  object-fit: cover !important;       /* llena el contenedor recortando lo mínimo posible */
-  object-position: center center !important; /* siempre centrada horizontal y vertical */
-  width: 100% !important;
-  height: 400px !important;           /* altura fija, ajustable según diseño */
+/* ================== INDICADORES ================== */
+.carousel-indicators-general,
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
 }
 
-/* Ajuste responsive */
-@media (max-width: 768px) {
-  .carousel-slide img,
-  .carousel-slide-general img {
-    height: 250px !important;
-  }
+.indicator-general,
+.indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.indicator-general.active,
+.indicator.active {
+  opacity: 1;
+}
+
+/* ================== AJUSTE MINI PARA CENTRADO DE IMÁGENES ================== */
+.carousel-slide-general img,
+.carousel-slide img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  object-position: center center;
 }
