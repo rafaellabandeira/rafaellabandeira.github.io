@@ -1,74 +1,60 @@
-/* ================= CARRUSELES DEL INDEX ================= */
-.carousel-container-general,
-.carousel-container.small {
-  max-width: 900px;       /* ancho uniforme */
-  height: 450px;          /* altura uniforme */
-  margin: 0 auto;
+/* Contenedor general del carrusel */
+.carousel-container-general {
   position: relative;
+  width: 100%;
+  max-width: 800px;       /* ancho deseado del carrusel */
+  margin: 0 auto;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 10px;    /* opcional, para bordes redondeados */
 }
 
-/* Contenedor de slides */
-.carousel-general-slides,
-.carousel {
+/* Slides en fila */
+.carousel-general-slides {
   display: flex;
-  width: 100%;
-  height: 100%;
+  transition: transform 0.5s ease-in-out;
 }
 
-/* Cada slide */
-.carousel-slide-general img,
-.carousel-slide img {
+/* Cada imagen mantiene proporción horizontal */
+.carousel-slide-general img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;      /* mantiene el formato horizontal sin deformar */
+  height: 400px;          /* altura fija, ajusta según quieras */
+  object-fit: cover;      /* recorta la imagen sin deformar */
   display: block;
-  border-radius: 10px;
 }
 
-/* Botones de navegación */
-.carousel-button-general,
-.carousel-button {
+/* Botones */
+.carousel-button-general {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  color: #fff;
+  background: rgba(0,0,0,0.4);
   border: none;
+  color: #fff;
   font-size: 2rem;
+  padding: 0.2rem 0.8rem;
   cursor: pointer;
-  padding: 0 12px;
-  border-radius: 5px;
   z-index: 10;
 }
 
-.carousel-button-general.prev-general,
-.carousel-button.prev { left: 10px; }
-.carousel-button-general.next-general,
-.carousel-button.next { right: 10px; }
+.carousel-button-general.prev-general { left: 10px; }
+.carousel-button-general.next-general { right: 10px; }
 
 /* Indicadores */
-.carousel-indicators-general,
-.carousel-indicators {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+.carousel-indicators-general {
   display: flex;
-  gap: 6px;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
 
-.indicator-general,
-.indicator {
+.indicator-general {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.7);
+  background: #ccc;
+  margin: 0 4px;
   cursor: pointer;
 }
 
-.indicator-general.active,
-.indicator.active {
-  background: #fff;
+.indicator-general.active {
+  background: #333;
 }
