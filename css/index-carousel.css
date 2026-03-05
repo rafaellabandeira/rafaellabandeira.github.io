@@ -1,1 +1,61 @@
 
+/* Contenedor general del carrusel */
+.carousel-container-general {
+  position: relative;
+  width: 100%;
+  max-width: 800px;       /* ancho deseado del carrusel */
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 10px;    /* opcional, para bordes redondeados */
+}
+
+/* Slides en fila */
+.carousel-general-slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Cada imagen mantiene proporción horizontal */
+.carousel-slide-general img {
+  width: 100%;
+  height: 400px;          /* altura fija, ajusta según quieras */
+  object-fit: cover;      /* recorta la imagen sin deformar */
+  display: block;
+}
+
+/* Botones */
+.carousel-button-general {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  padding: 0.2rem 0.8rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.carousel-button-general.prev-general { left: 10px; }
+.carousel-button-general.next-general { right: 10px; }
+
+/* Indicadores */
+.carousel-indicators-general {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.indicator-general {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ccc;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+.indicator-general.active {
+  background: #333;
+}
