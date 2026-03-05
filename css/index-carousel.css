@@ -14,6 +14,7 @@
   padding: 1rem;
   margin-bottom: 1rem; /* separación vertical */
   background-color: #fff;
+  box-sizing: border-box;
 }
 
 /* Carruseles (general y piscina) */
@@ -25,17 +26,28 @@
   overflow: hidden;
   max-width: 600px; /* tamaño igual al de las cabañas */
   margin: 1rem auto; /* centrado y separación vertical */
+  position: relative; /* para botones absolutos */
+  background-color: #fff;
+  box-sizing: border-box;
 }
 
 /* Contenedor de ubicación */
-section iframe {
+#ubicacion {
   border: 2px solid #4CAF50 !important;
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
-  display: block;
+  padding: 10px;
+  max-width: 600px; /* igual tamaño que cabañas */
+  margin: 1rem auto; /* separación vertical y centrado */
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+#ubicacion iframe {
   width: 100%;
-  max-width: 600px; /* igual tamaño cabañas */
-  margin: 0 auto 1rem auto; /* separación debajo y centrado */
+  border: none; /* quita borde interno */
+  height: 350px;
+  display: block;
 }
 
 /* Sección de contacto */
@@ -45,28 +57,43 @@ section iframe {
   border-radius: 8px;
   padding: 1rem;
   max-width: 600px;
-  margin: 0 auto 1rem auto;
+  margin: 1rem auto; /* separación vertical */
   background-color: #fff;
+  box-sizing: border-box;
 }
 
 /* -----------------------
    IMÁGENES DEL CARRUSEL
    ----------------------- */
 
-/* Ajuste horizontal de las imágenes, mismo tamaño que cabañas */
-.carousel-slide img,
-.carousel-slide-general img {
+/* Contenedor de slides */
+.carousel, .carousel-general-slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
   width: 100%;
-  height: 350px; /* fijo para uniformidad */
-  object-fit: cover; /* centra la imagen y mantiene ratio */
+}
+
+/* Cada slide */
+.carousel-slide, .carousel-slide-general {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel-slide img, .carousel-slide-general img {
+  width: 100%;
+  height: 350px; /* mismo tamaño que cabañas */
+  object-fit: cover; /* mantiene ratio horizontal */
   display: block;
+  margin: 0 auto;
 }
 
 /* -----------------------
    BOTONES DEL CARRUSEL
    ----------------------- */
 
-/* Posición sobre el borde del carrusel, centrados verticalmente */
+/* Posición sobre el carrusel, centrados verticalmente */
 .carousel-button,
 .carousel-button-general {
   position: absolute;
@@ -82,15 +109,8 @@ section iframe {
   z-index: 10;
 }
 
-/* Botón izquierdo */
-.prev, .prev-general {
-  left: 10px;
-}
-
-/* Botón derecho */
-.next, .next-general {
-  right: 10px;
-}
+.prev, .prev-general { left: 10px; }
+.next, .next-general { right: 10px; }
 
 /* -----------------------
    INDICADORES
@@ -100,6 +120,7 @@ section iframe {
   display: flex;
   justify-content: center;
   margin-top: 0.5rem;
+  gap: 5px;
 }
 
 .indicator,
@@ -108,7 +129,6 @@ section iframe {
   height: 12px;
   border-radius: 50%;
   background-color: #ccc;
-  margin: 0 4px;
   cursor: pointer;
 }
 
@@ -120,10 +140,17 @@ section iframe {
 /* -----------------------
    AJUSTES ADICIONALES
    ----------------------- */
+
+/* Separación entre secciones */
+section {
+  margin-bottom: 1rem;
+}
+
+/* Box-sizing global para estos containers */
 .carousel-container,
 .carousel-container-general,
 .cabin-card,
-section iframe,
+#ubicacion,
 #contacto {
   box-sizing: border-box;
 }
