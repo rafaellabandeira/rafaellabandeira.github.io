@@ -1,6 +1,6 @@
-/* ================= INDEX-CAROUSEL.CSS - AJUSTE FINAL ================= */
+/* ================= INDEX-CAROUSEL.CSS - VERSIÓN FINAL ================= */
 
-/* ---------- BLOQUES GENERALES (excepto motor de reservas) ---------- */
+/* ---------- GENERAL: TODOS LOS BLOQUES (EXCEPTO MOTOR DE RESERVAS) ---------- */
 .cabanias-grid,
 .cabin-card,
 .carousel-container,
@@ -46,7 +46,7 @@ section#ubicacion {
   background-color: #43a047 !important;
 }
 
-/* ---------- CARRUSELES (general y piscina) ---------- */
+/* ---------- CARRUSELES GENERAL Y PISCINA ---------- */
 .carousel-container,
 .carousel-container-general {
   position: relative !important;
@@ -54,13 +54,14 @@ section#ubicacion {
   width: 100% !important;
   max-width: 100% !important;
   margin: 20px 0 !important;
-  border-radius: 10px !important;
-  border: 2px solid #4caf50 !important;
+  border-radius: 12px !important;
+  border: 3px solid #4caf50 !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  height: 400px !important;   /* altura fija para todos los carruseles */
+  height: 400px !important; /* altura fija igual para todos */
   box-sizing: border-box !important;
+  background-color: #fff !important;
 }
 
 /* ---------- SLIDES ---------- */
@@ -84,8 +85,8 @@ section#ubicacion {
 .carousel-slide-general img {
   width: auto !important;
   max-width: 100% !important;
-  height: 100% !important;         
-  object-fit: contain !important;   /* mantiene ratio horizontal */
+  height: 100% !important;
+  object-fit: contain !important; /* mantiene ratio horizontal */
   display: block !important;
 }
 
