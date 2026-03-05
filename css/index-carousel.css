@@ -1,61 +1,138 @@
+/* =================================================
+   PRIORIDAD ALTA PARA ESTE CSS
+   ================================================= */
 
-/* Contenedor general del carrusel */
-.carousel-container-general {
-  position: relative;
-  width: 100%;
-  max-width: 800px;       /* ancho deseado del carrusel */
-  margin: 0 auto;
-  overflow: hidden;
-  border-radius: 10px;    /* opcional, para bordes redondeados */
+body .carousel-container,
+body .carousel-container-general,
+body .cabin-card,
+body #contacto,
+body section iframe,
+body section:has(iframe) {
+    border: 2px solid #2e7d32 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 8px rgba(46,125,50,0.35) !important;
+    padding: 15px !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    background: white !important;
 }
 
-/* Slides en fila */
-.carousel-general-slides {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
+/* =================================================
+   SEPARACIÓN ENTRE SECCIONES
+   ================================================= */
+
+body section {
+    margin-bottom: 20px !important;
 }
 
-/* Cada imagen mantiene proporción horizontal */
-.carousel-slide-general img {
-  width: 100%;
-  height: 400px;          /* altura fija, ajusta según quieras */
-  object-fit: cover;      /* recorta la imagen sin deformar */
-  display: block;
+/* =================================================
+   CARRUSELES (MISMO TAMAÑO PARA LOS DOS)
+   ================================================= */
+
+body .carousel-container,
+body .carousel-container-general {
+    width: 100% !important;
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    overflow: hidden !important;
 }
 
-/* Botones */
-.carousel-button-general {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.4);
-  border: none;
-  color: #fff;
-  font-size: 2rem;
-  padding: 0.2rem 0.8rem;
-  cursor: pointer;
-  z-index: 10;
+/* =================================================
+   CONTENEDOR INTERNO
+   ================================================= */
+
+body .carousel,
+body .carousel-general-slides {
+    display: flex !important;
+    transition: transform 0.5s ease !important;
 }
 
-.carousel-button-general.prev-general { left: 10px; }
-.carousel-button-general.next-general { right: 10px; }
+/* =================================================
+   SLIDES
+   ================================================= */
 
-/* Indicadores */
-.carousel-indicators-general {
-  display: flex;
-  justify-content: center;
-  margin-top: 0.5rem;
+body .carousel-slide,
+body .carousel-slide-general {
+    min-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.indicator-general {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ccc;
-  margin: 0 4px;
-  cursor: pointer;
+/* =================================================
+   IMÁGENES SIEMPRE HORIZONTALES
+   ================================================= */
+
+body .carousel-slide img,
+body .carousel-slide-general img {
+    width: 100% !important;
+    height: 420px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 10px !important;
 }
 
-.indicator-general.active {
-  background: #333;
+/* =================================================
+   BOTONES
+   ================================================= */
+
+body .carousel-button,
+body .carousel-button-general {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: rgba(0,0,0,0.45) !important;
+    border: none !important;
+    color: white !important;
+    font-size: 28px !important;
+    padding: 10px 16px !important;
+    cursor: pointer !important;
+    border-radius: 6px !important;
+    z-index: 10 !important;
+}
+
+body .carousel-button.prev,
+body .carousel-button-general.prev-general {
+    left: 10px !important;
+}
+
+body .carousel-button.next,
+body .carousel-button-general.next-general {
+    right: 10px !important;
+}
+
+/* =================================================
+   INDICADORES
+   ================================================= */
+
+body .carousel-indicators,
+body .carousel-indicators-general {
+    text-align: center !important;
+    margin-top: 10px !important;
+}
+
+body .indicator,
+body .indicator-general {
+    display: inline-block !important;
+    width: 10px !important;
+    height: 10px !important;
+    margin: 5px !important;
+    background: #ccc !important;
+    border-radius: 50% !important;
+}
+
+body .indicator.active,
+body .indicator-general.active {
+    background: #2e7d32 !important;
+}
+
+/* =================================================
+   CABINAS (BORDE INDIVIDUAL)
+   ================================================= */
+
+body .cabin-card {
+    transition: transform 0.2s ease !important;
+}
+
+body .cabin-card:hover {
+    transform: translateY(-4px) !important;
 }
