@@ -174,3 +174,20 @@ section {
   position: relative;
   z-index: 2;
 }
+
+/* =======================
+   AJUSTE FLATPICKR PARA VISIBILIDAD
+   ======================= */
+.reserva-box {
+  position: relative; /* para que los elementos hijos z-index funcionen */
+  overflow: visible !important; /* importante para que el calendario no quede recortado */
+}
+
+.reserva-box input {
+  position: relative;
+  z-index: 2;
+}
+
+.flatpickr-calendar {
+  z-index: 9999 !important; /* se asegura de que esté por encima de todo */
+}
