@@ -153,4 +153,24 @@ section {
 #ubicacion,
 #contacto {
   box-sizing: border-box;
+
+}
+
+/* Asegura que el calendario pueda salir por encima de todo */
+.flatpickr-calendar {
+  z-index: 9999 !important;
+}
+
+/* Evita que contenedores padres corten el calendario */
+.reserva-box {
+  position: relative; /* ya lo tenías, pero reforzamos */
+  overflow: visible !important; /* importante */
+}
+
+/* Inputs de fecha visibles y con suficiente ancho */
+#entrada, #salida {
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
 }
