@@ -265,49 +265,6 @@ function initCarouselCabanas() {
     showSlide(currentIndex);
   });
 }
-
-// ---------- CARRUSEL INDEX PRINCIPAL ----------
-
-function initCarouselIndex() {
-  const carousels = document.querySelectorAll('section .carousel-container');
-
-  carousels.forEach(container => {
-    const slides = container.querySelectorAll('.carousel-slide');
-    const nextBtn = container.querySelector('.next');
-    const prevBtn = container.querySelector('.prev');
-    const indicators = container.querySelectorAll('.indicator');
-    let currentIndex = 0;
-
-    if (!slides.length) return;
-
-    function showSlide(index) {
-      slides.forEach(slide => slide.classList.remove('active'));
-      slides[index].classList.add('active');
-
-      indicators.forEach(ind => ind.classList.remove('active'));
-      if (indicators[index]) indicators[index].classList.add('active');
-    }
-
-    nextBtn?.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % slides.length;
-      showSlide(currentIndex);
-    });
-
-    prevBtn?.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-      showSlide(currentIndex);
-    });
-
-    indicators.forEach((ind, i) => {
-      ind.addEventListener('click', () => {
-        currentIndex = i;
-        showSlide(currentIndex);
-      });
-    });
-
-    showSlide(currentIndex);
-  });
-}
 // ---------- HAMBURGER ----------
 function initHamburger() {
   const hamburger = document.getElementById("hamburger");
@@ -317,3 +274,47 @@ function initHamburger() {
     hamburger.classList.toggle("active");
   });
 }
+
+// ===== CARRUSEL FUNCIONAL PARA TODOS LOS CONTAINERS =====
+document.addEventListener("DOMContentLoaded", () => {
+  const carousels = document.querySelectorAll(".carousel-container");
+
+  carousels.forEach(container => {
+    const slides = container.querySelectorAll(".carousel-slide");
+    const prevBtn = container.querySelector(".prev");
+    const nextBtn = container.querySelector(".next");
+    const indicators = container.querySelectorAll(".indicator");
+    let currentIndex = 0;
+
+    if (!slides.length) return;
+
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove("active"));
+      slides[index].classList.add("active");
+
+      if (indicators.length) {
+        indicators.forEach(ind => ind.classList.remove("active"));
+        if (indicators[index]) indicators[index].classList.add("active");
+      }
+    }
+
+    nextBtn?.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    prevBtn?.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    indicators.forEach((ind, i) => {
+      ind.addEventListener("click", () => {
+        currentIndex = i;
+        showSlide(currentIndex);
+      });
+    });
+
+    showSlide(currentIndex);
+  });
+});
