@@ -275,10 +275,50 @@ function initHamburger() {
   });
 }
 
-// ===== CARRUSEL FUNCIONAL PARA TODOS LOS CONTAINERS =====
-document.addEventListener("DOMContentLoaded", () => {
-  const carousels = document.querySelectorAll(".carousel-container");
+// ===== CARRUSEL GENERAL PARA EL INDEX =====
+function initCarouselGeneral() {
+  const containers = document.querySelectorAll(".carousel-container-general");
 
+  containers.forEach(container => {
+    const slides = container.querySelectorAll(".carousel-slide-general");
+    const prevBtn = container.querySelector(".prev-general");
+    const nextBtn = container.querySelector(".next-general");
+    const indicators = container.querySelectorAll(".indicator-general");
+    let currentIndex = 0;
+
+    if (!slides.length) return;
+
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove("active"));
+      slides[index].classList.add("active");
+      indicators.forEach(ind => ind.classList.remove("active"));
+      if (indicators[index]) indicators[index].classList.add("active");
+    }
+
+    nextBtn?.addEventListener("click", () => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    prevBtn?.addEventListener("click", () => {
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    indicators.forEach((ind, i) => {
+      ind.addEventListener("click", () => {
+        currentIndex = i;
+        showSlide(currentIndex);
+      });
+    });
+
+    showSlide(currentIndex);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Inicializa carruseles de cabañas (el que ya funcionaba)
+  const carousels = document.querySelectorAll(".carousel-container");
   carousels.forEach(container => {
     const slides = container.querySelectorAll(".carousel-slide");
     const prevBtn = container.querySelector(".prev");
@@ -317,4 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showSlide(currentIndex);
   });
+
+  // Inicializa carruseles generales del Index
+  initCarouselGeneral();
 });
