@@ -218,14 +218,10 @@ function esTemporadaAlta(fecha) {
 
 }
 
-
 function calcularReserva() {
-
   const cabaña = document.getElementById("cabaña").value;
-
   const entradaStr = document.getElementById("entrada").value;
   const salidaStr = document.getElementById("salida").value;
-
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -242,57 +238,61 @@ function calcularReserva() {
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
-
   spinner.style.display = "block";
   resultado.style.display = "none";
 
   setTimeout(() => {
-
-    const [d,m,y] = entradaStr.split("/");
+    // Convertir fechas
+    const [d, m, y] = entradaStr.split("/");
     const fechaEntrada = new Date(`${y}-${m}-${d}`);
-
-    const [ds,ms,ys] = salidaStr.split("/");
+    const [ds, ms, ys] = salidaStr.split("/");
     const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
 
-    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
-
+    const noches = (fechaSalida - fechaEntrada) / (1000 * 60 * 60 * 24);
     let total = 0;
+    let descuento = 0;
+    let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
 
-    for (let i=0; i<noches; i++) {
-
+    for (let i = 0; i < noches; i++) {
       const dia = new Date(fechaEntrada);
-
-      dia.setDate(dia.getDate()+i);
-
+      dia.setDate(dia.getDate() + i);
       const dow = dia.getDay();
-
       let precio;
 
       if (esTemporadaAlta(dia)) {
-
         precio = 150;
-
       } else {
-
-        if (dow === 5 || dow === 6)
-          precio = cabaña === "campanilla" ? 150 : 140;
-        else
-          precio = cabaña === "campanilla" ? 115 : 110;
-
+        if (dow === 5 || dow === 6) precio = cabaña === "campanilla" ? 150 : 140;
+        else precio = cabaña === "campanilla" ? 115 : 110;
       }
 
       total += precio;
-
     }
 
+    // Aplicar descuentos
+    if (esTemporadaAlta(fechaEntrada) && noches >= 6) descuento = total * 0.10;
+    else if (!esTemporadaAlta(fechaEntrada) && noches >= 3) descuento = total * 0.10;
+
+    total -= descuento;
+
+    if (noches < minNoches) {
+      alert(`Mínimo ${minNoches} noches en estas fechas`);
+      spinner.style.display = "none";
+      return;
+    }
+
+    // Mostrar resultados
+    document.getElementById("cabañaSeleccionada").innerText =
+      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
+
+    const pagoInicial = 50; // si tienes pago inicial fijo
+    document.getElementById("resto").innerText = (total - pagoInicial).toFixed(2);
 
     spinner.style.display = "none";
-
     resultado.style.display = "block";
-
-  },300);
-
+  }, 300);
 }
 
 
