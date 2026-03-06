@@ -202,22 +202,7 @@ function iniciarCalendarios(fechasOcupadas) {
 
 }
 
-
-// ===== CÁLCULO RESERVA =====
-function esTemporadaAlta(fecha) {
-
-  const mes = fecha.getMonth() + 1;
-  const dia = fecha.getDate();
-
-  return (
-    mes === 7 ||
-    mes === 8 ||
-    (mes === 12 && dia >= 22) ||
-    (mes === 1 && dia <= 7)
-  );
-
-}
-
+// ===== CALCULO RESERVA CORREGIDO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const entradaStr = document.getElementById("entrada").value;
@@ -253,6 +238,7 @@ function calcularReserva() {
     let descuento = 0;
     let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
 
+    // Calcular total noche a noche
     for (let i = 0; i < noches; i++) {
       const dia = new Date(fechaEntrada);
       dia.setDate(dia.getDate() + i);
@@ -269,9 +255,12 @@ function calcularReserva() {
       total += precio;
     }
 
-    // Aplicar descuentos
-    if (esTemporadaAlta(fechaEntrada) && noches >= 6) descuento = total * 0.10;
-    else if (!esTemporadaAlta(fechaEntrada) && noches >= 3) descuento = total * 0.10;
+    // Aplicar descuento correctamente
+    if (noches >= 6 && esTemporadaAlta(fechaEntrada)) {
+      descuento = total * 0.10;
+    } else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) {
+      descuento = total * 0.10;
+    }
 
     total -= descuento;
 
@@ -287,13 +276,30 @@ function calcularReserva() {
     document.getElementById("total").innerText = total.toFixed(2);
     document.getElementById("descuento").innerText = descuento.toFixed(2);
 
-    const pagoInicial = 50; // si tienes pago inicial fijo
+    const pagoInicial = 50;
     document.getElementById("resto").innerText = (total - pagoInicial).toFixed(2);
 
     spinner.style.display = "none";
     resultado.style.display = "block";
   }, 300);
 }
+
+
+// ===== CÁLCULO RESERVA =====
+function esTemporadaAlta(fecha) {
+
+  const mes = fecha.getMonth() + 1;
+  const dia = fecha.getDate();
+
+  return (
+    mes === 7 ||
+    mes === 8 ||
+    (mes === 12 && dia >= 22) ||
+    (mes === 1 && dia <= 7)
+  );
+
+}
+
 
 
 // ===== RESERVAR =====
