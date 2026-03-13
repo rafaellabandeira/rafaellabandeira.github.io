@@ -228,13 +228,15 @@
       <option value="tejo">Cabaña El Tejo</option>
     </select>
 
-    <!-- Botones para mover el calendario -->
-    <div class="calendario-navegacion">
-      <button id="mesAnterior">◀ Mes anterior</button>
-      <button id="mesSiguiente">Mes siguiente ▶</button>
+    <label for="fechas">Selecciona tus fechas</label>
+    
+    <!-- Contenedor de navegación de meses -->
+    <div id="navegacionMeses" style="text-align:center; margin-bottom:10px;">
+      <button id="mesAnterior">◀</button>
+      <button id="mesSiguiente">▶</button>
     </div>
 
-    <label for="fechas">Selecciona tus fechas</label>
+    <!-- Calendario -->
     <div id="fechas"></div>
     
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
@@ -260,12 +262,11 @@
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
       <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto" style="color:red;"></span> €</p>
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
     </div>
   </div>
 </section>
-
 <section id="contacto">
   <h2>Reservas personalizadas</h2>
   <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
