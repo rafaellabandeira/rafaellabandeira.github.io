@@ -152,19 +152,21 @@ function iniciarCalendarioBooking(fechasOcupadas) {
   crearMes(hoy.getFullYear(), hoy.getMonth());
   crearMes(hoy.getFullYear(), hoy.getMonth() + 1);
 }
-// ===== CALCULO RESERVA CORREGIDO =====
+
+
+// ===== CALCULO RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
-  const entradaStr = document.getElementById("entrada").value;
-  const salidaStr = document.getElementById("salida").value;
+  const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
+
+  if (!diasSeleccionados.length) {
+    alert("Selecciona un rango de fechas");
+    return;
+  }
+
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
-
-  if (!entradaStr || !salidaStr) {
-    alert("Selecciona fechas");
-    return;
-  }
 
   if (!nombre || !telefono || !email) {
     alert("Completa todos los datos personales");
@@ -177,18 +179,17 @@ function calcularReserva() {
   resultado.style.display = "none";
 
   setTimeout(() => {
-    // Convertir fechas
-    const [d, m, y] = entradaStr.split("/");
-    const fechaEntrada = new Date(`${y}-${m}-${d}`);
-    const [ds, ms, ys] = salidaStr.split("/");
-    const fechaSalida = new Date(`${ys}-${ms}-${ds}`);
+    const fechas = Array.from(diasSeleccionados).map(d => new Date(d.dataset.fecha));
+    fechas.sort((a,b) => a - b);
+    const fechaEntrada = fechas[0];
+    const fechaSalida = new Date(fechas[fechas.length -1]);
+    fechaSalida.setDate(fechaSalida.getDate() + 1); // salida al día siguiente
 
-    const noches = (fechaSalida - fechaEntrada) / (1000 * 60 * 60 * 24);
+    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
     let total = 0;
     let descuento = 0;
     let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
 
-    // Calcular total noche a noche
     for (let i = 0; i < noches; i++) {
       const dia = new Date(fechaEntrada);
       dia.setDate(dia.getDate() + i);
@@ -198,14 +199,13 @@ function calcularReserva() {
       if (esTemporadaAlta(dia)) {
         precio = 150;
       } else {
-        if (dow === 5 || dow === 6) precio = cabaña === "campanilla" ? 150 : 140;
-        else precio = cabaña === "campanilla" ? 115 : 110;
+        precio = (dow === 5 || dow === 6) ? (cabaña === "campanilla" ? 150 : 140) : (cabaña === "campanilla" ? 115 : 110);
       }
 
       total += precio;
     }
 
-    // Aplicar descuento correctamente
+    // Descuento
     if (noches >= 6 && esTemporadaAlta(fechaEntrada)) {
       descuento = total * 0.10;
     } else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) {
@@ -221,39 +221,37 @@ function calcularReserva() {
     }
 
     // Mostrar resultados
+    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     const totalElem = document.getElementById("total");
-totalElem.innerText = total.toFixed(2);
-totalElem.classList.add("animar-precio");
-setTimeout(()=> totalElem.classList.remove("animar-precio"),500);
+    totalElem.innerText = total.toFixed(2);
+    totalElem.classList.add("animar-precio");
+    setTimeout(()=> totalElem.classList.remove("animar-precio"),500);
 
-document.getElementById("descuento").innerText = descuento.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
 
-const pagoInicial = 50;
+    const pagoInicial = 50;
+    const restoElem = document.getElementById("resto");
+    restoElem.innerText = (total - pagoInicial).toFixed(2);
+    restoElem.classList.add("resaltar-resto");
+    setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
 
-const restoElem = document.getElementById("resto");
-restoElem.innerText = (total - pagoInicial).toFixed(2);
-restoElem.classList.add("resaltar-resto");
-setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
     spinner.style.display = "none";
     resultado.style.display = "block";
   }, 300);
 }
 
-
-// ===== CÁLCULO RESERVA =====
+// ===== CALCULO TEMPORADA ALTA =====
 function esTemporadaAlta(fecha) {
-
   const mes = fecha.getMonth() + 1;
   const dia = fecha.getDate();
-
   return (
     mes === 7 ||
     mes === 8 ||
     (mes === 12 && dia >= 22) ||
     (mes === 1 && dia <= 7)
   );
-
 }
+      
 
 
 
