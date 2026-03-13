@@ -45,7 +45,7 @@ h1, h2, h3 {
 /* ===== HERO PORTADA ===== */
 .hero {
   position: relative;
-  height: 80vh; /* Ajusta según prefieras */
+  height: 80vh;
   background: url('../images/hero.jpg') center/cover no-repeat;
   display: flex;
   align-items: center;
@@ -62,7 +62,7 @@ h1, h2, h3 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.35); /* sombra oscura para mejorar contraste */
+  background: rgba(0,0,0,0.35);
   z-index: 1;
 }
 
@@ -85,7 +85,7 @@ h1, h2, h3 {
 }
 
 .hero-title span {
-  color: #FFD700; /* Resaltar palabras si quieres */
+  color: #FFD700;
 }
 
 .hero-sub {
@@ -180,6 +180,8 @@ section {
   padding: 10px;
   border-radius: 6px;
 }
+
+/* Spinner */
 .spinner {
   display: none;
   width: 40px;
@@ -193,15 +195,6 @@ section {
 @keyframes girar {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-/* ====================== CALENDARIO FLATPICKR ====================== */
-.flatpickr-calendar {
-  font-family: inherit;
-  z-index: 1000;
-}
-.flatpickr-day {
-  border-radius: 6px !important;
 }
 
 /* ====================== FOOTER ====================== */
@@ -235,46 +228,66 @@ footer a { color: #4caf50; }
   .hero-title { font-size: 2rem; }
   .hero-sub { font-size: 1rem; }
 }
+
 /* Animación precio */
 .animar-precio{
-animation: flashPrecio .5s ease-in-out;
+  animation: flashPrecio .5s ease-in-out;
 }
 
 @keyframes flashPrecio{
-0%{transform:scale(1);color:#000;}
-50%{transform:scale(1.2);color:#4CAF50;}
-100%{transform:scale(1);color:#000;}
+  0%{transform:scale(1);color:#000;}
+  50%{transform:scale(1.2);color:#4CAF50;}
+  100%{transform:scale(1);color:#000;}
 }
 
 /* Resto a pagar destacado */
 .resaltar-resto{
-background:#4CAF50;
-color:#fff;
-padding:2px 6px;
-border-radius:4px;
-transition:.5s;
+  background:#4CAF50;
+  color:#fff;
+  padding:2px 6px;
+  border-radius:4px;
+  transition:.5s;
 }
 
 /* ===== MENSAJE URGENCIA ===== */
-
 .mensaje-urgencia{
-margin-top:10px;
-padding:8px;
-font-size:14px;
-background:#fff3cd;
-border-left:4px solid #ff9800;
-border-radius:4px;
+  margin-top:10px;
+  padding:8px;
+  font-size:14px;
+  background:#fff3cd;
+  border-left:4px solid #ff9800;
+  border-radius:4px;
 }
 
-/* ===== CALENDARIO TIPO BOOKING ===== */
+/* ===== CALENDARIO TIPO BOOKING (2 MESES en cuadrícula) ===== */
 #fechas {
-  display: flex;
+  display: flex;           /* Contenedor horizontal para dos meses */
+  gap: 20px;
+  justify-content: center;
   flex-wrap: wrap;
+}
+
+.mes-calendario {
+  display: grid;
+  grid-template-columns: repeat(7, 40px); /* 7 columnas: L-M-X-J-V-S-D */
   gap: 4px;
   padding: 10px;
   background: #f5f5f5;
   border-radius: 8px;
-  max-width: 350px;
+}
+
+.titulo-mes {
+  grid-column: span 7;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.dia-semana {
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.8rem;
+  color: #555;
 }
 
 /* Día disponible */
@@ -306,97 +319,7 @@ border-radius:4px;
   transform: scale(1.1);
 }
 
-/* Hover */
-.fila-dia:not(.reservado):hover {
-  background: #a5d6a7;
-}
-
-/* Mensaje de urgencia */
-.mensaje-urgencia {
-  margin: 8px 0;
-  padding: 8px;
-  background: #ffecb3;
-  border-left: 4px solid #ffb300;
-  font-weight: bold;
-  color: #bf360c;
-  border-radius: 4px;
-  animation: parpadeo 1.5s infinite alternate;
-}
-
-/* Animación parpadeo para urgencia */
-@keyframes parpadeo {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
-}
-
-/* Resto a pagar destacado */
-#resto {
-  font-weight: bold;
-  color: #d32f2f;
-  font-size: 1.2em;
-}
-
-/* Spinner (si no lo tienes) */
-.spinner {
-  width: 30px;
-  height: 30px;
-  border: 4px solid #ccc;
-  border-top-color: #43a047;
-  border-radius: 50%;
-  animation: girar 1s linear infinite;
-  margin: 10px auto;
-  display: none;
-}
-
-@keyframes girar {
-  to { transform: rotate(360deg); }
-}
-
-
-/* ===== CALENDARIO TIPO BOOKING ===== */
-#fechas {
-  display: flex;           /* Contenedor horizontal para dos meses */
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.mes-calendario {
-  display: grid;
-  grid-template-columns: repeat(7, 40px); /* 7 columnas: L-M-X-J-V-S-D */
-  gap: 4px;
-  padding: 10px;
-  background: #f5f5f5;
-  border-radius: 8px;
-}
-
-.fila-dia {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
-  border-radius: 6px;
-  cursor: pointer;
-  background: #e8f5e9;
-  color: #000;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.fila-dia.reservado {
-  background: #e53935;
-  color: #fff;
-  cursor: not-allowed;
-}
-
-.fila-dia.seleccionado {
-  background: #43a047;
-  color: #fff;
-  font-weight: bold;
-  transform: scale(1.1);
-}
-
+/* Hover día no reservado */
 .fila-dia:hover:not(.reservado):not(.seleccionado) {
   background: #a5d6a7;
 }
