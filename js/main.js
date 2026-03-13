@@ -183,8 +183,7 @@ document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   refrescarCalendario();
 });
   
-
-    // ===== CALCULO RESERVA COMPLETO =====
+// ===== CALCULO RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
@@ -228,13 +227,11 @@ function calcularReserva() {
 
     // ===== MOSTRAR FECHAS SELECCIONADAS =====
     const opciones = { day: "numeric", month: "short" };
-
     const entradaTexto = fechaEntrada.toLocaleDateString("es-ES", opciones);
     const salidaTexto = fechaSalida.toLocaleDateString("es-ES", opciones);
 
     document.getElementById("fechasSeleccionadas").innerHTML =
-      "📅 " + entradaTexto + " → " + salidaTexto +
-      "<br>🛏 " + noches + (noches === 1 ? " noche" : " noches");
+      `📅 ${entradaTexto} - ${salidaTexto}<br>🛏 ${noches} ${noches === 1 ? "noche" : "noches"}`;
 
     let total = 0;
     let descuento = 0;
