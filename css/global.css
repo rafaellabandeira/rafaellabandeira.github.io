@@ -259,14 +259,17 @@ footer a { color: #4caf50; }
   border-radius:4px;
 }
 
-/* ===== CALENDARIO TIPO BOOKING (2 MESES en cuadrícula) ===== */
+/* ===== CALENDARIO TIPO BOOKING (navegable) ===== */
 #fechas {
-  display: flex;           /* Contenedor horizontal para dos meses */
+  display: flex;           /* Contenedor horizontal para los meses */
   gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 10px;
 }
 
+/* Contenedor de cada mes */
 .mes-calendario {
   display: grid;
   grid-template-columns: repeat(7, 40px); /* 7 columnas: L-M-X-J-V-S-D */
@@ -274,15 +277,19 @@ footer a { color: #4caf50; }
   padding: 10px;
   background: #f5f5f5;
   border-radius: 8px;
+  position: relative;
 }
 
+/* Título del mes */
 .titulo-mes {
   grid-column: span 7;
   text-align: center;
   font-weight: bold;
   margin-bottom: 8px;
+  font-size: 0.95rem;
 }
 
+/* Días de la semana */
 .dia-semana {
   text-align: center;
   font-weight: bold;
@@ -324,6 +331,34 @@ footer a { color: #4caf50; }
   background: #a5d6a7;
 }
 
+/* Botones navegación meses */
+#calendario-nav {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+#calendario-nav button {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  margin: 0 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#calendario-nav button:hover {
+  background: #43a047;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #fechas {
+    flex-direction: column;
+    align-items: center;
+  }
+}
 /* ===== AJUSTES MÓVIL PARA CALENDARIO ===== */
 @media (max-width: 500px) {
   #fechas {
