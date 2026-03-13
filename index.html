@@ -228,8 +228,14 @@
       <option value="tejo">Cabaña El Tejo</option>
     </select>
 
+    <!-- Botones para mover el calendario -->
+    <div class="calendario-navegacion">
+      <button id="mesAnterior">◀ Mes anterior</button>
+      <button id="mesSiguiente">Mes siguiente ▶</button>
+    </div>
+
     <label for="fechas">Selecciona tus fechas</label>
-<div id="fechas"></div>
+    <div id="fechas"></div>
     
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
@@ -254,7 +260,7 @@
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
       <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto" style="color:red;"></span> €</p>
       <button id="btnPagar">Pagar</button>
     </div>
   </div>
