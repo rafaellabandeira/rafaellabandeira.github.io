@@ -432,3 +432,41 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     btnPagar.addEventListener("click", reservar);
 
 });
+
+// ===== MENSAJE URGENCIA INTELIGENTE =====
+function actualizarUrgencia(fechasOcupadas){
+
+  const mensaje = document.getElementById("mensajeUrgencia");
+  if(!mensaje) return;
+
+  const hoy = new Date();
+  const mesActual = hoy.getMonth()+1;
+
+  const ocupadas = fechasOcupadas.campanilla.length;
+
+  let texto = "";
+
+  if(mesActual === 7 || mesActual === 8){
+
+    texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
+
+  }
+  else if(ocupadas > 20){
+
+    texto = "⚡ Quedan pocas fechas disponibles este mes.";
+
+  }
+  else if(ocupadas > 10){
+
+    texto = "📅 Este alojamiento suele reservarse rápido.";
+
+  }
+  else{
+
+    texto = "✨ Reserva ahora para asegurar tus fechas.";
+
+  }
+
+  mensaje.innerText = texto;
+
+}
