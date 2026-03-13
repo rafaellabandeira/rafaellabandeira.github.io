@@ -68,14 +68,13 @@ async function cargarReservasAirbnb() {
 }
 
 
-// ===== CALENDARIO TIPO BOOKING NAVEGABLE =====
+  // ===== CALENDARIO TIPO BOOKING (navegable con flechas) =====
 let mesBase = new Date(); // mes inicial mostrado
 let reservasGlobal = {};
 let inicioSeleccion = null;
 let finSeleccion = null;
 
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
-  reservasGlobal = fechasOcupadas; // guardar globalmente
   const container = document.getElementById("fechas");
   if (!container) return;
   container.innerHTML = "";
@@ -131,7 +130,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado por Airbnb
+      // Día reservado por Airbnb (formato d/m/Y)
       const fechaFormateada = formatearLocal(fecha);
       if (fechasOcupadas[cabana]?.includes(fechaFormateada)) {
         diaElem.classList.add("reservado");
@@ -169,15 +168,20 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   crearMes(siguiente.getFullYear(), siguiente.getMonth());
 }
 
-// Botones para navegar
-function moverMes(diferencia) {
-  mesBase.setMonth(mesBase.getMonth() + diferencia);
-  refrescarCalendario();
-}
-
+// ===== FUNCIONES FLECHAS =====
 function refrescarCalendario() {
   iniciarCalendarioBooking(reservasGlobal, mesBase);
 }
+
+// Botones navegación
+document.getElementById("mesAnterior")?.addEventListener("click", () => {
+  mesBase.setMonth(mesBase.getMonth() - 1);
+  refrescarCalendario();
+});
+document.getElementById("mesSiguiente")?.addEventListener("click", () => {
+  mesBase.setMonth(mesBase.getMonth() + 1);
+  refrescarCalendario();
+});
   
     
 // ===== CALCULO RESERVA COMPLETO =====
