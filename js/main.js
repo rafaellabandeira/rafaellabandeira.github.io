@@ -161,7 +161,8 @@ function iniciarCalendarios(fechasOcupadas) {
 
   const fpConfig = {
 
-    mode: "single",
+    mode: "range",
+showMonths: 2,
 
     dateFormat: "d/m/Y",
 
