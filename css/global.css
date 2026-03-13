@@ -323,3 +323,14 @@ footer a { color: #4caf50; }
 .fila-dia:hover:not(.reservado):not(.seleccionado) {
   background: #a5d6a7;
 }
+
+/* ===== AJUSTES MÓVIL PARA CALENDARIO ===== */
+@media (max-width: 500px) {
+  #fechas {
+    flex-direction: column;   /* Apila los meses uno debajo del otro */
+    align-items: center;      /* Centra los meses */
+  }
+  .mes-calendario {
+    margin-bottom: 15px;      /* Espacio entre meses */
+  }
+}
