@@ -67,58 +67,90 @@ async function cargarReservasAirbnb() {
   }
 }
 
-    // ===== CALENDARIO TIPO BOOKING (Rango) =====
+// ===== CALENDARIO TIPO BOOKING 2 MESES =====
 function iniciarCalendarioBooking(fechasOcupadas) {
+  const container = document.getElementById("fechas");
+  if (!container) return;
+  container.innerHTML = "";
 
-  const aviso = document.getElementById("avisoFechas");
-  const inputRango = document.getElementById("fechas");
-  const inputEntrada = document.getElementById("entrada");
-  const inputSalida = document.getElementById("salida");
+  const hoy = new Date();
+  const cabana = document.getElementById("cabaña").value.toLowerCase();
 
-  function pintarDias(instance) {
-    const cabana = document.getElementById("cabaña").value.toLowerCase();
-    const hoy = new Date(); hoy.setHours(0,0,0,0);
-    const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
+  let inicioSeleccion = null;
+  let finSeleccion = null;
 
-    days.forEach(dayElem => {
-      const fechaISO = formatearLocal(dayElem.dateObj);
-      dayElem.style.borderRadius = "6px";
-
-      if (dayElem.dateObj < hoy || fechasOcupadas[cabana]?.includes(fechaISO)) {
-        dayElem.style.background = "#e53935";
-        dayElem.style.color = "#fff";
-        dayElem.style.pointerEvents = "none";
-      } else {
-        dayElem.style.background = "#e8f5e9";
-        dayElem.style.color = "#000";
-        dayElem.style.pointerEvents = "";
+  function actualizarSeleccion() {
+    const dias = container.querySelectorAll(".fila-dia");
+    dias.forEach(diaElem => {
+      diaElem.classList.remove("seleccionado");
+      const fecha = new Date(diaElem.dataset.fecha);
+      if (inicioSeleccion && finSeleccion && fecha >= inicioSeleccion && fecha <= finSeleccion) {
+        diaElem.classList.add("seleccionado");
       }
     });
   }
 
-  flatpickr(inputRango, {
-    mode: "range",
-    dateFormat: "d/m/Y",
-    minDate: "today",
-    locale: { firstDayOfWeek: 1 },
-    disable: [
-      function(date) {
-        const cabana = document.getElementById("cabaña").value.toLowerCase();
-        return fechasOcupadas[cabana]?.includes(formatearLocal(date));
-      }
-    ],
-    onChange: (selectedDates, dateStr, instance) => {
-      pintarDias(instance);
-      aviso.style.display = "none";
+  function crearMes(ano, mes) {
+    const primerDia = new Date(ano, mes, 1);
+    const ultimoDia = new Date(ano, mes + 1, 0);
+    const mesContainer = document.createElement("div");
+    mesContainer.style.display = "inline-block";
+    mesContainer.style.verticalAlign = "top";
+    mesContainer.style.marginRight = "10px";
 
-      if (selectedDates.length === 2) {
-        inputEntrada.value = formatearLocal(selectedDates[0]);
-        inputSalida.value = formatearLocal(selectedDates[1]);
+    const tituloMes = document.createElement("div");
+    tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
+    tituloMes.style.fontWeight = "bold";
+    tituloMes.style.textAlign = "center";
+    mesContainer.appendChild(tituloMes);
+
+    for (let d = 1; d <= ultimoDia.getDate(); d++) {
+      const fecha = new Date(ano, mes, d);
+      const diaElem = document.createElement("div");
+      diaElem.classList.add("fila-dia");
+      diaElem.innerText = d;
+      diaElem.dataset.fecha = fecha.toISOString().slice(0,10);
+
+      // Día pasado
+      if (fecha < hoy) {
+        diaElem.classList.add("reservado");
+        diaElem.style.cursor = "not-allowed";
       }
-    },
-    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
-    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance)
-  });
+
+      // Día reservado por Airbnb
+      const fechaISO = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+        diaElem.classList.add("reservado");
+        diaElem.style.cursor = "not-allowed";
+      }
+
+      // Click selección
+      diaElem.addEventListener("click", () => {
+        if (diaElem.classList.contains("reservado")) return;
+
+        if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
+          inicioSeleccion = fecha;
+          finSeleccion = null;
+        } else if (!finSeleccion) {
+          if (fecha < inicioSeleccion) {
+            finSeleccion = inicioSeleccion;
+            inicioSeleccion = fecha;
+          } else {
+            finSeleccion = fecha;
+          }
+        }
+        actualizarSeleccion();
+      });
+
+      mesContainer.appendChild(diaElem);
+    }
+
+    container.appendChild(mesContainer);
+  }
+
+  // Mostrar mes actual + siguiente
+  crearMes(hoy.getFullYear(), hoy.getMonth());
+  crearMes(hoy.getFullYear(), hoy.getMonth() + 1);
 }
 // ===== CALCULO RESERVA CORREGIDO =====
 function calcularReserva() {
