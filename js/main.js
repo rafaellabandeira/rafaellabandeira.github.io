@@ -410,6 +410,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
   const reservas = await cargarReservasAirbnb();
+  actualizarUrgencia(reservas);
 
   if (
     document.getElementById("cabaña") &&
