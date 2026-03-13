@@ -222,28 +222,33 @@
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
+
+    <!-- Selección de cabaña -->
     <label for="cabaña">Selecciona cabaña</label>
     <select id="cabaña">
       <option value="campanilla">Cabaña Campanilla</option>
       <option value="tejo">Cabaña El Tejo</option>
     </select>
 
+    <!-- Selección de fechas con navegación -->
     <label for="fechas">Selecciona tus fechas</label>
     
-    <!-- Contenedor de navegación de meses -->
-    <div id="navegacionMeses" style="text-align:center; margin-bottom:10px;">
-      <button id="mesAnterior">◀</button>
-      <button id="mesSiguiente">▶</button>
+    <!-- Contenedor de calendario con flechas -->
+    <div id="fechas-container">
+      <div id="mesAnterior">◀</div>
+      <div id="fechas"></div>
+      <div id="mesSiguiente">▶</div>
     </div>
-
-    <!-- Calendario -->
-    <div id="fechas"></div>
     
+    <!-- Aviso fechas no disponibles -->
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
     </p>
+
+    <!-- Mensaje de urgencia -->
     <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
+    <!-- Datos personales -->
     <label for="nombre">Nombre completo</label>
     <input type="text" id="nombre" placeholder="Nombre">
 
@@ -253,10 +258,13 @@
     <label for="email">Email</label>
     <input type="email" id="email" placeholder="Email">
 
+    <!-- Botón calcular precio -->
     <button id="btnCalcular">Calcular precio</button>
 
+    <!-- Spinner -->
     <div class="spinner" id="spinner"></div>
 
+    <!-- Resultados de la reserva -->
     <div id="resultado" class="resumen-reserva" style="display:none;">
       <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
@@ -265,6 +273,7 @@
       <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
     </div>
+
   </div>
 </section>
 <section id="contacto">
