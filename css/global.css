@@ -235,3 +235,22 @@ footer a { color: #4caf50; }
   .hero-title { font-size: 2rem; }
   .hero-sub { font-size: 1rem; }
 }
+/* Animación precio */
+.animar-precio{
+animation: flashPrecio .5s ease-in-out;
+}
+
+@keyframes flashPrecio{
+0%{transform:scale(1);color:#000;}
+50%{transform:scale(1.2);color:#4CAF50;}
+100%{transform:scale(1);color:#000;}
+}
+
+/* Resto a pagar destacado */
+.resaltar-resto{
+background:#4CAF50;
+color:#fff;
+padding:2px 6px;
+border-radius:4px;
+transition:.5s;
+}
