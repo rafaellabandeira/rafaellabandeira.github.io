@@ -183,7 +183,7 @@ document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   refrescarCalendario();
 });
   
-    
+  
 // ===== CALCULO RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
@@ -198,9 +198,18 @@ function calcularReserva() {
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
 
+  // Validación email
   if (!nombre || !telefono || !email) {
-    alert("Completa todos los datos personales");
+    if(!email || !/\S+@\S+\.\S+/.test(email)) {
+      document.getElementById("email").classList.add("error");
+      alert("Introduce un email válido");
+    } else {
+      document.getElementById("email").classList.remove("error");
+      alert("Completa todos los datos personales");
+    }
     return;
+  } else {
+    document.getElementById("email").classList.remove("error");
   }
 
   const spinner = document.getElementById("spinner");
@@ -252,16 +261,28 @@ function calcularReserva() {
 
     // Mostrar resultados
     document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+
     const totalElem = document.getElementById("total");
     totalElem.innerText = total.toFixed(2);
     totalElem.classList.add("animar-precio");
     setTimeout(()=> totalElem.classList.remove("animar-precio"),500);
 
-    document.getElementById("descuento").innerText = descuento.toFixed(2);
+    const descuentoElem = document.getElementById("descuento");
+    descuentoElem.innerText = descuento.toFixed(2);
 
     const pagoInicial = 50;
     const restoElem = document.getElementById("resto");
     restoElem.innerText = (total - pagoInicial).toFixed(2);
+
+    // Aplicar estilo destacado en verde con texto rojo
+    restoElem.style.background = "#4caf50";
+    restoElem.style.color = "#e53935";
+    restoElem.style.padding = "2px 6px";
+    restoElem.style.borderRadius = "4px";
+    restoElem.style.fontWeight = "bold";
+    restoElem.style.display = "inline-block";
+
+    // Animación
     restoElem.classList.add("resaltar-resto");
     setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
 
