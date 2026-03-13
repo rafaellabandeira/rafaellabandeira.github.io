@@ -67,142 +67,59 @@ async function cargarReservasAirbnb() {
   }
 }
 
-
-// ===== CALENDARIO CON FLATPICKR =====
-function iniciarCalendarios(fechasOcupadas) {
+    // ===== CALENDARIO TIPO BOOKING (Rango) =====
+function iniciarCalendarioBooking(fechasOcupadas) {
 
   const aviso = document.getElementById("avisoFechas");
-
-  function actualizarAviso(selectedDates) {
-
-    const entrada = selectedDates[0];
-    const salida = selectedDates[1];
-
-    if (!entrada || !salida) {
-      aviso.style.display = "none";
-      return;
-    }
-
-    const cabana = document.getElementById("cabaña").value.toLowerCase();
-
-    let actual = new Date(entrada);
-    const fin = new Date(salida);
-
-    let ocupado = false;
-
-    while (actual < fin) {
-
-      const fechaISO = formatearLocal(actual);
-
-      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
-        ocupado = true;
-        break;
-      }
-
-      actual.setDate(actual.getDate() + 1);
-    }
-
-    aviso.style.display = ocupado ? "block" : "none";
-  }
-
+  const inputRango = document.getElementById("fechas");
+  const inputEntrada = document.getElementById("entrada");
+  const inputSalida = document.getElementById("salida");
 
   function pintarDias(instance) {
-
     const cabana = document.getElementById("cabaña").value.toLowerCase();
-
-    const hoy = new Date();
-    hoy.setHours(0,0,0,0);
-
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
     const days = instance.calendarContainer.querySelectorAll(".flatpickr-day");
 
     days.forEach(dayElem => {
-
-      if (dayElem.classList.contains("prevMonthDay") ||
-          dayElem.classList.contains("nextMonthDay")) {
-
-        dayElem.style.background = "";
-        dayElem.style.color = "";
-        dayElem.style.pointerEvents = "";
-        return;
-      }
-
       const fechaISO = formatearLocal(dayElem.dateObj);
-
       dayElem.style.borderRadius = "6px";
 
-      if (dayElem.dateObj < hoy) {
-
-        dayElem.style.background = "#212121";
-        dayElem.style.color = "#fff";
-        dayElem.style.pointerEvents = "none";
-
-      }
-
-      else if (fechasOcupadas[cabana]?.includes(fechaISO)) {
-
+      if (dayElem.dateObj < hoy || fechasOcupadas[cabana]?.includes(fechaISO)) {
         dayElem.style.background = "#e53935";
         dayElem.style.color = "#fff";
         dayElem.style.pointerEvents = "none";
-
-      }
-
-      else {
-
+      } else {
         dayElem.style.background = "#e8f5e9";
         dayElem.style.color = "#000";
         dayElem.style.pointerEvents = "";
-
       }
-
     });
-
   }
 
-
-  const fpConfig = {
-
+  flatpickr(inputRango, {
     mode: "range",
-showMonths: 2,
-
     dateFormat: "d/m/Y",
-
     minDate: "today",
-
-    locale: {
-      firstDayOfWeek: 1
-    },
-
+    locale: { firstDayOfWeek: 1 },
     disable: [
       function(date) {
-
         const cabana = document.getElementById("cabaña").value.toLowerCase();
-
-        const fechaISO = formatearLocal(date);
-
-        return fechasOcupadas[cabana]?.includes(fechaISO);
+        return fechasOcupadas[cabana]?.includes(formatearLocal(date));
       }
     ],
-
-    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
-
-    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance),
-
     onChange: (selectedDates, dateStr, instance) => {
-
-      actualizarAviso(selectedDates);
-
       pintarDias(instance);
+      aviso.style.display = "none";
 
-    }
-
-  };
-
-  flatpickr("#entrada", fpConfig);
-
-  flatpickr("#salida", fpConfig);
-
+      if (selectedDates.length === 2) {
+        inputEntrada.value = formatearLocal(selectedDates[0]);
+        inputSalida.value = formatearLocal(selectedDates[1]);
+      }
+    },
+    onReady: (selectedDates, dateStr, instance) => pintarDias(instance),
+    onMonthChange: (selectedDates, dateStr, instance) => pintarDias(instance)
+  });
 }
-
 // ===== CALCULO RESERVA CORREGIDO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
