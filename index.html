@@ -261,20 +261,30 @@
     <!-- Botón calcular precio -->
     <button id="btnCalcular">Calcular precio</button>
 
-    <!-- AQUÍ aparecerán las fechas seleccionadas -->
-    <div id="fechasSeleccionadas" class="fechas-seleccionadas"></div>
-
     <!-- Spinner -->
     <div class="spinner" id="spinner"></div>
 
     <!-- Resultados de la reserva -->
     <div id="resultado" class="resumen-reserva" style="display:none;">
-      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
+
+      <p><strong>Cabaña seleccionada:</strong> 
+      <span id="cabañaSeleccionada"></span></p>
+
+      <p><strong>Fechas de estancia:</strong> 
+      <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
+
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
+
+      <p><strong>Descuento aplicado:</strong> 
+      <span id="descuento" class="descuento">0</span> €</p>
+
       <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
+
+      <p><strong>Resto a pagar en alojamiento:</strong> 
+      <span id="resto"></span> €</p>
+
       <button id="btnPagar">Pagar</button>
+
     </div>
 
   </div>
