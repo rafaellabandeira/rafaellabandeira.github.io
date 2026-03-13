@@ -411,22 +411,35 @@ footer a { color: #4caf50; }
 }
 
 /* ===== FECHAS SELECCIONADAS ===== */
-.fechas-seleccionadas{
-  margin-top:10px;
-  font-weight:bold;
-  font-size:0.95rem;
-  color:#333;
-  line-height:1.4;
+.fechas-seleccionadas {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.4;
+  display: inline-block;      /* Permite controlar cada línea */
+  padding: 4px 8px;           /* Un ligero recuadro */
+  border-radius: 4px;
+  background: #e8f5e9;        /* Verde muy suave de fondo */
   animation: aparecerFechas 0.3s ease;
 }
 
-@keyframes aparecerFechas{
-  from{
-    opacity:0;
-    transform:translateY(-3px);
+.fechas-seleccionadas span {
+  display: block;             /* Cada línea separada */
+}
+
+.fechas-seleccionadas .entrada-salida {
+  white-space: nowrap;        /* Evita que se rompa el guion */
+}
+
+/* Animación existente */
+@keyframes aparecerFechas {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
   }
-  to{
-    opacity:1;
-    transform:translateY(0);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
