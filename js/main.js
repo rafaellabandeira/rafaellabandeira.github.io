@@ -94,33 +94,25 @@ function iniciarCalendarioBooking(fechasOcupadas) {
   function crearMes(ano, mes) {
     const primerDia = new Date(ano, mes, 1);
     const ultimoDia = new Date(ano, mes + 1, 0);
+
     const mesContainer = document.createElement("div");
-    mesContainer.style.display = "inline-block";
-    mesContainer.style.verticalAlign = "top";
+    mesContainer.classList.add("mes-calendario");
     mesContainer.style.marginRight = "10px";
 
     // Título del mes
     const tituloMes = document.createElement("div");
+    tituloMes.classList.add("titulo-mes");
     tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
-    tituloMes.style.fontWeight = "bold";
-    tituloMes.style.textAlign = "center";
-    tituloMes.style.marginBottom = "8px";
     mesContainer.appendChild(tituloMes);
 
     // Fila de días de la semana
     const diasSemana = ["L","M","X","J","V","S","D"];
-    const encabezadoSemana = document.createElement("div");
-    encabezadoSemana.style.display = "flex";
     diasSemana.forEach(dia => {
       const dElem = document.createElement("div");
+      dElem.classList.add("dia-semana");
       dElem.innerText = dia;
-      dElem.style.width = "40px";
-      dElem.style.height = "20px";
-      dElem.style.textAlign = "center";
-      dElem.style.fontWeight = "bold";
-      encabezadoSemana.appendChild(dElem);
+      mesContainer.appendChild(dElem);
     });
-    mesContainer.appendChild(encabezadoSemana);
 
     // Días del mes
     for (let d = 1; d <= ultimoDia.getDate(); d++) {
@@ -136,9 +128,9 @@ function iniciarCalendarioBooking(fechasOcupadas) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado por Airbnb
-      const fechaISO = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
+      // Día reservado por Airbnb (formato d/m/Y)
+      const fechaFormateada = formatearLocal(fecha);
+      if (fechasOcupadas[cabana]?.includes(fechaFormateada)) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
       }
