@@ -271,14 +271,19 @@ function calcularReserva() {
     }
 
     // Mostrar resultados
-    document.getElementById("cabañaSeleccionada").innerText =
-      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
-    document.getElementById("total").innerText = total.toFixed(2);
-    document.getElementById("descuento").innerText = descuento.toFixed(2);
+    const totalElem = document.getElementById("total");
+totalElem.innerText = total.toFixed(2);
+totalElem.classList.add("animar-precio");
+setTimeout(()=> totalElem.classList.remove("animar-precio"),500);
 
-    const pagoInicial = 50;
-    document.getElementById("resto").innerText = (total - pagoInicial).toFixed(2);
+document.getElementById("descuento").innerText = descuento.toFixed(2);
 
+const pagoInicial = 50;
+
+const restoElem = document.getElementById("resto");
+restoElem.innerText = (total - pagoInicial).toFixed(2);
+restoElem.classList.add("resaltar-resto");
+setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
     spinner.style.display = "none";
     resultado.style.display = "block";
   }, 300);
