@@ -67,93 +67,106 @@ async function cargarReservasAirbnb() {
   }
 }
 
-// ===== CALENDARIO TIPO BOOKING 2 MESES =====
+   // ===== CALENDARIO TIPO BOOKING =====
 function iniciarCalendarioBooking(fechasOcupadas) {
-  const container = document.getElementById("fechas");
-  if (!container) return;
-  container.innerHTML = "";
+  const fechasDiv = document.getElementById("fechas");
+  fechasDiv.innerHTML = "";
 
   const hoy = new Date();
-  const cabana = document.getElementById("cabaña").value.toLowerCase();
+  const mesActual = hoy.getMonth();
+  const añoActual = hoy.getFullYear();
 
-  let inicioSeleccion = null;
-  let finSeleccion = null;
+  const mesSiguiente = (mesActual + 1) % 12;
+  const añoSiguiente = mesSiguiente === 0 ? añoActual + 1 : añoActual;
 
-  function actualizarSeleccion() {
-    const dias = container.querySelectorAll(".fila-dia");
-    dias.forEach(diaElem => {
-      diaElem.classList.remove("seleccionado");
-      const fecha = new Date(diaElem.dataset.fecha);
-      if (inicioSeleccion && finSeleccion && fecha >= inicioSeleccion && fecha <= finSeleccion) {
-        diaElem.classList.add("seleccionado");
+  // Generar los dos meses
+  fechasDiv.appendChild(generarCalendarioMes(mesActual, añoActual, fechasOcupadas));
+  fechasDiv.appendChild(generarCalendarioMes(mesSiguiente, añoSiguiente, fechasOcupadas));
+
+  // Selección de rango
+  let entrada = null;
+  let salida = null;
+
+  fechasDiv.querySelectorAll(".fila-dia:not(.reservado)").forEach(dia => {
+    dia.addEventListener("click", () => {
+      const parent = dia.parentElement;
+      const diaNum = parseInt(dia.innerText);
+      const mes = parent === fechasDiv.children[0] ? mesActual : mesSiguiente;
+      const año = parent === fechasDiv.children[0] ? añoActual : añoSiguiente;
+
+      const fecha = new Date(año, mes, diaNum);
+
+      if (!entrada || (entrada && salida)) {
+        entrada = fecha;
+        salida = null;
+      } else {
+        if (fecha <= entrada) {
+          entrada = fecha;
+          salida = null;
+        } else {
+          salida = fecha;
+        }
+      }
+
+      // Limpiar clases
+      fechasDiv.querySelectorAll(".fila-dia").forEach(d => d.classList.remove("seleccionado"));
+
+      if (entrada) entradaElem = new Date(entrada);
+      if (entrada) {
+        dia.classList.add("seleccionado");
+        // Marcar rango
+        fechasDiv.querySelectorAll(".fila-dia").forEach(d => {
+          const parent = d.parentElement;
+          const diaNum = parseInt(d.innerText);
+          const mes = parent === fechasDiv.children[0] ? mesActual : mesSiguiente;
+          const año = parent === fechasDiv.children[0] ? añoActual : añoSiguiente;
+          const f = new Date(año, mes, diaNum);
+          if (entrada && salida && f >= entrada && f <= salida) {
+            d.classList.add("seleccionado");
+          }
+        });
+      }
+
+      // Actualizar valores ocultos para calcular precio
+      document.getElementById("entrada").value = `${entrada.getDate().toString().padStart(2,"0")}/${(entrada.getMonth()+1).toString().padStart(2,"0")}/${entrada.getFullYear()}`;
+      if (salida) {
+        document.getElementById("salida").value = `${salida.getDate().toString().padStart(2,"0")}/${(salida.getMonth()+1).toString().padStart(2,"0")}/${salida.getFullYear()}`;
       }
     });
-  }
-
-  function crearMes(ano, mes) {
-    const primerDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes + 1, 0);
-    const mesContainer = document.createElement("div");
-    mesContainer.style.display = "inline-block";
-    mesContainer.style.verticalAlign = "top";
-    mesContainer.style.marginRight = "10px";
-
-    const tituloMes = document.createElement("div");
-    tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
-    tituloMes.style.fontWeight = "bold";
-    tituloMes.style.textAlign = "center";
-    mesContainer.appendChild(tituloMes);
-
-    for (let d = 1; d <= ultimoDia.getDate(); d++) {
-      const fecha = new Date(ano, mes, d);
-      const diaElem = document.createElement("div");
-      diaElem.classList.add("fila-dia");
-      diaElem.innerText = d;
-      diaElem.dataset.fecha = fecha.toISOString().slice(0,10);
-
-      // Día pasado
-      if (fecha < hoy) {
-        diaElem.classList.add("reservado");
-        diaElem.style.cursor = "not-allowed";
-      }
-
-      // Día reservado por Airbnb
-      const fechaISO = `${fecha.getFullYear()}-${String(fecha.getMonth()+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
-        diaElem.classList.add("reservado");
-        diaElem.style.cursor = "not-allowed";
-      }
-
-      // Click selección
-      diaElem.addEventListener("click", () => {
-        if (diaElem.classList.contains("reservado")) return;
-
-        if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
-          inicioSeleccion = fecha;
-          finSeleccion = null;
-        } else if (!finSeleccion) {
-          if (fecha < inicioSeleccion) {
-            finSeleccion = inicioSeleccion;
-            inicioSeleccion = fecha;
-          } else {
-            finSeleccion = fecha;
-          }
-        }
-        actualizarSeleccion();
-      });
-
-      mesContainer.appendChild(diaElem);
-    }
-
-    container.appendChild(mesContainer);
-  }
-
-  // Mostrar mes actual + siguiente
-  crearMes(hoy.getFullYear(), hoy.getMonth());
-  crearMes(hoy.getFullYear(), hoy.getMonth() + 1);
+  });
 }
 
+// Función para generar un mes
+function generarCalendarioMes(mes, año, fechasOcupadas) {
+  const cont = document.createElement("div");
+  cont.classList.add("mes-calendario");
 
+  const primerDia = new Date(año, mes, 1).getDay(); // 0=Domingo
+  const diasMes = new Date(año, mes + 1, 0).getDate();
+
+  const offset = (primerDia + 6) % 7; // lunes=0
+
+  // Espacios vacíos
+  for (let i = 0; i < offset; i++) {
+    const diaVacio = document.createElement("div");
+    cont.appendChild(diaVacio);
+  }
+
+  for (let d = 1; d <= diasMes; d++) {
+    const diaElem = document.createElement("div");
+    diaElem.classList.add("fila-dia");
+    diaElem.innerText = d;
+
+    const fechaStr = `${d.toString().padStart(2, "0")}/${(mes + 1).toString().padStart(2, "0")}/${año}`;
+    if (fechasOcupadas.campanilla?.includes(fechaStr) || fechasOcupadas.tejo?.includes(fechaStr)) {
+      diaElem.classList.add("reservado");
+    }
+
+    cont.appendChild(diaElem);
+  }
+
+  return cont;
+}   
 // ===== CALCULO RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
