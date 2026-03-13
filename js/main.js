@@ -316,41 +316,36 @@ function initHamburger() {
 
 }
 
-
 // ===== INICIALIZACIÓN GENERAL =====
-document.addEventListener("DOMContentLoaded", async ()=>{
+document.addEventListener("DOMContentLoaded", async () => {
 
+  // Inicializar menú hamburguesa
   initHamburger();
 
+  // Inicializar carruseles
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
-
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
+  // Cargar reservas desde Airbnb
   const reservas = await cargarReservasAirbnb();
+
+  // Actualizar mensaje de urgencia
   actualizarUrgencia(reservas);
 
-  if (
-    document.getElementById("cabaña") &&
-    document.getElementById("entrada") &&
-    document.getElementById("salida")
-  ) {
-
-    iniciarCalendarios(reservas);
-
+  // Inicializar calendario tipo Booking
+  if (document.getElementById("cabaña") && document.getElementById("fechas")) {
+    iniciarCalendarioBooking(reservas);
   }
 
+  // Botón calcular precio
   const btnCalcular = document.getElementById("btnCalcular");
+  if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
 
-  if (btnCalcular)
-    btnCalcular.addEventListener("click", calcularReserva);
-
+  // Botón pagar
   const btnPagar = document.getElementById("btnPagar");
-
-  if (btnPagar)
-    btnPagar.addEventListener("click", reservar);
+  if (btnPagar) btnPagar.addEventListener("click", reservar);
 
 });
-
 // ===== MENSAJE URGENCIA INTELIGENTE =====
 function actualizarUrgencia(fechasOcupadas){
 
