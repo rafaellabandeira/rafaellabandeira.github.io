@@ -183,8 +183,8 @@ document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   refrescarCalendario();
 });
   
-  
-// ===== CALCULO RESERVA COMPLETO =====
+
+    // ===== CALCULO RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
@@ -225,6 +225,17 @@ function calcularReserva() {
     fechaSalida.setDate(fechaSalida.getDate() + 1); // salida al día siguiente
 
     const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
+
+    // ===== MOSTRAR FECHAS SELECCIONADAS =====
+    const opciones = { day: "numeric", month: "short" };
+
+    const entradaTexto = fechaEntrada.toLocaleDateString("es-ES", opciones);
+    const salidaTexto = fechaSalida.toLocaleDateString("es-ES", opciones);
+
+    document.getElementById("fechasSeleccionadas").innerHTML =
+      "📅 " + entradaTexto + " → " + salidaTexto +
+      "<br>🛏 " + noches + (noches === 1 ? " noche" : " noches");
+
     let total = 0;
     let descuento = 0;
     let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
@@ -260,7 +271,8 @@ function calcularReserva() {
     }
 
     // Mostrar resultados
-    document.getElementById("cabañaSeleccionada").innerText = cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("cabañaSeleccionada").innerText =
+      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
 
     const totalElem = document.getElementById("total");
     totalElem.innerText = total.toFixed(2);
@@ -274,13 +286,9 @@ function calcularReserva() {
     const restoElem = document.getElementById("resto");
     restoElem.innerText = (total - pagoInicial).toFixed(2);
 
-    // Aplicar estilo destacado en verde con texto rojo
-    restoElem.style.background = "#4caf50";
+    // Solo rojo fuerte (sin fondo)
     restoElem.style.color = "#e53935";
-    restoElem.style.padding = "2px 6px";
-    restoElem.style.borderRadius = "4px";
     restoElem.style.fontWeight = "bold";
-    restoElem.style.display = "inline-block";
 
     // Animación
     restoElem.classList.add("resaltar-resto");
@@ -290,6 +298,7 @@ function calcularReserva() {
     resultado.style.display = "block";
   }, 300);
 }
+    
 
 // ===== CALCULO TEMPORADA ALTA =====
 function esTemporadaAlta(fecha) {
