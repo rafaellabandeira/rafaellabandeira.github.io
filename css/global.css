@@ -443,3 +443,27 @@ footer a { color: #4caf50; }
     transform: translateY(0);
   }
 }
+
+
+/* ===== CALENDARIO COMPACTO ===== */
+.mes-calendario {
+  grid-template-columns: repeat(7, 30px); /* días más pequeños */
+  gap: 3px;
+  padding: 6px; /* menos padding */
+}
+
+.dia-semana {
+  font-size: 0.7rem; /* más pequeño */
+}
+
+.fila-dia {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 0.8rem; /* opcional, para texto más compacto */
+}
+
+.titulo-mes {
+  font-size: 0.85rem; /* título ligeramente más pequeño */
+  margin-bottom: 5px;
+}
