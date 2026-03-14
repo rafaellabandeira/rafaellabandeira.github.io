@@ -1,36 +1,27 @@
+// AirbnbSync.js
 import https from "https";
 import fs from "fs";
 import path from "path";
 import { parseICS } from "./parseICS.js";
 
-// 📍 Ruta correcta en Render (disco temporal escribible)
+// 📍 Ruta segura en Render para el JSON
 const filePath = path.join(process.env.TMPDIR || "/tmp", "reservas.json");
 
-// 🔹 iCal AIRBNB Campanilla → calendario madre
-const ICAL_AIRBNB_CAMPANILLA =
+// 🔹 iCal Airbnb Campanilla
+const ICAL_AIRBNB =
   "https://www.airbnb.es/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3";
 
-// 🔹 iCal AIRBNB El Tejo (cuando lo tengas)
-const ICAL_AIRBNB_TEJO = null;
-
+// 🔹 El Tejo (si lo añades después)
+const ICAL_TEJO = null;
 
 // --------------------------------------------------
 // DESCARGAR ICS
 // --------------------------------------------------
 function descargarICS(url) {
   return new Promise((resolve, reject) => {
-    if (!url) {
-      resolve(null);
-      return;
-    }
-
     https.get(url, res => {
       let data = "";
-
-      res.on("data", chunk => {
-        data += chunk;
-      });
-
+      res.on("data", chunk => (data += chunk));
       res.on("end", () => {
         console.log(`✅ ICS descargado (${url}) → ${data.length} chars`);
         resolve(data);
@@ -39,141 +30,40 @@ function descargarICS(url) {
   });
 }
 
-
 // --------------------------------------------------
-// 🔧 FIX IMPORTANTE → Render usa UTC
-// Airbnb exporta fechas que pueden desplazarse 1 día
+// CORREGIR DESPLAZAMIENTO UTC Render
 // --------------------------------------------------
 function corregirZonaHoraria(fechas) {
   const offset = new Date().getTimezoneOffset();
-
   if (offset === 0) {
     console.log("🌍 Servidor en UTC → corrigiendo fechas…");
-
     return fechas.map(f => {
       const d = new Date(f);
-      d.setDate(d.getDate() - 1);
+      d.setDate(d.getDate() - 1); // Corrige desfase 1 día
       return d.toISOString().split("T")[0];
     });
   }
-
   return fechas;
 }
 
-
 // --------------------------------------------------
-// Eliminar duplicados y ordenar
+// ELIMINAR DUPLICADOS Y ORDENAR
 // --------------------------------------------------
 function limpiarFechas(fechas) {
   return [...new Set(fechas)].sort();
 }
 
-
 // --------------------------------------------------
-// SINCRONIZACIÓN TOTAL
+// SINCRONIZACIÓN Airbnb
 // --------------------------------------------------
-export async function sincronizarBooking() {
+export async function sincronizarAirbnb() {
   try {
-    console.log("🔄 Sincronizando calendarios de Airbnb…");
+    console.log("🔄 Sincronizando calendario Airbnb…");
 
-    // -------- CAMPANILLA (AIRBNB = CALENDARIO MADRE) --------
-    let campanilla = [];
-
-    const icsAirbnbCampanilla = await descargarICS(ICAL_AIRBNB_CAMPANILLA);
-    if (icsAirbnbCampanilla) {
-      campanilla = parseICS(icsAirbnbCampanilla);
-      campanilla = corregirZonaHoraria(campanilla);
-      campanilla = limpiarFechas(campanilla);
-    }
-
-    console.log("📅 Airbnb Campanilla:", campanilla.length);
-
-    // -------- TEJO --------
-    let tejo = [];
-    if (ICAL_AIRBNB_TEJO) {
-      const icsTejo = await descargarICS(ICAL_AIRBNB_TEJO);
-      if (icsTejo) {
-        tejo = parseICS(icsTejo);
-        tejo = corregirZonaHoraria(tejo);
-        tejo = limpiarFechas(tejo);
-      }
-    }
-
-    console.log("📅 Airbnb Tejo:", tejo.length);
-
-    const reservas = { campanilla, tejo };
-
-    fs.writeFileSync(filePath, JSON.stringify(reservas, null, 2));
-
-    console.log("💾 reservas.json guardado en:", filePath);
-    console.log("📊 Total Campanilla:", campanilla.length);
-    console.log("📊 Total Tejo:", tejo.length);
-
-  } catch (err) {
-    console.error("❌ Error sincronizando:", err);
-  }
-}
-
-
-// --------------------------------------------------
-// 🔧 FIX IMPORTANTE → Render usa UTC
-// Booking/Airbnb exportan fechas en LOCAL
-// Esto corrige el desplazamiento de 1 día
-// --------------------------------------------------
-function corregirZonaHoraria(fechas) {
-  const offset = new Date().getTimezoneOffset();
-
-  // Si el servidor está en UTC (Render = 0)
-  if (offset === 0) {
-    console.log("🌍 Servidor en UTC → corrigiendo fechas…");
-
-    return fechas.map(f => {
-      const d = new Date(f);
-      d.setDate(d.getDate() - 1); // ← CLAVE del bug que tenías
-      return d.toISOString().split("T")[0];
-    });
-  }
-
-  return fechas;
-}
-
-
-// --------------------------------------------------
-// Eliminar duplicados y ordenar
-// --------------------------------------------------
-function limpiarFechas(fechas) {
-  return [...new Set(fechas)].sort();
-}
-
-
-// --------------------------------------------------
-// SINCRONIZACIÓN TOTAL
-// --------------------------------------------------
-export async function sincronizarBooking() {
-  try {
-    console.log("🔄 Sincronizando calendarios…");
-
-    // -------- BOOKING --------
-    const icsBooking = await descargarICS(ICAL_CAMPANILLA);
-    let campanillaBooking = parseICS(icsBooking);
-
-    // -------- AIRBNB --------
+    // -------- CAMPANILLA --------
     const icsAirbnb = await descargarICS(ICAL_AIRBNB);
-    let campanillaAirbnb = parseICS(icsAirbnb);
-
-    console.log("📅 Booking:", campanillaBooking.length);
-    console.log("📅 Airbnb:", campanillaAirbnb.length);
-
-    // 🔥 UNIMOS ambos calendarios
-    let campanilla = [
-      ...campanillaBooking,
-      ...campanillaAirbnb
-    ];
-
-    // 🔧 corregimos bug de Render UTC
+    let campanilla = parseICS(icsAirbnb);
     campanilla = corregirZonaHoraria(campanilla);
-
-    // limpiamos duplicados
     campanilla = limpiarFechas(campanilla);
 
     // -------- TEJO --------
@@ -183,14 +73,14 @@ export async function sincronizarBooking() {
       tejo = limpiarFechas(corregirZonaHoraria(parseICS(icsTejo)));
     }
 
+    // Guardar JSON
     const reservas = { campanilla, tejo };
-
     fs.writeFileSync(filePath, JSON.stringify(reservas, null, 2));
 
     console.log("💾 reservas.json guardado en:", filePath);
     console.log("📊 Total Campanilla:", campanilla.length);
 
   } catch (err) {
-    console.error("❌ Error sincronizando:", err);
+    console.error("❌ Error sincronizando Airbnb:", err);
   }
 }
