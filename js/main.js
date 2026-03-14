@@ -8,73 +8,27 @@ function formatearLocal(fecha) {
   return `${d}/${m}/${y}`;
 }
 
-// ===== CARGAR RESERVAS DESDE AIRBNB =====
-const ICAL_URL = "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es";
-
+// ===== CARGAR RESERVAS DESDE BACKEND Render =====
 async function cargarReservasAirbnb() {
   try {
-    const res = await fetch(ICAL_URL);
-    if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
-
-    const text = await res.text();
-    const fechas = [];
-
-    const lines = text.split("\n");
-    let currentEvent = {};
-
-    for (let line of lines) {
-
-      if (line.startsWith("DTSTART"))
-        currentEvent.start = line.split(":")[1];
-
-      if (line.startsWith("DTEND")) {
-
-        currentEvent.end = line.split(":")[1];
-
-        const start = new Date(
-          currentEvent.start.slice(0,4) + "-" +
-          currentEvent.start.slice(4,6) + "-" +
-          currentEvent.start.slice(6,8)
-        );
-
-        const end = new Date(
-          currentEvent.end.slice(0,4) + "-" +
-          currentEvent.end.slice(4,6) + "-" +
-          currentEvent.end.slice(6,8)
-        );
-
-        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
-          fechas.push(formatearLocal(new Date(d)));
-        }
-
-        currentEvent = {};
-      }
-    }
-
-    return {
-      campanilla: fechas,
-      tejo: fechas
-    };
-
+    const res = await fetch("https://rafaellabandeira-github-io.onrender.com/reservas");
+    if (!res.ok) throw new Error("No se pudo cargar reservas del backend");
+    const data = await res.json();
+    return data;
   } catch (err) {
-
     console.error(err);
-
-    return {
-      campanilla: [],
-      tejo: []
-    };
+    return { campanilla: [], tejo: [] };
   }
 }
 
-
-  // ===== CALENDARIO TIPO BOOKING (navegable con flechas) =====
+// ===== CALENDARIO TIPO BOOKING (navegable con flechas) =====
 let mesBase = new Date(); // mes inicial mostrado
 let reservasGlobal = {};
 let inicioSeleccion = null;
 let finSeleccion = null;
 
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
+  reservasGlobal = fechasOcupadas; // actualizar global
   const container = document.getElementById("fechas");
   if (!container) return;
   container.innerHTML = "";
@@ -130,9 +84,11 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado por Airbnb (formato d/m/Y)
+      // Día reservado según backend (formato YYYY-MM-DD → convertimos a d/m/Y)
       const fechaFormateada = formatearLocal(fecha);
-      if (fechasOcupadas[cabana]?.includes(fechaFormateada)) {
+      const fechaISO = fecha.toISOString().slice(0,10); // YYYY-MM-DD
+
+      if (fechasOcupadas[cabana]?.includes(fechaISO)) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
       }
@@ -173,7 +129,6 @@ function refrescarCalendario() {
   iniciarCalendarioBooking(reservasGlobal, mesBase);
 }
 
-// Botones navegación
 document.getElementById("mesAnterior")?.addEventListener("click", () => {
   mesBase.setMonth(mesBase.getMonth() - 1);
   refrescarCalendario();
@@ -182,7 +137,7 @@ document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   mesBase.setMonth(mesBase.getMonth() + 1);
   refrescarCalendario();
 });
-  
+
 // ===== CALCULO RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
@@ -197,7 +152,6 @@ function calcularReserva() {
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
 
-  // Validación email
   if (!nombre || !telefono || !email) {
     if(!email || !/\S+@\S+\.\S+/.test(email)) {
       document.getElementById("email").classList.add("error");
@@ -221,11 +175,10 @@ function calcularReserva() {
     fechas.sort((a,b) => a - b);
     const fechaEntrada = fechas[0];
     const fechaSalida = new Date(fechas[fechas.length -1]);
-    fechaSalida.setDate(fechaSalida.getDate() + 1); // salida al día siguiente
+    fechaSalida.setDate(fechaSalida.getDate() + 1);
 
     const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
 
-    // ===== MOSTRAR FECHAS SELECCIONADAS =====
     const opciones = { day: "numeric", month: "short" };
     const entradaTexto = fechaEntrada.toLocaleDateString("es-ES", opciones);
     const salidaTexto = fechaSalida.toLocaleDateString("es-ES", opciones);
@@ -252,12 +205,8 @@ function calcularReserva() {
       total += precio;
     }
 
-    // Descuento
-    if (noches >= 6 && esTemporadaAlta(fechaEntrada)) {
-      descuento = total * 0.10;
-    } else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) {
-      descuento = total * 0.10;
-    }
+    if (noches >= 6 && esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
+    else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
 
     total -= descuento;
 
@@ -267,7 +216,6 @@ function calcularReserva() {
       return;
     }
 
-    // Mostrar resultados
     document.getElementById("cabañaSeleccionada").innerText =
       cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
 
@@ -282,12 +230,8 @@ function calcularReserva() {
     const pagoInicial = 50;
     const restoElem = document.getElementById("resto");
     restoElem.innerText = (total - pagoInicial).toFixed(2);
-
-    // Solo rojo fuerte (sin fondo)
     restoElem.style.color = "#e53935";
     restoElem.style.fontWeight = "bold";
-
-    // Animación
     restoElem.classList.add("resaltar-resto");
     setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
 
@@ -295,178 +239,81 @@ function calcularReserva() {
     resultado.style.display = "block";
   }, 300);
 }
-    
 
-// ===== CALCULO TEMPORADA ALTA =====
+// ===== TEMPORADA ALTA =====
 function esTemporadaAlta(fecha) {
   const mes = fecha.getMonth() + 1;
   const dia = fecha.getDate();
-  return (
-    mes === 7 ||
-    mes === 8 ||
-    (mes === 12 && dia >= 22) ||
-    (mes === 1 && dia <= 7)
-  );
+  return mes === 7 || mes === 8 || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7);
 }
-      
-
-
 
 // ===== RESERVAR =====
 function reservar() {
   alert("Aquí se conectará el pago de 50 €.");
 }
 
-
 // ===== CARRUSEL UNIVERSAL =====
 function initCarousel(containerSelector, slideSelector, prevSelector, nextSelector, indicatorSelector) {
-
   const containers = document.querySelectorAll(containerSelector);
-
   containers.forEach(container => {
-
     const slides = container.querySelectorAll(slideSelector);
-
     const prevBtn = container.querySelector(prevSelector);
     const nextBtn = container.querySelector(nextSelector);
-
     const indicators = container.querySelectorAll(indicatorSelector);
-
     let currentIndex = 0;
-
     if (!slides.length) return;
-
     function showSlide(index) {
-
-      slides.forEach((slide,i)=>{
-
-        slide.style.display = i === index ? "block" : "none";
-
-      });
-
-      indicators.forEach((ind,i)=>{
-
-        ind.classList.toggle("active", i===index);
-
-      });
-
+      slides.forEach((slide,i)=> slide.style.display = i===index?"block":"none");
+      indicators.forEach((ind,i)=> ind.classList.toggle("active", i===index));
     }
-
-    nextBtn?.addEventListener("click", ()=>{
-
-      currentIndex = (currentIndex + 1) % slides.length;
-
-      showSlide(currentIndex);
-
-    });
-
-    prevBtn?.addEventListener("click", ()=>{
-
-      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-
-      showSlide(currentIndex);
-
-    });
-
-    indicators.forEach((ind,i)=>{
-
-      ind.addEventListener("click", ()=>{
-
-        currentIndex = i;
-
-        showSlide(currentIndex);
-
-      });
-
-    });
-
+    nextBtn?.addEventListener("click", ()=>{ currentIndex = (currentIndex + 1) % slides.length; showSlide(currentIndex); });
+    prevBtn?.addEventListener("click", ()=>{ currentIndex = (currentIndex - 1 + slides.length) % slides.length; showSlide(currentIndex); });
+    indicators.forEach((ind,i)=>{ ind.addEventListener("click", ()=>{ currentIndex = i; showSlide(currentIndex); }); });
     showSlide(currentIndex);
-
   });
-
 }
-
 
 // ===== HAMBURGER =====
 function initHamburger() {
-
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("navMenu");
-
   hamburger?.addEventListener("click", ()=>{
-
     navMenu?.classList.toggle("active");
-
     hamburger.classList.toggle("active");
-
   });
-
 }
 
 // ===== INICIALIZACIÓN GENERAL =====
 document.addEventListener("DOMContentLoaded", async () => {
-
-  // Inicializar menú hamburguesa
   initHamburger();
-
-  // Inicializar carruseles
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  // Cargar reservas desde Airbnb
   const reservas = await cargarReservasAirbnb();
-
-  // Actualizar mensaje de urgencia
   actualizarUrgencia(reservas);
 
-  // Inicializar calendario tipo Booking
   if (document.getElementById("cabaña") && document.getElementById("fechas")) {
     iniciarCalendarioBooking(reservas);
   }
 
-  // Botón calcular precio
   const btnCalcular = document.getElementById("btnCalcular");
   if (btnCalcular) btnCalcular.addEventListener("click", calcularReserva);
 
-  // Botón pagar
   const btnPagar = document.getElementById("btnPagar");
   if (btnPagar) btnPagar.addEventListener("click", reservar);
-
 });
+
 // ===== MENSAJE URGENCIA INTELIGENTE =====
 function actualizarUrgencia(fechasOcupadas){
-
   const mensaje = document.getElementById("mensajeUrgencia");
   if(!mensaje) return;
-
   const hoy = new Date();
   const mesActual = hoy.getMonth()+1;
-
   const ocupadas = fechasOcupadas.campanilla.length;
-
   let texto = "";
-
-  if(mesActual === 7 || mesActual === 8){
-
-    texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
-
-  }
-  else if(ocupadas > 20){
-
-    texto = "⚡ Quedan pocas fechas disponibles este mes.";
-
-  }
-  else if(ocupadas > 10){
-
-    texto = "📅 Este alojamiento suele reservarse rápido.";
-
-  }
-  else{
-
-    texto = "✨ Reserva ahora para asegurar tus fechas.";
-
-  }
-
+  if(mesActual === 7 || mesActual === 8) texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
+  else if(ocupadas > 20) texto = "⚡ Quedan pocas fechas disponibles este mes.";
+  else if(ocupadas > 10) texto = "📅 Este alojamiento suele reservarse rápido.";
+  else texto = "✨ Reserva ahora para asegurar tus fechas.";
   mensaje.innerText = texto;
-
 }
