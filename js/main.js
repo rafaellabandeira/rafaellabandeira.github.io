@@ -1,4 +1,4 @@
-// ================= MAIN.JS COMPLETO CORREGIDO =================
+// ================= MAIN.JS COMPLETO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
 function formatearLocal(fecha) {
@@ -23,9 +23,7 @@ async function cargarReservasAirbnb() {
     let currentEvent = {};
 
     for (let line of lines) {
-      if (line.startsWith("DTSTART"))
-        currentEvent.start = line.split(":")[1];
-
+      if (line.startsWith("DTSTART")) currentEvent.start = line.split(":")[1];
       if (line.startsWith("DTEND")) {
         currentEvent.end = line.split(":")[1];
 
@@ -49,14 +47,18 @@ async function cargarReservasAirbnb() {
       }
     }
 
-    return { campanilla: fechas, tejo: fechas };
+    return {
+      campanilla: fechas,
+      tejo: fechas
+    };
+
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
   }
 }
 
-// ===== CALENDARIO TIPO BOOKING =====
+// ===== CALENDARIO TIPO BOOKING (navegable con flechas) =====
 let mesBase = new Date();
 let reservasGlobal = {};
 let inicioSeleccion = null;
@@ -77,11 +79,13 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     mesContainer.classList.add("mes-calendario");
     mesContainer.style.marginRight = "10px";
 
+    // Título del mes
     const tituloMes = document.createElement("div");
     tituloMes.classList.add("titulo-mes");
     tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
     mesContainer.appendChild(tituloMes);
 
+    // Fila de días de la semana
     const diasSemana = ["L","M","X","J","V","S","D"];
     diasSemana.forEach(dia => {
       const dElem = document.createElement("div");
@@ -90,9 +94,9 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       mesContainer.appendChild(dElem);
     });
 
-    // Espacios antes del primer día
+    // Espacios en blanco antes del primer día
     let primerDiaSemana = primerDia.getDay();
-    primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
+    primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; // lunes=0
     for (let i = 0; i < primerDiaSemana; i++) {
       const empty = document.createElement("div");
       empty.classList.add("fila-dia", "empty-dia");
@@ -100,12 +104,8 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     }
 
     // Días del mes
-    const cabana = document.getElementById("cabaña")?.value.toLowerCase();
-
     for (let d = 1; d <= ultimoDia.getDate(); d++) {
       const fecha = new Date(ano, mes, d);
-      const fechaFormateada = formatearLocal(fecha);
-
       const diaElem = document.createElement("div");
       diaElem.classList.add("fila-dia");
       diaElem.innerText = d;
@@ -117,7 +117,9 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día bloqueado Airbnb
+      // Día reservado por Airbnb
+      const fechaFormateada = formatearLocal(fecha);
+      const cabana = document.getElementById("cabaña")?.value.toLowerCase();
       if (reservasGlobal[cabana]?.includes(fechaFormateada)) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
@@ -139,7 +141,6 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
           }
         }
 
-        // Actualizar selección
         const dias = mesContainer.querySelectorAll(".fila-dia");
         dias.forEach(d => d.classList.remove("seleccionado"));
         dias.forEach(d => {
@@ -156,7 +157,6 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     container.appendChild(mesContainer);
   }
 
-  // Mostrar mes base + siguiente
   crearMes(fechaBase.getFullYear(), fechaBase.getMonth());
   const siguiente = new Date(fechaBase);
   siguiente.setMonth(siguiente.getMonth() + 1);
@@ -164,12 +164,188 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
 }
 
 // ===== FUNCIONES FLECHAS =====
-function refrescarCalendario() { iniciarCalendarioBooking(reservasGlobal, mesBase); }
-document.getElementById("mesAnterior")?.addEventListener("click", () => { mesBase.setMonth(mesBase.getMonth() - 1); refrescarCalendario(); });
-document.getElementById("mesSiguiente")?.addEventListener("click", () => { mesBase.setMonth(mesBase.getMonth() + 1); refrescarCalendario(); });
+function refrescarCalendario() {
+  iniciarCalendarioBooking(reservasGlobal, mesBase);
+}
 
-// ===== FUNCIONES CALCULO RESERVA, TEMPORADA, RESERVAR, CARRUSEL, HAMBURGER =====
-// Mantener tu código tal cual, no cambia nada, solo que ahora reservasGlobal funciona correctamente
+document.getElementById("mesAnterior")?.addEventListener("click", () => {
+  mesBase.setMonth(mesBase.getMonth() - 1);
+  refrescarCalendario();
+});
+document.getElementById("mesSiguiente")?.addEventListener("click", () => {
+  mesBase.setMonth(mesBase.getMonth() + 1);
+  refrescarCalendario();
+});
+
+// ===== CAMBIO DE CABAÑA AUTOMÁTICO =====
+document.getElementById("cabaña")?.addEventListener("change", () => {
+  refrescarCalendario();
+});
+
+// ===== CALCULO RESERVA COMPLETO =====
+function calcularReserva() {
+  const cabaña = document.getElementById("cabaña").value;
+  const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
+
+  if (!diasSeleccionados.length) {
+    alert("Selecciona un rango de fechas");
+    return;
+  }
+
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if (!nombre || !telefono || !email) {
+    if(!email || !/\S+@\S+\.\S+/.test(email)) {
+      document.getElementById("email").classList.add("error");
+      alert("Introduce un email válido");
+    } else {
+      document.getElementById("email").classList.remove("error");
+      alert("Completa todos los datos personales");
+    }
+    return;
+  } else {
+    document.getElementById("email").classList.remove("error");
+  }
+
+  const spinner = document.getElementById("spinner");
+  const resultado = document.getElementById("resultado");
+  spinner.style.display = "block";
+  resultado.style.display = "none";
+
+  setTimeout(() => {
+    const fechas = Array.from(diasSeleccionados).map(d => new Date(d.dataset.fecha));
+    fechas.sort((a,b) => a - b);
+    const fechaEntrada = fechas[0];
+    const fechaSalida = new Date(fechas[fechas.length -1]);
+    fechaSalida.setDate(fechaSalida.getDate() + 1);
+
+    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
+
+    const opciones = { day: "numeric", month: "short" };
+    const entradaTexto = fechaEntrada.toLocaleDateString("es-ES", opciones);
+    const salidaTexto = fechaSalida.toLocaleDateString("es-ES", opciones);
+
+    document.getElementById("fechasSeleccionadas").innerHTML =
+      `📅 ${entradaTexto} - ${salidaTexto}<br>🛏 ${noches} ${noches === 1 ? "noche" : "noches"}`;
+
+    let total = 0;
+    let descuento = 0;
+    let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
+
+    for (let i = 0; i < noches; i++) {
+      const dia = new Date(fechaEntrada);
+      dia.setDate(dia.getDate() + i);
+      const dow = dia.getDay();
+      let precio;
+
+      if (esTemporadaAlta(dia)) {
+        precio = 150;
+      } else {
+        precio = (dow === 5 || dow === 6) ? (cabaña === "campanilla" ? 150 : 140) : (cabaña === "campanilla" ? 115 : 110);
+      }
+
+      total += precio;
+    }
+
+    if (noches >= 6 && esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
+    else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
+
+    total -= descuento;
+
+    if (noches < minNoches) {
+      alert(`Mínimo ${minNoches} noches en estas fechas`);
+      spinner.style.display = "none";
+      return;
+    }
+
+    document.getElementById("cabañaSeleccionada").innerText =
+      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+
+    const totalElem = document.getElementById("total");
+    totalElem.innerText = total.toFixed(2);
+    totalElem.classList.add("animar-precio");
+    setTimeout(()=> totalElem.classList.remove("animar-precio"),500);
+
+    const descuentoElem = document.getElementById("descuento");
+    descuentoElem.innerText = descuento.toFixed(2);
+
+    const pagoInicial = 50;
+    const restoElem = document.getElementById("resto");
+    restoElem.innerText = (total - pagoInicial).toFixed(2);
+    restoElem.style.color = "#e53935";
+    restoElem.style.fontWeight = "bold";
+    restoElem.classList.add("resaltar-resto");
+    setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
+
+    spinner.style.display = "none";
+    resultado.style.display = "block";
+  }, 300);
+}
+
+// ===== CALCULO TEMPORADA ALTA =====
+function esTemporadaAlta(fecha) {
+  const mes = fecha.getMonth() + 1;
+  const dia = fecha.getDate();
+  return (mes === 7 || mes === 8 || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7));
+}
+
+// ===== RESERVAR =====
+function reservar() {
+  alert("Aquí se conectará el pago de 50 €.");
+}
+
+// ===== CARRUSEL UNIVERSAL =====
+function initCarousel(containerSelector, slideSelector, prevSelector, nextSelector, indicatorSelector) {
+  const containers = document.querySelectorAll(containerSelector);
+  containers.forEach(container => {
+    const slides = container.querySelectorAll(slideSelector);
+    const prevBtn = container.querySelector(prevSelector);
+    const nextBtn = container.querySelector(nextSelector);
+    const indicators = container.querySelectorAll(indicatorSelector);
+    let currentIndex = 0;
+    if (!slides.length) return;
+
+    function showSlide(index) {
+      slides.forEach((slide,i)=>{
+        slide.style.display = i === index ? "block" : "none";
+      });
+      indicators.forEach((ind,i)=>{
+        ind.classList.toggle("active", i===index);
+      });
+    }
+
+    nextBtn?.addEventListener("click", ()=>{
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    prevBtn?.addEventListener("click", ()=>{
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    indicators.forEach((ind,i)=>{
+      ind.addEventListener("click", ()=>{
+        currentIndex = i;
+        showSlide(currentIndex);
+      });
+    });
+
+    showSlide(currentIndex);
+  });
+}
+
+// ===== HAMBURGER =====
+function initHamburger() {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  hamburger?.addEventListener("click", ()=>{
+    navMenu?.classList.toggle("active");
+    hamburger.classList.toggle("active");
+  });
+}
 
 // ===== INICIALIZACIÓN GENERAL =====
 document.addEventListener("DOMContentLoaded", async () => {
@@ -186,4 +362,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
+
+  // Actualizar calendario al cambiar de cabaña
+  document.getElementById("cabaña")?.addEventListener("change", () => {
+    iniciarCalendarioBooking(reservasGlobal);
+  });
 });
+
+// ===== MENSAJE URGENCIA INTELIGENTE =====
+function actualizarUrgencia(fechasOcupadas){
+  const mensaje = document.getElementById("mensajeUrgencia");
+  if(!mensaje) return;
+
+  const hoy = new Date();
+  const mesActual = hoy.getMonth()+1;
+  const ocupadas = fechasOcupadas.campanilla.length;
+  let texto = "";
+
+  if(mesActual === 7 || mesActual === 8){
+    texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
+  }
+  else if(ocupadas > 20){
+    texto = "⚡ Quedan pocas fechas disponibles este mes.";
+  }
+  else if(ocupadas > 10){
+    texto = "📅 Este alojamiento suele reservarse rápido.";
+  }
+  else{
+    texto = "✨ Reserva ahora para asegurar tus fechas.";
+  }
+
+  mensaje.innerText = texto;
+}
