@@ -1,17 +1,16 @@
 // ================= MAIN.JS COMPLETO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
-// Convierte un objeto Date en formato 'dd/mm/yyyy'
+// Convierte un objeto Date a "YYYY-MM-DD" para comparación y dataset
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
-  return `${d}/${m}/${y}`;
+  return `${y}-${m}-${d}`;
 }
 
 // ===== CARGAR RESERVAS DESDE BACKEND =====
-// El backend devuelve reservas de cada cabaña {campanilla: [...], tejo: [...]}
-// Se asegura que estén en formato ISO 'YYYY-MM-DD' para poder compararlas con dataset.fecha del calendario
+// Backend devuelve { campanilla: [...], tejo: [...] }
 const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas";
 
 async function cargarReservasBackend() {
@@ -20,11 +19,11 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
+    // Convertimos todas las fechas a formato ISO para coincidencia
     const reservas = { campanilla: [], tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
-
     return reservas;
   } catch (err) {
     console.error(err);
@@ -32,21 +31,21 @@ async function cargarReservasBackend() {
   }
 }
 
-// ===== VARIABLES GLOBALES DEL CALENDARIO =====
-let mesBase = new Date();          // Mes actualmente visible en el calendario
-let reservasGlobal = {};           // Contiene reservas actuales cargadas desde backend
-let inicioSeleccion = null;        // Fecha de inicio de la selección
-let finSeleccion = null;           // Fecha de fin de la selección
+// ===== VARIABLES GLOBALES =====
+let mesBase = new Date();
+let reservasGlobal = {};
+let inicioSeleccion = null;
+let finSeleccion = null;
 
-// ===== INICIAR CALENDARIO TIPO BOOKING =====
+// ===== INICIAR CALENDARIO =====
+// Dibuja dos meses visibles y marca días bloqueados en rojo
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   const container = document.getElementById("fechas");
   if (!container) return;
-  container.innerHTML = "";        // Limpia calendario antes de dibujar
+  container.innerHTML = "";
 
   reservasGlobal = fechasOcupadas;
 
-  // Función para crear un mes completo
   function crearMes(ano, mes) {
     const primerDia = new Date(ano, mes, 1);
     const ultimoDia = new Date(ano, mes + 1, 0);
@@ -55,13 +54,13 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     mesContainer.classList.add("mes-calendario");
     mesContainer.style.marginRight = "10px";
 
-    // ===== Título del mes =====
+    // Título del mes
     const tituloMes = document.createElement("div");
     tituloMes.classList.add("titulo-mes");
     tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
     mesContainer.appendChild(tituloMes);
 
-    // ===== Fila de días de la semana =====
+    // Fila de días de la semana
     const diasSemana = ["L","M","X","J","V","S","D"];
     diasSemana.forEach(dia => {
       const dElem = document.createElement("div");
@@ -70,7 +69,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       mesContainer.appendChild(dElem);
     });
 
-    // ===== Espacios en blanco antes del primer día del mes =====
+    // Espacios en blanco antes del primer día
     let primerDiaSemana = primerDia.getDay();
     primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; // lunes=0
     for (let i = 0; i < primerDiaSemana; i++) {
@@ -79,13 +78,13 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       mesContainer.appendChild(empty);
     }
 
-    // ===== Días del mes =====
+    // Días del mes
     for (let d = 1; d <= ultimoDia.getDate(); d++) {
       const fecha = new Date(ano, mes, d);
       const diaElem = document.createElement("div");
       diaElem.classList.add("fila-dia");
       diaElem.innerText = d;
-      diaElem.dataset.fecha = fecha.toISOString().slice(0,10);
+      diaElem.dataset.fecha = formatearLocal(fecha);
 
       // Día pasado
       if (fecha < new Date(new Date().setHours(0,0,0,0))) {
@@ -93,15 +92,15 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado por backend (Airbnb sincronizado)
-      const fechaISO = fecha.toISOString().slice(0,10);
+      // Día reservado en backend
+      const fechaISO = formatearLocal(fecha);
       const cabana = document.getElementById("cabaña")?.value.toLowerCase();
       if (reservasGlobal[cabana]?.includes(fechaISO)) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
       }
 
-      // ===== Selección de fechas =====
+      // Click selección
       diaElem.addEventListener("click", () => {
         if (diaElem.classList.contains("reservado")) return;
 
@@ -117,10 +116,10 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
           }
         }
 
-        // Marca rango seleccionado visualmente
-        const dias = mesContainer.querySelectorAll(".fila-dia");
-        dias.forEach(d => d.classList.remove("seleccionado"));
-        dias.forEach(d => {
+        // Recorre TODOS los días visibles para marcar selección incluso cruzando meses
+        const todosDias = document.querySelectorAll(".fila-dia");
+        todosDias.forEach(d => d.classList.remove("seleccionado"));
+        todosDias.forEach(d => {
           const f = new Date(d.dataset.fecha);
           if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
             d.classList.add("seleccionado");
@@ -155,7 +154,7 @@ document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   refrescarCalendario();
 });
 
-// ===== CALCULO DE RESERVA COMPLETO =====
+// ===== CALCULO RESERVA =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
@@ -203,7 +202,6 @@ function calcularReserva() {
     document.getElementById("fechasSeleccionadas").innerHTML =
       `📅 ${entradaTexto} - ${salidaTexto}<br>🛏 ${noches} ${noches === 1 ? "noche" : "noches"}`;
 
-    // ===== Cálculo de precio =====
     let total = 0;
     let descuento = 0;
     let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
@@ -223,7 +221,6 @@ function calcularReserva() {
       total += precio;
     }
 
-    // Aplicar descuentos
     if (noches >= 6 && esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
     else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
 
@@ -259,7 +256,7 @@ function calcularReserva() {
   }, 300);
 }
 
-// ===== CALCULO TEMPORADA ALTA =====
+// ===== TEMPORADA ALTA =====
 function esTemporadaAlta(fecha) {
   const mes = fecha.getMonth() + 1;
   const dia = fecha.getDate();
@@ -328,7 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  // ===== Función para actualizar reservas y refrescar calendario =====
+  // Función para cargar reservas y actualizar calendario
   async function actualizarReservas() {
     const reservas = await cargarReservasBackend();
     reservasGlobal = reservas;
@@ -338,13 +335,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Carga inicial
+  // Primera carga
   await actualizarReservas();
 
-  // Actualizar cada 2 horas automáticamente
+  // Actualizar cada 2 horas
   setInterval(actualizarReservas, 2 * 60 * 60 * 1000);
 
-  // Botones de cálculo y pago
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
 
