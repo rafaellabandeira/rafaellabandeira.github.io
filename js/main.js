@@ -8,51 +8,22 @@ function formatearLocal(fecha) {
   return `${d}/${m}/${y}`;
 }
 
-// ===== CARGAR RESERVAS DESDE AIRBNB =====
-const ICAL_URL = "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es";
+// ===== CARGAR RESERVAS DESDE BACKEND =====
+const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas"; // devuelve { campanilla: [...], tejo: [...] }
 
-async function cargarReservasAirbnb() {
+async function cargarReservasBackend() {
   try {
-    const res = await fetch(ICAL_URL);
-    if (!res.ok) throw new Error("No se pudo cargar el iCal de Airbnb");
+    const res = await fetch(BACKEND_URL);
+    if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
+    const data = await res.json();
 
-    const text = await res.text();
-    const fechas = [];
-
-    const lines = text.split("\n");
-    let currentEvent = {};
-
-    for (let line of lines) {
-      if (line.startsWith("DTSTART")) currentEvent.start = line.split(":")[1];
-      if (line.startsWith("DTEND")) {
-        currentEvent.end = line.split(":")[1];
-
-        const start = new Date(
-          currentEvent.start.slice(0,4) + "-" +
-          currentEvent.start.slice(4,6) + "-" +
-          currentEvent.start.slice(6,8)
-        );
-
-        const end = new Date(
-          currentEvent.end.slice(0,4) + "-" +
-          currentEvent.end.slice(4,6) + "-" +
-          currentEvent.end.slice(6,8)
-        );
-
-        for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
-          // Guardar en formato ISO para que coincida con dataset.fecha
-          fechas.push(d.toISOString().slice(0,10));
-        }
-
-        currentEvent = {};
-      }
+    // Aseguramos formato ISO YYYY-MM-DD
+    const reservas = { campanilla: [], tejo: [] };
+    for (let cabana of ["campanilla", "tejo"]) {
+      reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
 
-    return {
-      campanilla: fechas,
-      tejo: fechas
-    };
-
+    return reservas;
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [] };
@@ -113,12 +84,12 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       diaElem.dataset.fecha = fecha.toISOString().slice(0,10);
 
       // Día pasado
-      if (fecha < new Date()) {
+      if (fecha < new Date(new Date().setHours(0,0,0,0))) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado por Airbnb
+      // Día reservado por Airbnb / backend
       const fechaISO = fecha.toISOString().slice(0,10);
       const cabana = document.getElementById("cabaña")?.value.toLowerCase();
       if (reservasGlobal[cabana]?.includes(fechaISO)) {
@@ -176,11 +147,6 @@ document.getElementById("mesAnterior")?.addEventListener("click", () => {
 });
 document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   mesBase.setMonth(mesBase.getMonth() + 1);
-  refrescarCalendario();
-});
-
-// ===== CAMBIO DE CABAÑA AUTOMÁTICO =====
-document.getElementById("cabaña")?.addEventListener("change", () => {
   refrescarCalendario();
 });
 
@@ -355,19 +321,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  const reservas = await cargarReservasAirbnb();
-  actualizarUrgencia(reservas);
-
-  if (document.getElementById("cabaña") && document.getElementById("fechas")) {
-    iniciarCalendarioBooking(reservas);
+  // Cargar reservas del backend y refrescar calendario
+  async function actualizarReservas() {
+    const reservas = await cargarReservasBackend();
+    reservasGlobal = reservas;
+    actualizarUrgencia(reservas);
+    if (document.getElementById("cabaña") && document.getElementById("fechas")) {
+      iniciarCalendarioBooking(reservasGlobal);
+    }
   }
+
+  await actualizarReservas();
+
+  // Actualizar cada 2 horas
+  setInterval(actualizarReservas, 2 * 60 * 60 * 1000);
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
 
   // Actualizar calendario al cambiar de cabaña
   document.getElementById("cabaña")?.addEventListener("change", () => {
-    refrescarCalendario();
+    iniciarCalendarioBooking(reservasGlobal);
   });
 });
 
