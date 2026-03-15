@@ -40,7 +40,8 @@ async function cargarReservasAirbnb() {
         );
 
         for (let d = new Date(start); d < end; d.setDate(d.getDate()+1)) {
-          fechas.push(formatearLocal(new Date(d)));
+          // Guardar en formato ISO para que coincida con dataset.fecha
+          fechas.push(d.toISOString().slice(0,10));
         }
 
         currentEvent = {};
@@ -118,9 +119,9 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       }
 
       // Día reservado por Airbnb
-      const fechaFormateada = formatearLocal(fecha);
+      const fechaISO = fecha.toISOString().slice(0,10);
       const cabana = document.getElementById("cabaña")?.value.toLowerCase();
-      if (reservasGlobal[cabana]?.includes(fechaFormateada)) {
+      if (reservasGlobal[cabana]?.includes(fechaISO)) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
       }
@@ -157,6 +158,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     container.appendChild(mesContainer);
   }
 
+  // Mostrar mes base + siguiente
   crearMes(fechaBase.getFullYear(), fechaBase.getMonth());
   const siguiente = new Date(fechaBase);
   siguiente.setMonth(siguiente.getMonth() + 1);
@@ -365,7 +367,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Actualizar calendario al cambiar de cabaña
   document.getElementById("cabaña")?.addEventListener("change", () => {
-    iniciarCalendarioBooking(reservasGlobal);
+    refrescarCalendario();
   });
 });
 
