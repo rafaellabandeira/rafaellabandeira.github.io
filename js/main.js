@@ -1,6 +1,7 @@
 // ================= MAIN.JS COMPLETO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
+// Convierte un objeto Date en formato 'dd/mm/yyyy'
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
@@ -9,7 +10,9 @@ function formatearLocal(fecha) {
 }
 
 // ===== CARGAR RESERVAS DESDE BACKEND =====
-const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas"; // devuelve { campanilla: [...], tejo: [...] }
+// El backend devuelve reservas de cada cabaña {campanilla: [...], tejo: [...]}
+// Se asegura que estén en formato ISO 'YYYY-MM-DD' para poder compararlas con dataset.fecha del calendario
+const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas";
 
 async function cargarReservasBackend() {
   try {
@@ -17,7 +20,6 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
-    // Aseguramos formato ISO YYYY-MM-DD
     const reservas = { campanilla: [], tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
@@ -30,19 +32,21 @@ async function cargarReservasBackend() {
   }
 }
 
-// ===== CALENDARIO TIPO BOOKING (navegable con flechas) =====
-let mesBase = new Date();
-let reservasGlobal = {};
-let inicioSeleccion = null;
-let finSeleccion = null;
+// ===== VARIABLES GLOBALES DEL CALENDARIO =====
+let mesBase = new Date();          // Mes actualmente visible en el calendario
+let reservasGlobal = {};           // Contiene reservas actuales cargadas desde backend
+let inicioSeleccion = null;        // Fecha de inicio de la selección
+let finSeleccion = null;           // Fecha de fin de la selección
 
+// ===== INICIAR CALENDARIO TIPO BOOKING =====
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   const container = document.getElementById("fechas");
   if (!container) return;
-  container.innerHTML = "";
+  container.innerHTML = "";        // Limpia calendario antes de dibujar
 
   reservasGlobal = fechasOcupadas;
 
+  // Función para crear un mes completo
   function crearMes(ano, mes) {
     const primerDia = new Date(ano, mes, 1);
     const ultimoDia = new Date(ano, mes + 1, 0);
@@ -51,13 +55,13 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     mesContainer.classList.add("mes-calendario");
     mesContainer.style.marginRight = "10px";
 
-    // Título del mes
+    // ===== Título del mes =====
     const tituloMes = document.createElement("div");
     tituloMes.classList.add("titulo-mes");
     tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
     mesContainer.appendChild(tituloMes);
 
-    // Fila de días de la semana
+    // ===== Fila de días de la semana =====
     const diasSemana = ["L","M","X","J","V","S","D"];
     diasSemana.forEach(dia => {
       const dElem = document.createElement("div");
@@ -66,7 +70,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       mesContainer.appendChild(dElem);
     });
 
-    // Espacios en blanco antes del primer día
+    // ===== Espacios en blanco antes del primer día del mes =====
     let primerDiaSemana = primerDia.getDay();
     primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; // lunes=0
     for (let i = 0; i < primerDiaSemana; i++) {
@@ -75,7 +79,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
       mesContainer.appendChild(empty);
     }
 
-    // Días del mes
+    // ===== Días del mes =====
     for (let d = 1; d <= ultimoDia.getDate(); d++) {
       const fecha = new Date(ano, mes, d);
       const diaElem = document.createElement("div");
@@ -89,7 +93,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado por Airbnb / backend
+      // Día reservado por backend (Airbnb sincronizado)
       const fechaISO = fecha.toISOString().slice(0,10);
       const cabana = document.getElementById("cabaña")?.value.toLowerCase();
       if (reservasGlobal[cabana]?.includes(fechaISO)) {
@@ -97,7 +101,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Click selección
+      // ===== Selección de fechas =====
       diaElem.addEventListener("click", () => {
         if (diaElem.classList.contains("reservado")) return;
 
@@ -113,6 +117,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
           }
         }
 
+        // Marca rango seleccionado visualmente
         const dias = mesContainer.querySelectorAll(".fila-dia");
         dias.forEach(d => d.classList.remove("seleccionado"));
         dias.forEach(d => {
@@ -150,7 +155,7 @@ document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   refrescarCalendario();
 });
 
-// ===== CALCULO RESERVA COMPLETO =====
+// ===== CALCULO DE RESERVA COMPLETO =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
@@ -198,6 +203,7 @@ function calcularReserva() {
     document.getElementById("fechasSeleccionadas").innerHTML =
       `📅 ${entradaTexto} - ${salidaTexto}<br>🛏 ${noches} ${noches === 1 ? "noche" : "noches"}`;
 
+    // ===== Cálculo de precio =====
     let total = 0;
     let descuento = 0;
     let minNoches = esTemporadaAlta(fechaEntrada) ? 4 : 2;
@@ -217,6 +223,7 @@ function calcularReserva() {
       total += precio;
     }
 
+    // Aplicar descuentos
     if (noches >= 6 && esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
     else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
 
@@ -321,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  // Cargar reservas del backend y refrescar calendario
+  // ===== Función para actualizar reservas y refrescar calendario =====
   async function actualizarReservas() {
     const reservas = await cargarReservasBackend();
     reservasGlobal = reservas;
@@ -331,11 +338,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Carga inicial
   await actualizarReservas();
 
-  // Actualizar cada 2 horas
+  // Actualizar cada 2 horas automáticamente
   setInterval(actualizarReservas, 2 * 60 * 60 * 1000);
 
+  // Botones de cálculo y pago
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
 
