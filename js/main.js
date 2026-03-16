@@ -1,7 +1,6 @@
 // ================= MAIN.JS COMPLETO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
-// Convierte un objeto Date a "YYYY-MM-DD" para comparación y dataset
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
@@ -10,7 +9,6 @@ function formatearLocal(fecha) {
 }
 
 // ===== CARGAR RESERVAS DESDE BACKEND =====
-// Backend devuelve { campanilla: [...], tejo: [...] }
 const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
 
 async function cargarReservasBackend() {
@@ -19,7 +17,6 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
-    // Convertimos todas las fechas a formato ISO para coincidencia
     const reservas = { campanilla: [], tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
@@ -37,122 +34,10 @@ let reservasGlobal = {};
 let inicioSeleccion = null;
 let finSeleccion = null;
 
-// ===== INICIAR CALENDARIO =====
-// Dibuja dos meses visibles y marca días bloqueados en rojo
-function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
-  const container = document.getElementById("fechas");
-  if (!container) return;
-  container.innerHTML = "";
-
-  reservasGlobal = fechasOcupadas;
-
-  function crearMes(ano, mes) {
-    const primerDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes + 1, 0);
-
-    const mesContainer = document.createElement("div");
-    mesContainer.classList.add("mes-calendario");
-    mesContainer.style.marginRight = "10px";
-
-    // Título del mes
-    const tituloMes = document.createElement("div");
-    tituloMes.classList.add("titulo-mes");
-    tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
-    mesContainer.appendChild(tituloMes);
-
-    // Fila de días de la semana
-    const diasSemana = ["L","M","X","J","V","S","D"];
-    diasSemana.forEach(dia => {
-      const dElem = document.createElement("div");
-      dElem.classList.add("dia-semana");
-      dElem.innerText = dia;
-      mesContainer.appendChild(dElem);
-    });
-
-    // Espacios en blanco antes del primer día
-    let primerDiaSemana = primerDia.getDay();
-    primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; // lunes=0
-    for (let i = 0; i < primerDiaSemana; i++) {
-      const empty = document.createElement("div");
-      empty.classList.add("fila-dia", "empty-dia");
-      mesContainer.appendChild(empty);
-    }
-
-    // Días del mes
-    for (let d = 1; d <= ultimoDia.getDate(); d++) {
-      const fecha = new Date(ano, mes, d);
-      const diaElem = document.createElement("div");
-      diaElem.classList.add("fila-dia");
-      diaElem.innerText = d;
-      diaElem.dataset.fecha = formatearLocal(fecha);
-
-      // Día pasado
-      if (fecha < new Date(new Date().setHours(0,0,0,0))) {
-        diaElem.classList.add("reservado");
-        diaElem.style.cursor = "not-allowed";
-      }
-
-      // Día reservado en backend
-      const fechaISO = formatearLocal(fecha);
-      const cabana = document.getElementById("cabaña")?.value.toLowerCase();
-      if (reservasGlobal[cabana]?.includes(fechaISO)) {
-        diaElem.classList.add("reservado");
-        diaElem.style.cursor = "not-allowed";
-      }
-
-      // Click selección
-      diaElem.addEventListener("click", () => {
-        if (diaElem.classList.contains("reservado")) return;
-
-        if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
-          inicioSeleccion = fecha;
-          finSeleccion = null;
-        } else if (!finSeleccion) {
-          if (fecha < inicioSeleccion) {
-            finSeleccion = inicioSeleccion;
-            inicioSeleccion = fecha;
-          } else {
-            finSeleccion = fecha;
-          }
-        }
-
-        // Recorre TODOS los días visibles para marcar selección incluso cruzando meses
-        const todosDias = document.querySelectorAll(".fila-dia");
-        todosDias.forEach(d => d.classList.remove("seleccionado"));
-        todosDias.forEach(d => {
-          const f = new Date(d.dataset.fecha);
-          if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
-            d.classList.add("seleccionado");
-          }
-        });
-      });
-
-      mesContainer.appendChild(diaElem);
-    }
-
-    container.appendChild(mesContainer);
-  }
-
-  // Mostrar mes base + siguiente
-  crearMes(fechaBase.getFullYear(), fechaBase.getMonth());
-  const siguiente = new Date(fechaBase);
-  siguiente.setMonth(siguiente.getMonth() + 1);
-  crearMes(siguiente.getFullYear(), siguiente.getMonth());
-}
-
 // ===== FUNCIONES FLECHAS =====
 function refrescarCalendario() {
   iniciarCalendarioBooking(reservasGlobal, mesBase);
 }
-
-document.getElementById("mesAnterior")?.addEventListener("click", () => {
-  mesBase.setMonth(mesBase.getMonth() - 1);
-  refrescarCalendario();
-});
-document.getElementById("mesSiguiente")?.addEventListener("click", () => {
-  mesBase.setMonth(mesBase.getMonth() + 1);
-  refrescarCalendario();
-});
 
 // ===== CALCULO RESERVA =====
 function calcularReserva() {
@@ -325,6 +210,99 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
+  // ===== INICIAR CALENDARIO =====
+  function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
+    const container = document.getElementById("fechas");
+    if (!container) return;
+    container.innerHTML = "";
+
+    reservasGlobal = fechasOcupadas;
+
+    function crearMes(ano, mes) {
+      const primerDia = new Date(ano, mes, 1);
+      const ultimoDia = new Date(ano, mes + 1, 0);
+
+      const mesContainer = document.createElement("div");
+      mesContainer.classList.add("mes-calendario");
+      mesContainer.style.marginRight = "10px";
+
+      const tituloMes = document.createElement("div");
+      tituloMes.classList.add("titulo-mes");
+      tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
+      mesContainer.appendChild(tituloMes);
+
+      const diasSemana = ["L","M","X","J","V","S","D"];
+      diasSemana.forEach(dia => {
+        const dElem = document.createElement("div");
+        dElem.classList.add("dia-semana");
+        dElem.innerText = dia;
+        mesContainer.appendChild(dElem);
+      });
+
+      let primerDiaSemana = primerDia.getDay();
+      primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
+      for (let i = 0; i < primerDiaSemana; i++) {
+        const empty = document.createElement("div");
+        empty.classList.add("fila-dia", "empty-dia");
+        mesContainer.appendChild(empty);
+      }
+
+      for (let d = 1; d <= ultimoDia.getDate(); d++) {
+        const fecha = new Date(ano, mes, d);
+        const diaElem = document.createElement("div");
+        diaElem.classList.add("fila-dia");
+        diaElem.innerText = d;
+        diaElem.dataset.fecha = formatearLocal(fecha);
+
+        if (fecha < new Date(new Date().setHours(0,0,0,0))) {
+          diaElem.classList.add("reservado");
+          diaElem.style.cursor = "not-allowed";
+        }
+
+        const cabañaElem = document.getElementById("cabaña");
+        const cabana = cabañaElem ? cabañaElem.value.toLowerCase() : null;
+        if (cabana && reservasGlobal[cabana]?.includes(formatearLocal(fecha))) {
+          diaElem.classList.add("reservado");
+          diaElem.style.cursor = "not-allowed";
+        }
+
+        diaElem.addEventListener("click", () => {
+          if (diaElem.classList.contains("reservado")) return;
+
+          if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
+            inicioSeleccion = fecha;
+            finSeleccion = null;
+          } else if (!finSeleccion) {
+            if (fecha < inicioSeleccion) {
+              finSeleccion = inicioSeleccion;
+              inicioSeleccion = fecha;
+            } else {
+              finSeleccion = fecha;
+            }
+          }
+
+          const todosDias = document.querySelectorAll(".fila-dia");
+          todosDias.forEach(d => d.classList.remove("seleccionado"));
+          todosDias.forEach(d => {
+            const f = new Date(d.dataset.fecha);
+            if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
+              d.classList.add("seleccionado");
+            }
+          });
+        });
+
+        mesContainer.appendChild(diaElem);
+      }
+
+      container.appendChild(mesContainer);
+    }
+
+    crearMes(fechaBase.getFullYear(), fechaBase.getMonth());
+    const siguiente = new Date(fechaBase);
+    siguiente.setMonth(siguiente.getMonth() + 1);
+    crearMes(siguiente.getFullYear(), siguiente.getMonth());
+  }
+
   // Función para cargar reservas y actualizar calendario
   async function actualizarReservas() {
     const reservas = await cargarReservasBackend();
@@ -347,6 +325,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Actualizar calendario al cambiar de cabaña
   document.getElementById("cabaña")?.addEventListener("change", () => {
     iniciarCalendarioBooking(reservasGlobal);
+  });
+
+  // ===== FUNCIONES FLECHAS =====
+  document.getElementById("mesAnterior")?.addEventListener("click", () => {
+    mesBase.setMonth(mesBase.getMonth() - 1);
+    refrescarCalendario();
+  });
+  document.getElementById("mesSiguiente")?.addEventListener("click", () => {
+    mesBase.setMonth(mesBase.getMonth() + 1);
+    refrescarCalendario();
   });
 });
 
