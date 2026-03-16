@@ -1,13 +1,16 @@
 // ================= MAIN.JS COMPLETO =================
 
-// ===== FORMATEO FECHA LOCAL (YYYY-MM-DD) =====
+// ===== FORMATEO FECHA LOCAL (d/m/Y) =====
+// Convierte un objeto Date a "YYYY-MM-DD" para comparación y dataset
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
+
 // ===== CARGAR RESERVAS DESDE BACKEND =====
+// Backend devuelve { campanilla: [...], tejo: [...] }
 const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas";
 
 async function cargarReservasBackend() {
@@ -16,9 +19,10 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
+    // Convertimos todas las fechas a formato ISO para coincidencia
     const reservas = { campanilla: [], tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
-      reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
+      reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
     return reservas;
   } catch (err) {
@@ -34,12 +38,12 @@ let inicioSeleccion = null;
 let finSeleccion = null;
 
 // ===== INICIAR CALENDARIO =====
+// Dibuja dos meses visibles y marca días bloqueados en rojo
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   const container = document.getElementById("fechas");
   if (!container) return;
   container.innerHTML = "";
 
-  // Guardamos todas las reservas del backend
   reservasGlobal = fechasOcupadas;
 
   function crearMes(ano, mes) {
@@ -88,15 +92,15 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado según cabaña seleccionada
-      const cabana = document.getElementById("cabaña")?.value.toLowerCase();
+      // Día reservado en backend
       const fechaISO = formatearLocal(fecha);
+      const cabana = document.getElementById("cabaña")?.value.toLowerCase();
       if (reservasGlobal[cabana]?.includes(fechaISO)) {
         diaElem.classList.add("reservado");
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Click selección de fechas
+      // Click selección
       diaElem.addEventListener("click", () => {
         if (diaElem.classList.contains("reservado")) return;
 
@@ -112,7 +116,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
           }
         }
 
-        // Recorre todos los días visibles incluso cruzando meses
+        // Recorre TODOS los días visibles para marcar selección incluso cruzando meses
         const todosDias = document.querySelectorAll(".fila-dia");
         todosDias.forEach(d => d.classList.remove("seleccionado"));
         todosDias.forEach(d => {
@@ -148,12 +152,6 @@ document.getElementById("mesAnterior")?.addEventListener("click", () => {
 document.getElementById("mesSiguiente")?.addEventListener("click", () => {
   mesBase.setMonth(mesBase.getMonth() + 1);
   refrescarCalendario();
-});
-
-// ===== CAMBIO DE CABAÑA =====
-document.getElementById("cabaña")?.addEventListener("change", () => {
-  // ✅ refresca el calendario sin romper Render
-  iniciarCalendarioBooking(reservasGlobal, mesBase);
 });
 
 // ===== CALCULO RESERVA =====
@@ -327,7 +325,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  // Cargar reservas del backend y refrescar calendario
+  // Función para cargar reservas y actualizar calendario
   async function actualizarReservas() {
     const reservas = await cargarReservasBackend();
     reservasGlobal = reservas;
@@ -337,6 +335,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  // Primera carga
   await actualizarReservas();
 
   // Actualizar cada 2 horas
@@ -344,9 +343,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
+
+  // Actualizar calendario al cambiar de cabaña
+  document.getElementById("cabaña")?.addEventListener("change", () => {
+    iniciarCalendarioBooking(reservasGlobal);
+  });
 });
 
-// ===== MENSAJE URGENCIA =====
+// ===== MENSAJE URGENCIA INTELIGENTE =====
 function actualizarUrgencia(fechasOcupadas){
   const mensaje = document.getElementById("mensajeUrgencia");
   if(!mensaje) return;
