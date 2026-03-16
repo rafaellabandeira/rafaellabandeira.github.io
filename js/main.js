@@ -7,7 +7,6 @@ function formatearLocal(fecha) {
   const d = String(fecha.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
-
 // ===== CARGAR RESERVAS DESDE BACKEND =====
 const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas";
 
