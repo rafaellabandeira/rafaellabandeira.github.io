@@ -38,13 +38,13 @@ let inicioSeleccion = null;
 let finSeleccion = null;
 
 // ===== INICIAR CALENDARIO =====
-// Dibuja dos meses visibles y marca días bloqueados en rojo
+// Dibuja dos meses visibles y marca días bloqueados en rojo según la cabaña seleccionada
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   const container = document.getElementById("fechas");
   if (!container) return;
   container.innerHTML = "";
 
-  // 🔹 Guardamos todas las reservas del backend
+  // 🔹 Guardamos todas las reservas que vienen del backend
   reservasGlobal = fechasOcupadas;
 
   function crearMes(ano, mes) {
@@ -93,11 +93,11 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // 🔹 Día reservado en backend según cabaña seleccionada
+      // 🔹 Día reservado según cabaña seleccionada
       const cabana = document.getElementById("cabaña")?.value.toLowerCase();
       const fechaISO = formatearLocal(fecha);
       if (reservasGlobal[cabana]?.includes(fechaISO)) {
-        diaElem.classList.add("reservado"); // esto lo pinta en rojo
+        diaElem.classList.add("reservado"); // esto marca el día en rojo
         diaElem.style.cursor = "not-allowed";
       }
 
@@ -140,8 +140,6 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   siguiente.setMonth(siguiente.getMonth() + 1);
   crearMes(siguiente.getFullYear(), siguiente.getMonth());
 }
-
-      
 // ===== FUNCIONES FLECHAS =====
 function refrescarCalendario() {
   iniciarCalendarioBooking(reservasGlobal, mesBase);
