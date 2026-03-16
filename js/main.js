@@ -11,7 +11,7 @@ function formatearLocal(fecha) {
 
 // ===== CARGAR RESERVAS DESDE BACKEND =====
 // Backend devuelve { campanilla: [...], tejo: [...] }
-const BACKEND_URL = "https://rafaellabandeira.github.io.onrender.com/reservas";
+const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
 
 async function cargarReservasBackend() {
   try {
