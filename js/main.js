@@ -44,6 +44,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   if (!container) return;
   container.innerHTML = "";
 
+  // 🔹 Guardamos todas las reservas del backend
   reservasGlobal = fechasOcupadas;
 
   function crearMes(ano, mes) {
@@ -92,15 +93,15 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Día reservado en backend
-      const fechaISO = formatearLocal(fecha);
+      // 🔹 Día reservado en backend según cabaña seleccionada
       const cabana = document.getElementById("cabaña")?.value.toLowerCase();
+      const fechaISO = formatearLocal(fecha);
       if (reservasGlobal[cabana]?.includes(fechaISO)) {
-        diaElem.classList.add("reservado");
+        diaElem.classList.add("reservado"); // esto lo pinta en rojo
         diaElem.style.cursor = "not-allowed";
       }
 
-      // Click selección
+      // Click selección de fechas
       diaElem.addEventListener("click", () => {
         if (diaElem.classList.contains("reservado")) return;
 
@@ -116,7 +117,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
           }
         }
 
-        // Recorre TODOS los días visibles para marcar selección incluso cruzando meses
+        // 🔹 Recorre TODOS los días visibles incluso cruzando meses
         const todosDias = document.querySelectorAll(".fila-dia");
         todosDias.forEach(d => d.classList.remove("seleccionado"));
         todosDias.forEach(d => {
@@ -140,6 +141,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   crearMes(siguiente.getFullYear(), siguiente.getMonth());
 }
 
+      
 // ===== FUNCIONES FLECHAS =====
 function refrescarCalendario() {
   iniciarCalendarioBooking(reservasGlobal, mesBase);
