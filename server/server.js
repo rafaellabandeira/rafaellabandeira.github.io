@@ -1,71 +1,23 @@
-// server.js
+// server/server.js
 import express from "express";
-import cors from "cors";
-import fs from "fs";
 import path from "path";
-import { sincronizarAirbnb } from "./AirbnbSync.js"; // Nuevo: solo Airbnb
+import cors from "cors";
 
 const app = express();
 app.use(cors());
 
-const PORT = process.env.PORT || 10000;
+// 🔹 Servir archivos estáticos de la carpeta main (donde está tu index.html y main.js)
+app.use(express.static(path.join(process.cwd(), "main")));
 
-// Ruta segura para reservas.json en Render
-const filePath = path.join(process.env.TMPDIR || "/tmp", "reservas.json");
-console.log("📂 Archivo reservas en:", filePath);
-
-// 🔹 Endpoint que devuelve reservas
+// 🔹 Endpoint de reservas (puedes reemplazarlo con tu backend real si lo deseas)
 app.get("/reservas", (req, res) => {
-  try {
-    if (!fs.existsSync(filePath)) {
-      console.log("⚠️ reservas.json no existe todavía");
-      return res.json({ campanilla: [], tejo: [] });
-    }
-
-    const data = fs.readFileSync(filePath, "utf8");
-    const json = JSON.parse(data);
-
-    console.log("📤 Enviando reservas:", {
-      campanilla: json.campanilla?.length || 0,
-      tejo: json.tejo?.length || 0
-    });
-
-    res.json(json);
-  } catch (err) {
-    console.error("❌ Error leyendo reservas:", err);
-    res.json({ campanilla: [], tejo: [] });
-  }
+  // Ejemplo: devolver un JSON con fechas bloqueadas
+  // Si tu backend ya devuelve esto, simplemente haz fetch desde main.js
+  res.json({
+    campanilla: ["2026-03-18","2026-03-19"],
+    tejo: ["2026-03-20","2026-03-21"]
+  });
 });
 
-// 🔹 Arranque controlado
-async function iniciarServidor() {
-  try {
-    console.log("🚀 Iniciando sincronización con Airbnb…");
-
-    // Solo Airbnb
-    await sincronizarAirbnb();
-
-    console.log("✅ Sincronización terminada");
-
-    // Comprobación final de archivo
-    if (fs.existsSync(filePath)) {
-      const contenido = JSON.parse(fs.readFileSync(filePath, "utf8"));
-      console.log("📊 Reservas guardadas:", {
-        campanilla: contenido.campanilla?.length || 0,
-        tejo: contenido.tejo?.length || 0
-      });
-    } else {
-      console.log("❌ reservas.json NO se creó");
-    }
-
-    app.listen(PORT, () => {
-      console.log(`🌐 Servidor activo en puerto ${PORT}`);
-    });
-
-  } catch (err) {
-    console.error("❌ Error iniciando servidor:", err);
-    process.exit(1);
-  }
-}
-
-iniciarServidor();
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Servidor corriendo en puerto ${port}`));
