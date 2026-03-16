@@ -329,11 +329,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ===== FUNCIONES FLECHAS =====
   document.getElementById("mesAnterior")?.addEventListener("click", () => {
-    mesBase.setMonth(mesBase.getMonth() - 1);
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1); // ← arreglado
     refrescarCalendario();
   });
   document.getElementById("mesSiguiente")?.addEventListener("click", () => {
-    mesBase.setMonth(mesBase.getMonth() + 1);
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1); // ← arreglado
     refrescarCalendario();
   });
 });
