@@ -6,16 +6,12 @@ function formatearLocal(fecha) {
   return `${y}-${m}-${d}`;
 }
 
-// ===== CONFIG =====
-const BACKEND_URL = "/backend/reservas.json"; // Simulación backend
-const PASSWORD_ADMIN = "8111"; // Contraseña del candado
-
 // ===== VARIABLES GLOBALES =====
+const BACKEND_URL = "/backend/reservas.json"; // Simulación backend
 let reservasGlobal = {};
 let mesBase = new Date();
 let inicioSeleccion = null;
 let finSeleccion = null;
-let adminActivo = false;
 
 // ===== CARGAR RESERVAS =====
 async function cargarReservas() {
@@ -27,18 +23,6 @@ async function cargarReservas() {
     console.error(err);
     return { campanilla: [], tejo: [] };
   }
-}
-
-// ===== GUARDAR RESERVAS SIMULADO =====
-async function guardarReservasSimulado() {
-  console.log("Reservas guardadas:", reservasGlobal);
-}
-
-// ===== TEMPORADA ALTA =====
-function esTemporadaAlta(fecha){
-  const mes = fecha.getMonth()+1;
-  const dia = fecha.getDate();
-  return (mes===7 || mes===8 || (mes===12 && dia>=22) || (mes===1 && dia<=7));
 }
 
 // ===== CALCULO RESERVA =====
@@ -91,6 +75,7 @@ function calcularReserva() {
 
   total -= descuento;
 
+  // Mostrar resultados
   const opciones = { day:"numeric", month:"short" };
   document.getElementById("fechasSeleccionadas").innerHTML = 
     `📅 ${fechaEntrada.toLocaleDateString("es-ES",opciones)} - ${fechaSalida.toLocaleDateString("es-ES",opciones)}<br>🛏 ${noches} ${noches===1?"noche":"noches"}`;
@@ -100,26 +85,17 @@ function calcularReserva() {
   document.getElementById("descuento").innerText = descuento.toFixed(2);
   document.getElementById("resto").innerText = (total-50).toFixed(2);
 
-  document.getElementById("resultado").style.display = "block";
+  document.getElementById("resultado").style.display="block";
 }
 
-// ===== BLOQUEAR DÍAS =====
-function toggleBloqueoDia(diaElem, cabaña) {
-  const fechaStr = diaElem.dataset.fecha;
-
-  if(adminActivo) {
-    if(diaElem.classList.contains("bloqueado")) {
-      diaElem.classList.remove("bloqueado");
-      reservasGlobal[cabaña] = reservasGlobal[cabaña].filter(f => f !== fechaStr);
-    } else {
-      diaElem.classList.add("bloqueado");
-      if(!reservasGlobal[cabaña].includes(fechaStr)) reservasGlobal[cabaña].push(fechaStr);
-    }
-    guardarReservasSimulado();
-  }
+// ===== TEMPORADA ALTA =====
+function esTemporadaAlta(fecha){
+  const mes = fecha.getMonth()+1;
+  const dia = fecha.getDate();
+  return (mes===7 || mes===8 || (mes===12 && dia>=22) || (mes===1 && dia<=7));
 }
 
-// ===== CALENDARIO =====
+// ===== INICIAR CALENDARIO =====
 async function iniciarCalendario(){
   reservasGlobal = await cargarReservas();
   const container = document.getElementById("fechas");
@@ -161,16 +137,12 @@ async function iniciarCalendario(){
       diaElem.dataset.fecha = formatearLocal(fecha);
 
       const cabaña = document.getElementById("cabaña")?.value.toLowerCase();
-
       if(cabaña && reservasGlobal[cabaña]?.includes(formatearLocal(fecha))) {
-        diaElem.classList.add("bloqueado");
+        diaElem.classList.add("reservado");
       }
 
       diaElem.addEventListener("click",()=>{
-        if(diaElem.classList.contains("bloqueado")) {
-          toggleBloqueoDia(diaElem, cabaña);
-          return;
-        }
+        if(diaElem.classList.contains("reservado")) return;
         if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
           inicioSeleccion = fecha;
           finSeleccion = null;
@@ -206,26 +178,26 @@ async function iniciarCalendario(){
 }
 
 // ===== CARRUSEL =====
-function iniciarCarruseles() {
-  const carruseles = document.querySelectorAll(".carousel-container-general");
-
-  carruseles.forEach(carousel => {
-    const slides = carousel.querySelectorAll(".carousel-slide-general");
-    const indicators = carousel.querySelectorAll(".indicator-general");
+function iniciarCarruseles(){
+  document.querySelectorAll(".carousel-container-general").forEach(container=>{
+    const slides = container.querySelectorAll(".carousel-slide-general");
+    const prev = container.querySelector(".prev-general");
+    const next = container.querySelector(".next-general");
+    const indicators = container.querySelectorAll(".indicator-general");
     let index = 0;
 
-    function mostrarSlide(n) {
-      slides.forEach((s,i)=>{
-        s.classList.toggle("active", i===n);
-        if(indicators[i]) indicators[i].classList.toggle("active", i===n);
-      });
+    function mostrarSlide(i){
+      slides.forEach(s=>s.classList.remove("active"));
+      indicators.forEach(ind=>ind.classList.remove("active"));
+      slides[i].classList.add("active");
+      if(indicators[i]) indicators[i].classList.add("active");
     }
 
-    carousel.querySelector(".prev-general")?.addEventListener("click", ()=>{
+    prev.addEventListener("click",()=>{
       index = (index-1+slides.length)%slides.length;
       mostrarSlide(index);
     });
-    carousel.querySelector(".next-general")?.addEventListener("click", ()=>{
+    next.addEventListener("click",()=>{
       index = (index+1)%slides.length;
       mostrarSlide(index);
     });
@@ -234,50 +206,63 @@ function iniciarCarruseles() {
   });
 }
 
-// ===== BOTONES FLOTANTES =====
-function crearBotonesFlotantes() {
-  // Botón candado
-  const adminBtn = document.createElement("div");
-  adminBtn.id = "adminButton";
-  adminBtn.innerHTML = "🔒";
-  document.body.appendChild(adminBtn);
-  adminBtn.style.position = "fixed";
-  adminBtn.style.bottom = "20px";
-  adminBtn.style.left = "20px";
-  adminBtn.style.fontSize = "2rem";
-  adminBtn.style.cursor = "pointer";
-  adminBtn.addEventListener("click", ()=>{
-    const pw = prompt("Introduce contraseña de administración:");
-    if(pw===PASSWORD_ADMIN){
-      adminActivo = !adminActivo;
-      alert("Modo administración " + (adminActivo ? "activado" : "desactivado"));
+// ===== BOTÓN ADMINISTRACIÓN =====
+function crearBotonAdmin(){
+  const btn = document.createElement("button");
+  btn.id = "btnAdmin";
+  btn.innerText = "🔒";
+  btn.style.position = "fixed";
+  btn.style.bottom = "20px";
+  btn.style.left = "20px";
+  btn.style.zIndex = "9999";
+  btn.style.fontSize = "1.5rem";
+  btn.style.padding = "10px";
+  btn.style.borderRadius = "50%";
+  btn.style.cursor = "pointer";
+  btn.title = "Administración - Bloquear fechas";
+
+  btn.addEventListener("click",()=>{
+    const password = prompt("Introduce la contraseña:");
+    if(password==="8111"){
+      alert("Modo administración activado. Haz click en días para bloquear/desbloquear.");
+      document.querySelectorAll(".fila-dia").forEach(d=>{
+        if(!d.classList.contains("empty-dia")){
+          d.addEventListener("click", bloquearDiaAdmin);
+        }
+      });
     } else {
       alert("Contraseña incorrecta");
     }
   });
 
-  // Botón WhatsApp
-  const waBtn = document.createElement("a");
-  waBtn.href = "https://wa.me/34620419157";
-  waBtn.target="_blank";
-  waBtn.id = "whatsappButton";
-  waBtn.title="Chatea con nosotros";
-  waBtn.innerHTML='<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />';
-  document.body.appendChild(waBtn);
-  waBtn.style.position = "fixed";
-  waBtn.style.bottom = "20px";
-  waBtn.style.right = "20px";
-  waBtn.style.width = "60px";
-  waBtn.style.height = "60px";
-  waBtn.style.cursor = "pointer";
+  document.body.appendChild(btn);
+}
+
+function bloquearDiaAdmin(e){
+  e.preventDefault();
+  const dia = e.currentTarget;
+  const cabaña = document.getElementById("cabaña").value.toLowerCase();
+  if(dia.classList.contains("reservado")){
+    dia.classList.remove("reservado");
+    reservasGlobal[cabaña] = reservasGlobal[cabaña].filter(f=>f!==dia.dataset.fecha);
+  } else {
+    dia.classList.add("reservado");
+    if(!reservasGlobal[cabaña]) reservasGlobal[cabaña]=[];
+    reservasGlobal[cabaña].push(dia.dataset.fecha);
+  }
+  // Aquí se podría guardar en backend real
+  console.log("Reservas actualizadas:", reservasGlobal);
 }
 
 // ===== INICIALIZACIÓN =====
 document.addEventListener("DOMContentLoaded",()=>{
   iniciarCalendario();
   iniciarCarruseles();
-  crearBotonesFlotantes();
+  crearBotonAdmin();
 
-  document.getElementById("cabaña")?.addEventListener("change",()=>iniciarCalendario());
+  document.getElementById("cabaña")?.addEventListener("change",()=>{
+    iniciarCalendario();
+  });
+
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
 });
