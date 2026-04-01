@@ -1,6 +1,6 @@
 // ================= MAIN.JS COMPLETO =================
 
-// ===== FORMATEO FECHA LOCAL (YYYY-MM-DD) =====
+// ===== FORMATEO FECHA LOCAL =====
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
@@ -13,18 +13,17 @@ const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
 
 async function cargarReservasBackend() {
   try {
-    const res = await fetch(BACKEND_URL, { cache: "no-store" });
-    if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
-
+    const res = await fetch(BACKEND_URL);
+    if (!res.ok) throw new Error("Error cargando reservas backend");
     const data = await res.json();
 
     const reservas = { campanilla: [], tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
-      reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
+      reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
     return reservas;
   } catch (err) {
-    console.error("Error backend:", err);
+    console.error(err);
     return { campanilla: [], tejo: [] };
   }
 }
@@ -35,12 +34,12 @@ let reservasGlobal = {};
 let inicioSeleccion = null;
 let finSeleccion = null;
 
-// ===== FLECHAS =====
+// ===== FUNCIONES FLECHAS =====
 function refrescarCalendario() {
   iniciarCalendarioBooking(reservasGlobal, mesBase);
 }
 
-// ===== CALCULAR RESERVA =====
+// ===== CALCULO RESERVA =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
@@ -55,16 +54,17 @@ function calcularReserva() {
   const email = document.getElementById("email").value.trim();
 
   if (!nombre || !telefono || !email) {
-    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    if(!email || !/\S+@\S+\.\S+/.test(email)) {
       document.getElementById("email").classList.add("error");
       alert("Introduce un email válido");
     } else {
+      document.getElementById("email").classList.remove("error");
       alert("Completa todos los datos personales");
     }
     return;
+  } else {
+    document.getElementById("email").classList.remove("error");
   }
-
-  document.getElementById("email").classList.remove("error");
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
@@ -73,13 +73,12 @@ function calcularReserva() {
 
   setTimeout(() => {
     const fechas = Array.from(diasSeleccionados).map(d => new Date(d.dataset.fecha));
-    fechas.sort((a, b) => a - b);
-
+    fechas.sort((a,b) => a - b);
     const fechaEntrada = fechas[0];
-    const fechaSalida = new Date(fechas[fechas.length - 1]);
+    const fechaSalida = new Date(fechas[fechas.length -1]);
     fechaSalida.setDate(fechaSalida.getDate() + 1);
 
-    const noches = (fechaSalida - fechaEntrada) / (1000 * 60 * 60 * 24);
+    const noches = (fechaSalida - fechaEntrada) / (1000*60*60*24);
 
     const opciones = { day: "numeric", month: "short" };
     const entradaTexto = fechaEntrada.toLocaleDateString("es-ES", opciones);
@@ -95,15 +94,13 @@ function calcularReserva() {
     for (let i = 0; i < noches; i++) {
       const dia = new Date(fechaEntrada);
       dia.setDate(dia.getDate() + i);
-
       const dow = dia.getDay();
       let precio;
 
-      if (esTemporadaAlta(dia)) precio = 150;
-      else {
-        precio = (dow === 5 || dow === 6)
-          ? (cabaña === "campanilla" ? 150 : 140)
-          : (cabaña === "campanilla" ? 115 : 110);
+      if (esTemporadaAlta(dia)) {
+        precio = 150;
+      } else {
+        precio = (dow === 5 || dow === 6) ? (cabaña === "campanilla" ? 150 : 140) : (cabaña === "campanilla" ? 115 : 110);
       }
 
       total += precio;
@@ -123,11 +120,21 @@ function calcularReserva() {
     document.getElementById("cabañaSeleccionada").innerText =
       cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
 
-    document.getElementById("total").innerText = total.toFixed(2);
-    document.getElementById("descuento").innerText = descuento.toFixed(2);
+    const totalElem = document.getElementById("total");
+    totalElem.innerText = total.toFixed(2);
+    totalElem.classList.add("animar-precio");
+    setTimeout(()=> totalElem.classList.remove("animar-precio"),500);
+
+    const descuentoElem = document.getElementById("descuento");
+    descuentoElem.innerText = descuento.toFixed(2);
 
     const pagoInicial = 50;
-    document.getElementById("resto").innerText = (total - pagoInicial).toFixed(2);
+    const restoElem = document.getElementById("resto");
+    restoElem.innerText = (total - pagoInicial).toFixed(2);
+    restoElem.style.color = "#e53935";
+    restoElem.style.fontWeight = "bold";
+    restoElem.classList.add("resaltar-resto");
+    setTimeout(()=> restoElem.classList.remove("resaltar-resto"),500);
 
     spinner.style.display = "none";
     resultado.style.display = "block";
@@ -143,10 +150,10 @@ function esTemporadaAlta(fecha) {
 
 // ===== RESERVAR =====
 function reservar() {
-  alert("Aquí iría el pago de 50 €.");
+  alert("Aquí se conectará el pago de 50 €.");
 }
 
-// ===== CARRUSEL =====
+// ===== CARRUSEL UNIVERSAL =====
 function initCarousel(containerSelector, slideSelector, prevSelector, nextSelector, indicatorSelector) {
   const containers = document.querySelectorAll(containerSelector);
   containers.forEach(container => {
@@ -158,22 +165,26 @@ function initCarousel(containerSelector, slideSelector, prevSelector, nextSelect
     if (!slides.length) return;
 
     function showSlide(index) {
-      slides.forEach((slide, i) => slide.style.display = i === index ? "block" : "none");
-      indicators.forEach((ind, i) => ind.classList.toggle("active", i === index));
+      slides.forEach((slide,i)=>{
+        slide.style.display = i === index ? "block" : "none";
+      });
+      indicators.forEach((ind,i)=>{
+        ind.classList.toggle("active", i===index);
+      });
     }
 
-    nextBtn?.addEventListener("click", () => {
+    nextBtn?.addEventListener("click", ()=>{
       currentIndex = (currentIndex + 1) % slides.length;
       showSlide(currentIndex);
     });
 
-    prevBtn?.addEventListener("click", () => {
+    prevBtn?.addEventListener("click", ()=>{
       currentIndex = (currentIndex - 1 + slides.length) % slides.length;
       showSlide(currentIndex);
     });
 
-    indicators.forEach((ind, i) => {
-      ind.addEventListener("click", () => {
+    indicators.forEach((ind,i)=>{
+      ind.addEventListener("click", ()=>{
         currentIndex = i;
         showSlide(currentIndex);
       });
@@ -187,13 +198,13 @@ function initCarousel(containerSelector, slideSelector, prevSelector, nextSelect
 function initHamburger() {
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("navMenu");
-  hamburger?.addEventListener("click", () => {
+  hamburger?.addEventListener("click", ()=>{
     navMenu?.classList.toggle("active");
     hamburger.classList.toggle("active");
   });
 }
 
-// ===== INICIALIZACIÓN =====
+// ===== INICIALIZACIÓN GENERAL =====
 document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
@@ -220,7 +231,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
       mesContainer.appendChild(tituloMes);
 
-      const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
+      const diasSemana = ["L","M","X","J","V","S","D"];
       diasSemana.forEach(dia => {
         const dElem = document.createElement("div");
         dElem.classList.add("dia-semana");
@@ -230,7 +241,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let primerDiaSemana = primerDia.getDay();
       primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
-
       for (let i = 0; i < primerDiaSemana; i++) {
         const empty = document.createElement("div");
         empty.classList.add("fila-dia", "empty-dia");
@@ -244,13 +254,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         diaElem.innerText = d;
         diaElem.dataset.fecha = formatearLocal(fecha);
 
-        if (fecha < new Date(new Date().setHours(0, 0, 0, 0))) {
+        if (fecha < new Date(new Date().setHours(0,0,0,0))) {
           diaElem.classList.add("reservado");
           diaElem.style.cursor = "not-allowed";
         }
 
         const cabana = document.getElementById("cabaña")?.value.toLowerCase();
-        if (reservasGlobal[cabana]?.includes(formatearLocal(fecha))) {
+        if (cabana && reservasGlobal[cabana]?.includes(formatearLocal(fecha))) {
           diaElem.classList.add("reservado");
           diaElem.style.cursor = "not-allowed";
         }
@@ -292,27 +302,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     crearMes(siguiente.getFullYear(), siguiente.getMonth());
   }
 
-  // ===== ACTUALIZAR RESERVAS =====
+  // ===== CARGA INICIAL =====
   async function actualizarReservas() {
     const reservas = await cargarReservasBackend();
     reservasGlobal = reservas;
-
     actualizarUrgencia(reservas);
-
-    if (document.getElementById("cabaña") && document.getElementById("fechas")) {
-      iniciarCalendarioBooking(reservasGlobal);
-    }
+    iniciarCalendarioBooking(reservasGlobal, mesBase);
   }
 
   await actualizarReservas();
-  setInterval(actualizarReservas, 2 * 60 * 60 * 1000);
-
-  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar")?.addEventListener("click", reservar);
-
-  document.getElementById("cabaña")?.addEventListener("change", () => {
-    iniciarCalendarioBooking(reservasGlobal);
-  });
 
   // ===== FLECHAS =====
   document.getElementById("mesAnterior")?.addEventListener("click", () => {
@@ -324,26 +322,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     mesBase.setMonth(mesBase.getMonth() + 1);
     refrescarCalendario();
   });
+
+  // ===== ACTUALIZAR AL CAMBIAR CABAÑA =====
+  document.getElementById("cabaña")?.addEventListener("change", () => {
+    iniciarCalendarioBooking(reservasGlobal, mesBase);
+  });
 });
 
-// ===== MENSAJE URGENCIA =====
-function actualizarUrgencia(fechasOcupadas) {
+// ===== URGENCIA =====
+function actualizarUrgencia(fechasOcupadas){
   const mensaje = document.getElementById("mensajeUrgencia");
-  if (!mensaje) return;
+  if(!mensaje) return;
 
   const hoy = new Date();
-  const mesActual = hoy.getMonth() + 1;
+  const mesActual = hoy.getMonth()+1;
   const ocupadas = fechasOcupadas.campanilla.length;
-
   let texto = "";
 
-  if (mesActual === 7 || mesActual === 8) {
+  if(mesActual === 7 || mesActual === 8){
     texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
-  } else if (ocupadas > 20) {
+  }
+  else if(ocupadas > 20){
     texto = "⚡ Quedan pocas fechas disponibles este mes.";
-  } else if (ocupadas > 10) {
+  }
+  else if(ocupadas > 10){
     texto = "📅 Este alojamiento suele reservarse rápido.";
-  } else {
+  }
+  else{
     texto = "✨ Reserva ahora para asegurar tus fechas.";
   }
 
