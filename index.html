@@ -22,38 +22,36 @@
 
 <style>
 /* Estilos específicos para Flatpickr y no afectar tu web */
-.flatpickr-calendar {
-  font-family: inherit;
-}
-.flatpickr-day {
-  border-radius: 6px;
-}
+.flatpickr-calendar { font-family: inherit; }
+.flatpickr-day { border-radius: 6px; }
 
-/* Estilos del botón flotante admin */
-#btnBloquear {
+/* Botón flotante admin */
+.boton-flotante {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  background-color: #25D366;
+  color: white;
+  border-radius: 50%;
   width: 60px;
   height: 60px;
-  border-radius: 50%;
-  background-color: #25d366;
-  border: none;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  font-size: 24px;
-  color: white;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  transition: transform 0.2s;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
 }
-#btnBloquear:hover {
-  transform: scale(1.1);
+.boton-flotante:hover { background-color: #128C7E; }
+
+/* Días bloqueados en rojo */
+.fila-dia.bloqueado {
+  background-color: #FF4C4C !important;
+  color: #fff !important;
+  cursor: not-allowed;
 }
 </style>
-
 </head>
 <body>
 
@@ -74,16 +72,9 @@
 <!-- ===== HERO ===== -->
 <header class="hero">
   <div class="header-inner">
-    <div class="hero-title-top">
-      Cabañas en Riopar
-    </div>
-    <div class="hero-title-bottom">
-      Complejo El Lagunazo
-    </div>
-    <p class="hero-sub">
-      Escapadas, naturaleza y tranquilidad junto al espectacular
-      Nacimiento del Río Mundo, dentro del Parque Natural
-    </p>
+    <div class="hero-title-top">Cabañas en Riopar</div>
+    <div class="hero-title-bottom">Complejo El Lagunazo</div>
+    <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al espectacular Nacimiento del Río Mundo, dentro del Parque Natural</p>
   </div>
 </header>
 
@@ -116,29 +107,16 @@
   <h2>Galería General</h2>
   <div class="carousel-container-general">
     <div class="carousel-general-slides">
-      <!-- tus imágenes del carrusel aquí -->
+      <!-- Repite tus slides como antes -->
+      <div class="carousel-slide-general active">
+        <img src="images/1000150795.jpg" alt="Imagen general 1">
+      </div>
+      <!-- ... otras imágenes ... -->
     </div>
-    <button class="carousel-button-general prev-general">❮</button>
-    <button class="carousel-button-general next-general">❯</button>
-    <div class="carousel-indicators-general">
-      <div class="indicator-general active"></div>
-      <div class="indicator-general"></div>
-      <div class="indicator-general"></div>
-      <div class="indicator-general"></div>
-    </div>
-  </div>
-</section>
 
-<!-- ===== CARRUSEL PISCINA ===== -->
-<section class="carousel-general-section">
-  <h2>Piscina en temporada de verano</h2>
-  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>
-  <div class="carousel-container-general">
-    <div class="carousel-general-slides">
-      <!-- tus imágenes de piscina -->
-    </div>
     <button class="carousel-button-general prev-general">❮</button>
     <button class="carousel-button-general next-general">❯</button>
+
     <div class="carousel-indicators-general">
       <div class="indicator-general active"></div>
       <div class="indicator-general"></div>
@@ -152,25 +130,29 @@
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
+
+    <!-- Selección de cabaña -->
     <label for="cabaña">Selecciona cabaña</label>
     <select id="cabaña">
       <option value="campanilla">Cabaña Campanilla</option>
       <option value="tejo">Cabaña El Tejo</option>
     </select>
 
+    <!-- Selección de fechas con navegación -->
     <label for="fechas">Selecciona tus fechas</label>
     <div id="fechas-container">
       <div id="mesAnterior">◀</div>
       <div id="fechas"></div>
       <div id="mesSiguiente">▶</div>
     </div>
-    
+
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
     </p>
 
     <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
+    <!-- Datos personales -->
     <label for="nombre">Nombre completo</label>
     <input type="text" id="nombre" placeholder="Nombre">
 
@@ -181,25 +163,16 @@
     <input type="email" id="email" placeholder="Email">
 
     <button id="btnCalcular">Calcular precio</button>
+
     <div class="spinner" id="spinner"></div>
 
     <div id="resultado" class="resumen-reserva" style="display:none;">
-      <p><strong>Cabaña seleccionada:</strong> 
-      <span id="cabañaSeleccionada"></span></p>
-
-      <p><strong>Fechas de estancia:</strong> 
-      <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
-
+      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
+      <p><strong>Fechas de estancia:</strong> <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-
-      <p><strong>Descuento aplicado:</strong> 
-      <span id="descuento" class="descuento">0</span> €</p>
-
+      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
-
-      <p><strong>Resto a pagar en alojamiento:</strong> 
-      <span id="resto"></span> €</p>
-
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
     </div>
 
@@ -223,11 +196,10 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<!-- Botón flotante admin estilo WhatsApp -->
-<button id="btnBloquear" title="Modo Admin">
-  🔒
-</button>
+<!-- Botón flotante admin -->
+<a href="#" id="adminButton" title="Bloquear días" class="boton-flotante">🔒</a>
 
+<!-- WhatsApp -->
 <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
 </a>
