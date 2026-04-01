@@ -118,10 +118,6 @@ function calcularReserva() {
   document.getElementById("resultado").style.display="block";
 }
 
-// =====================================================================
-//   NUEVO SISTEMA DE DOS MESES + DÍAS PASADOS EN ROJO + TÍTULO MES
-// =====================================================================
-
 // ===== SELECCIÓN RANGO =====
 function seleccionarFecha(fecha) {
   if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
@@ -188,11 +184,7 @@ function generarMes(baseDate){
     diaElem.innerText = d;
 
     // 🔴 Días pasados
-    if (fecha < hoy) {
-      diaElem.classList.add("reservado");
-      diaElem.style.backgroundColor = "#ff6666";
-      diaElem.style.color = "#fff";
-    }
+    if (fecha < hoy) diaElem.classList.add("reservado");
 
     const cabaña = document.getElementById("cabaña").value;
 
@@ -200,8 +192,6 @@ function generarMes(baseDate){
     if(reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
        reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
       diaElem.classList.add("reservado");
-      diaElem.style.backgroundColor = "#ff6666";
-      diaElem.style.color = "#fff";
     }
 
     diaElem.addEventListener("click", ()=>{
@@ -221,7 +211,6 @@ function iniciarCalendario(){
   container.innerHTML = "";
 
   container.appendChild(generarMes(mesBase));
-
   const siguiente = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 1);
   container.appendChild(generarMes(siguiente));
 }
@@ -236,7 +225,7 @@ function iniciarAdmin() {
   btn.addEventListener("click", ()=>{
     const pwd = prompt("Introduce la contraseña de administración");
     if(pwd==="8111"){
-      alert("Modo administrador activado (de momento solo deshabilita)");
+      alert("Modo administrador activado (solo deshabilita días bloqueados)");
     } else {
       alert("Contraseña incorrecta");
     }
@@ -255,7 +244,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 document.addEventListener("DOMContentLoaded",async ()=>{
   await cargarReservas();
   iniciarCalendario();
-  iniciarCarruseles();
+  iniciarCarruseles(); // <-- aquí se inicia el carrusel
   iniciarAdmin();
 
   document.getElementById("cabaña")?.addEventListener("change", ()=>iniciarCalendario());
