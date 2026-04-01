@@ -1,62 +1,74 @@
 // server/server.js
 import express from "express";
 import path from "path";
+import fs from "fs";
 import cors from "cors";
-import fs from "fs/promises";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔹 Archivo donde guardaremos los días bloqueados
-const BLOQUEADOS_FILE = path.join(process.cwd(), "server", "bloqueados.json");
-
-// 🔹 Inicializar archivo si no existe
-async function inicializarBloqueados() {
-  try {
-    await fs.access(BLOQUEADOS_FILE);
-  } catch {
-    await fs.writeFile(BLOQUEADOS_FILE, JSON.stringify({ campanilla: [], tejo: [], bloqueados: [] }, null, 2));
-  }
-}
-inicializarBloqueados();
-
-// 🔹 Servir archivos estáticos de la carpeta main (index.html, js, css)
+// 🔹 Carpeta main con index.html, main.js y CSS
 app.use(express.static(path.join(process.cwd(), "main")));
 
-// 🔹 GET reservas → devuelve JSON con reservas y bloqueados
-app.get("/reservas", async (req, res) => {
+// 🔹 Archivo de reservas persistente
+const reservasFile = path.join(process.cwd(), "server", "reservas.json");
+
+// 🔹 Leer reservas desde archivo o crear si no existe
+function leerReservas() {
   try {
-    const data = await fs.readFile(BLOQUEADOS_FILE, "utf-8");
-    const json = JSON.parse(data);
-    res.json(json);
-  } catch(err){
-    console.error(err);
-    res.status(500).json({ campanilla: [], tejo: [], bloqueados: [] });
-  }
-});
-
-// 🔹 POST reservas → bloquea una fecha
-app.post("/reservas", async (req, res) => {
-  const { fecha } = req.body;
-  if(!fecha) return res.status(400).json({ error: "Fecha no proporcionada" });
-
-  try {
-    const data = await fs.readFile(BLOQUEADOS_FILE, "utf-8");
-    const json = JSON.parse(data);
-
-    if(!json.bloqueados.includes(fecha)){
-      json.bloqueados.push(fecha);
-      await fs.writeFile(BLOQUEADOS_FILE, JSON.stringify(json, null, 2));
-      res.json({ ok: true, fecha });
-    } else {
-      res.status(400).json({ error: "Fecha ya bloqueada" });
+    if(!fs.existsSync(reservasFile)){
+      const init = { campanilla: [], tejo: [], bloqueados: [] };
+      fs.writeFileSync(reservasFile, JSON.stringify(init,null,2));
+      return init;
     }
-  } catch(err){
-    console.error(err);
-    res.status(500).json({ error: "Error al guardar fecha" });
+    const data = fs.readFileSync(reservasFile,"utf-8");
+    return JSON.parse(data);
+  } catch(e){
+    console.error("Error leyendo reservas:", e);
+    return { campanilla: [], tejo: [], bloqueados: [] };
   }
+}
+
+// 🔹 Guardar reservas en archivo
+function guardarReservas(reservas) {
+  try {
+    fs.writeFileSync(reservasFile, JSON.stringify(reservas,null,2));
+  } catch(e){
+    console.error("Error guardando reservas:", e);
+  }
+}
+
+// 🔹 GET reservas
+app.get("/reservas", (req,res)=>{
+  const reservas = leerReservas();
+  res.json(reservas);
 });
 
+// 🔹 POST bloquear día
+app.post("/reservas", (req,res)=>{
+  const { fecha } = req.body;
+  if(!fecha) return res.status(400).json({ok:false, msg:"Falta fecha"});
+
+  const reservas = leerReservas();
+  if(!reservas.bloqueados.includes(fecha)){
+    reservas.bloqueados.push(fecha);
+    guardarReservas(reservas);
+  }
+  res.json({ok:true});
+});
+
+// 🔹 DELETE desbloquear día
+app.delete("/reservas", (req,res)=>{
+  const { fecha } = req.body;
+  if(!fecha) return res.status(400).json({ok:false, msg:"Falta fecha"});
+
+  const reservas = leerReservas();
+  reservas.bloqueados = reservas.bloqueados.filter(f=>f!==fecha);
+  guardarReservas(reservas);
+  res.json({ok:true});
+});
+
+// 🔹 Iniciar servidor
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Servidor corriendo en puerto ${port}`));
+app.listen(port, ()=>console.log(`Servidor corriendo en puerto ${port}`));
