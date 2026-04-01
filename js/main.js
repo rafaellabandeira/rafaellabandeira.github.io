@@ -43,10 +43,10 @@ function iniciarCarruseles() {
   });
 }
 
-// ===== CARGAR RESERVAS SIMULADAS =====
+// ===== CARGAR RESERVAS DESDE SERVIDOR =====
 async function cargarReservas() {
   try {
-    const res = await fetch("/backend/reservas.json");
+    const res = await fetch("/reservas");
     if(!res.ok) throw new Error("Error cargando reservas");
     reservasGlobal = await res.json();
     if(!reservasGlobal.bloqueados) reservasGlobal.bloqueados = [];
@@ -196,14 +196,23 @@ function iniciarAdmin() {
   btn.innerText = "🔒";
   document.body.appendChild(btn);
 
-  btn.addEventListener("click", ()=>{
+  btn.addEventListener("click", async ()=>{
     const pwd = prompt("Introduce la contraseña de administración");
     if(pwd==="8111"){
       const fecha = prompt("Introduce la fecha a bloquear (YYYY-MM-DD)");
       if(fecha && !reservasGlobal.bloqueados.includes(fecha)){
-        reservasGlobal.bloqueados.push(fecha);
-        alert(`Fecha ${fecha} bloqueada`);
-        iniciarCalendario();
+        // 🔹 POST al backend para guardar
+        try{
+          const res = await fetch("/reservas", {
+            method:"POST",
+            headers: { "Content-Type":"application/json" },
+            body: JSON.stringify({ fecha })
+          });
+          if(!res.ok) throw new Error("Error al guardar fecha");
+          reservasGlobal.bloqueados.push(fecha);
+          alert(`Fecha ${fecha} bloqueada`);
+          iniciarCalendario();
+        } catch(err){ alert(err); }
       }
     } else alert("Contraseña incorrecta");
   });
