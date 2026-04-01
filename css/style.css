@@ -168,7 +168,7 @@
 }
 
 /* ==============================
-   4️⃣ CALENDARIO FLATPICKR
+   4️⃣ CALENDARIO FLATPICKR (si lo usas en otra sección)
    ============================== */
 .flatpickr-calendar {
   z-index: 1000;
@@ -194,11 +194,11 @@
 /* Días pasados */
 .flatpickr-day.pasado,
 .flatpickr-day.prevMonthDay {
-  background: #212121 !important;
-  color: #aaa !important;
+  background: #ececec !important;
+  color: #999 !important;
 }
 
-/* Hover solo en días disponibles */
+/* Hover disponible */
 .flatpickr-day.disponible:hover {
   background: #66bb6a !important;
   color: #fff !important;
@@ -211,7 +211,7 @@
 }
 
 /* ==============================
-   5️⃣ CALENDARIO PERSONALIZADO (COMPATIBLE CON TU MAIN.JS)
+   5️⃣ CALENDARIO PERSONALIZADO
    ============================== */
 
 .mes-calendario {
@@ -253,20 +253,20 @@
   transition: 0.2s;
 }
 
-/* Día vacío */
+/* Día vacío (mes anterior o siguiente) */
 .empty-dia {
-  background: transparent;
+  background: transparent !important;
   cursor: default !important;
 }
 
-/* Día seleccionado (verde) */
+/* Día seleccionado */
 .fila-dia.seleccionado {
   background: #4caf50 !important;
   color: #fff !important;
   font-weight: bold;
 }
 
-/* Día reservado (rojo) */
+/* Día reservado */
 .fila-dia.reservado {
   background: #e53935 !important;
   color: white !important;
@@ -274,8 +274,15 @@
   opacity: 0.85;
 }
 
-/* Hover solo si está disponible */
-.fila-dia:not(.reservado):hover {
-  background: #c8e6c9;
+/* Días pasados */
+.fila-dia.pasado {
+  background: #ddd !important;
+  color: #777 !important;
+  cursor: not-allowed !important;
+}
+
+/* Hover solo si es disponible */
+.fila-dia:not(.reservado):not(.pasado):hover {
+  background: #c8e6c9 !important;
   color: #000;
 }
