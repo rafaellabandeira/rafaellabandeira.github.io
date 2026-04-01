@@ -22,12 +22,8 @@
 
 <style>
 /* Estilos específicos para Flatpickr y no afectar tu web */
-.flatpickr-calendar {
-  font-family: inherit;
-}
-.flatpickr-day {
-  border-radius: 6px;
-}
+.flatpickr-calendar { font-family: inherit; }
+.flatpickr-day { border-radius: 6px; }
 
 /* WhatsApp abajo derecha */
 #whatsappButton {
@@ -64,8 +60,17 @@
   align-items: center;
   cursor: pointer;
 }
-</style>
 
+/* Días bloqueados en rojo */
+.fila-dia.reservado {
+  background-color: #f44336;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* Botones del carrusel */
+.carousel-button-general { cursor: pointer; }
+</style>
 </head>
 <body>
 
@@ -148,16 +153,9 @@
       <div class="carousel-slide-general"><img src="images/1000173061.jpg" alt="Imagen general 22"></div>
       <div class="carousel-slide-general"><img src="images/1000173057.jpg" alt="Imagen general 23"></div>
     </div>
-
     <button class="carousel-button-general prev-general">❮</button>
     <button class="carousel-button-general next-general">❯</button>
-
-    <div class="carousel-indicators-general">
-      <div class="indicator-general active"></div>
-      <div class="indicator-general"></div>
-      <div class="indicator-general"></div>
-      <div class="indicator-general"></div>
-    </div>
+    <div class="carousel-indicators-general"></div>
   </div>
 </section>
 
@@ -175,16 +173,9 @@
       <div class="carousel-slide-general"><img src="images/1000183090.jpg" alt="Piscina 5"></div>
       <div class="carousel-slide-general"><img src="images/1000183089.jpg" alt="Piscina 6"></div>
     </div>
-
     <button class="carousel-button-general prev-general">❮</button>
     <button class="carousel-button-general next-general">❯</button>
-
-    <div class="carousel-indicators-general">
-      <div class="indicator-general active"></div>
-      <div class="indicator-general"></div>
-      <div class="indicator-general"></div>
-      <div class="indicator-general"></div>
-    </div>
+    <div class="carousel-indicators-general"></div>
   </div>
 </section>
 
@@ -192,15 +183,12 @@
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
-
-    <!-- Selección de cabaña -->
     <label for="cabaña">Selecciona cabaña</label>
     <select id="cabaña">
       <option value="campanilla">Cabaña Campanilla</option>
       <option value="tejo">Cabaña El Tejo</option>
     </select>
 
-    <!-- Selección de fechas con navegación -->
     <label for="fechas">Selecciona tus fechas</label>
     <div id="fechas-container">
       <div id="mesAnterior">◀</div>
@@ -208,15 +196,12 @@
       <div id="mesSiguiente">▶</div>
     </div>
 
-    <!-- Aviso fechas no disponibles -->
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
     </p>
 
-    <!-- Mensaje de urgencia -->
     <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
-    <!-- Datos personales -->
     <label for="nombre">Nombre completo</label>
     <input type="text" id="nombre" placeholder="Nombre">
 
@@ -226,35 +211,18 @@
     <label for="email">Email</label>
     <input type="email" id="email" placeholder="Email">
 
-    <!-- Botón calcular precio -->
     <button id="btnCalcular">Calcular precio</button>
-
-    <!-- Spinner -->
     <div class="spinner" id="spinner"></div>
 
-    <!-- Resultados de la reserva -->
     <div id="resultado" class="resumen-reserva" style="display:none;">
-
-      <p><strong>Cabaña seleccionada:</strong> 
-      <span id="cabañaSeleccionada"></span></p>
-
-      <p><strong>Fechas de estancia:</strong> 
-      <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
-
+      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
+      <p><strong>Fechas de estancia:</strong> <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-
-      <p><strong>Descuento aplicado:</strong> 
-      <span id="descuento" class="descuento">0</span> €</p>
-
+      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
-
-      <p><strong>Resto a pagar en alojamiento:</strong> 
-      <span id="resto"></span> €</p>
-
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
-
     </div>
-
   </div>
 </section>
 
@@ -275,7 +243,12 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<!-- BOTONES FLOTANTES YA INCLUIDOS EN HEAD -->
+<!-- BOTONES FLOTANTES -->
+<a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+</a>
+<div id="adminButton">🔒</div>
+
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="js/main.js"></script>
