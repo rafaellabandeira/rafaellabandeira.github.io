@@ -22,36 +22,50 @@
 
 <style>
 /* Estilos específicos para Flatpickr y no afectar tu web */
-.flatpickr-calendar { font-family: inherit; }
-.flatpickr-day { border-radius: 6px; }
+.flatpickr-calendar {
+  font-family: inherit;
+}
+.flatpickr-day {
+  border-radius: 6px;
+}
 
-/* Botón flotante admin */
-.boton-flotante {
+/* WhatsApp abajo derecha */
+#whatsappButton {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #25D366;
-  color: white;
-  border-radius: 50%;
   width: 60px;
   height: 60px;
+  z-index: 1000;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-color: #25D366;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  z-index: 1000;
 }
-.boton-flotante:hover { background-color: #128C7E; }
+#whatsappButton img { width: 35px; height: 35px; }
 
-/* Días bloqueados en rojo */
-.fila-dia.bloqueado {
-  background-color: #FF4C4C !important;
-  color: #fff !important;
-  cursor: not-allowed;
+/* Candado abajo izquierda */
+#adminButton {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  z-index: 1000;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-color: #444;
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 </style>
+
 </head>
 <body>
 
@@ -74,7 +88,10 @@
   <div class="header-inner">
     <div class="hero-title-top">Cabañas en Riopar</div>
     <div class="hero-title-bottom">Complejo El Lagunazo</div>
-    <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al espectacular Nacimiento del Río Mundo, dentro del Parque Natural</p>
+    <p class="hero-sub">
+      Escapadas, naturaleza y tranquilidad junto al espectacular
+      Nacimiento del Río Mundo, dentro del Parque Natural
+    </p>
   </div>
 </header>
 
@@ -107,11 +124,56 @@
   <h2>Galería General</h2>
   <div class="carousel-container-general">
     <div class="carousel-general-slides">
-      <!-- Repite tus slides como antes -->
-      <div class="carousel-slide-general active">
-        <img src="images/1000150795.jpg" alt="Imagen general 1">
-      </div>
-      <!-- ... otras imágenes ... -->
+      <div class="carousel-slide-general active"><img src="images/1000150795.jpg" alt="Imagen general 1"></div>
+      <div class="carousel-slide-general"><img src="images/1000150768.jpg" alt="Imagen general 2"></div>
+      <div class="carousel-slide-general"><img src="images/1000150757.jpg" alt="Imagen general 3"></div>
+      <div class="carousel-slide-general"><img src="images/1000150758.jpg" alt="Imagen general 4"></div>
+      <div class="carousel-slide-general"><img src="images/1000150760.jpg" alt="Imagen general 5"></div>
+      <div class="carousel-slide-general"><img src="images/1000150761.jpg" alt="Imagen general 6"></div>
+      <div class="carousel-slide-general"><img src="images/1000150779.jpg" alt="Imagen general 7"></div>
+      <div class="carousel-slide-general"><img src="images/1000150780.jpg" alt="Imagen general 8"></div>
+      <div class="carousel-slide-general"><img src="images/1000150783.jpg" alt="Imagen general 9"></div>
+      <div class="carousel-slide-general"><img src="images/1000150788.jpg" alt="Imagen general 10"></div>
+      <div class="carousel-slide-general"><img src="images/1000150779.jpg" alt="Imagen general 11"></div>
+      <div class="carousel-slide-general"><img src="images/1000150800.jpg" alt="Imagen general 12"></div>
+      <div class="carousel-slide-general"><img src="images/1000150776.jpg" alt="Imagen general 13"></div>
+      <div class="carousel-slide-general"><img src="images/1000150806.jpg" alt="Imagen general 14"></div>
+      <div class="carousel-slide-general"><img src="images/1000150807.jpg" alt="Imagen general 15"></div>
+      <div class="carousel-slide-general"><img src="images/1000150816.jpg" alt="Imagen general 16"></div>
+      <div class="carousel-slide-general"><img src="images/1000150795.jpg" alt="Imagen general 17"></div>
+      <div class="carousel-slide-general"><img src="images/1000173072.jpg" alt="Imagen general 18"></div>
+      <div class="carousel-slide-general"><img src="images/1000173073.jpg" alt="Imagen general 19"></div>
+      <div class="carousel-slide-general"><img src="images/1000173071.jpg" alt="Imagen general 20"></div>
+      <div class="carousel-slide-general"><img src="images/1000173065.jpg" alt="Imagen general 21"></div>
+      <div class="carousel-slide-general"><img src="images/1000173061.jpg" alt="Imagen general 22"></div>
+      <div class="carousel-slide-general"><img src="images/1000173057.jpg" alt="Imagen general 23"></div>
+    </div>
+
+    <button class="carousel-button-general prev-general">❮</button>
+    <button class="carousel-button-general next-general">❯</button>
+
+    <div class="carousel-indicators-general">
+      <div class="indicator-general active"></div>
+      <div class="indicator-general"></div>
+      <div class="indicator-general"></div>
+      <div class="indicator-general"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CARRUSEL PISCINA ===== -->
+<section class="carousel-general-section">
+  <h2>Piscina en temporada de verano</h2>
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>
+  
+  <div class="carousel-container-general">
+    <div class="carousel-general-slides">
+      <div class="carousel-slide-general active"><img src="images/1000183084.jpg" alt="Piscina 1"></div>
+      <div class="carousel-slide-general"><img src="images/1000183086.jpg" alt="Piscina 2"></div>
+      <div class="carousel-slide-general"><img src="images/1000183088.jpg" alt="Piscina 3"></div>
+      <div class="carousel-slide-general"><img src="images/1000183085.jpg" alt="Piscina 4"></div>
+      <div class="carousel-slide-general"><img src="images/1000183090.jpg" alt="Piscina 5"></div>
+      <div class="carousel-slide-general"><img src="images/1000183089.jpg" alt="Piscina 6"></div>
     </div>
 
     <button class="carousel-button-general prev-general">❮</button>
@@ -146,10 +208,12 @@
       <div id="mesSiguiente">▶</div>
     </div>
 
+    <!-- Aviso fechas no disponibles -->
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
     </p>
 
+    <!-- Mensaje de urgencia -->
     <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
     <!-- Datos personales -->
@@ -162,18 +226,33 @@
     <label for="email">Email</label>
     <input type="email" id="email" placeholder="Email">
 
+    <!-- Botón calcular precio -->
     <button id="btnCalcular">Calcular precio</button>
 
+    <!-- Spinner -->
     <div class="spinner" id="spinner"></div>
 
+    <!-- Resultados de la reserva -->
     <div id="resultado" class="resumen-reserva" style="display:none;">
-      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
-      <p><strong>Fechas de estancia:</strong> <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
+
+      <p><strong>Cabaña seleccionada:</strong> 
+      <span id="cabañaSeleccionada"></span></p>
+
+      <p><strong>Fechas de estancia:</strong> 
+      <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
+
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
+
+      <p><strong>Descuento aplicado:</strong> 
+      <span id="descuento" class="descuento">0</span> €</p>
+
       <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
+
+      <p><strong>Resto a pagar en alojamiento:</strong> 
+      <span id="resto"></span> €</p>
+
       <button id="btnPagar">Pagar</button>
+
     </div>
 
   </div>
@@ -196,14 +275,7 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<!-- Botón flotante admin -->
-<a href="#" id="adminButton" title="Bloquear días" class="boton-flotante">🔒</a>
-
-<!-- WhatsApp -->
-<a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
-</a>
-
+<!-- BOTONES FLOTANTES YA INCLUIDOS EN HEAD -->
 <!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="js/main.js"></script>
