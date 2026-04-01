@@ -28,6 +28,30 @@
 .flatpickr-day {
   border-radius: 6px;
 }
+
+/* Estilos del botón flotante admin */
+#btnBloquear {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #25d366;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: transform 0.2s;
+}
+#btnBloquear:hover {
+  transform: scale(1.1);
+}
 </style>
 
 </head>
@@ -50,20 +74,16 @@
 <!-- ===== HERO ===== -->
 <header class="hero">
   <div class="header-inner">
-
     <div class="hero-title-top">
       Cabañas en Riopar
     </div>
-
     <div class="hero-title-bottom">
       Complejo El Lagunazo
     </div>
-
     <p class="hero-sub">
       Escapadas, naturaleza y tranquilidad junto al espectacular
       Nacimiento del Río Mundo, dentro del Parque Natural
     </p>
-
   </div>
 </header>
 
@@ -96,80 +116,10 @@
   <h2>Galería General</h2>
   <div class="carousel-container-general">
     <div class="carousel-general-slides">
-      <div class="carousel-slide-general active">
-        <img src="images/1000150795.jpg" alt="Imagen general 1">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150768.jpg" alt="Imagen general 2">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150757.jpg" alt="Imagen general 3">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150758.jpg" alt="Imagen general 4">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150760.jpg" alt="Imagen general 5">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150761.jpg" alt="Imagen general 6">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150779.jpg" alt="Imagen general 7">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150780.jpg" alt="Imagen general 8">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150783.jpg" alt="Imagen general 9">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150788.jpg" alt="Imagen general 10">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150779.jpg" alt="Imagen general 11">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150800.jpg" alt="Imagen general 12">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150776.jpg" alt="Imagen general 13">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150806.jpg" alt="Imagen general 14">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150807.jpg" alt="Imagen general 15">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150816.jpg" alt="Imagen general 16">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000150795.jpg" alt="Imagen general 17">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000173072.jpg" alt="Imagen general 18">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000173073.jpg" alt="Imagen general 19">
-      </div>
-        <div class="carousel-slide-general">
-        <img src="images/1000173071.jpg" alt="Imagen general 20">
-      </div>
-          <div class="carousel-slide-general">
-        <img src="images/1000173065.jpg" alt="Imagen general 21">
-      </div>
-          <div class="carousel-slide-general">
-        <img src="images/1000173061.jpg" alt="Imagen general 22">
-      </div>
-          <div class="carousel-slide-general">
-        <img src="images/1000173057.jpg" alt="Imagen general 23">
-      </div>
+      <!-- tus imágenes del carrusel aquí -->
     </div>
-
     <button class="carousel-button-general prev-general">❮</button>
     <button class="carousel-button-general next-general">❯</button>
-
     <div class="carousel-indicators-general">
       <div class="indicator-general active"></div>
       <div class="indicator-general"></div>
@@ -183,32 +133,12 @@
 <section class="carousel-general-section">
   <h2>Piscina en temporada de verano</h2>
   <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>
-  
   <div class="carousel-container-general">
     <div class="carousel-general-slides">
-      <div class="carousel-slide-general active">
-        <img src="images/1000183084.jpg" alt="Piscina 1">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000183086.jpg" alt="Piscina 2">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000183088.jpg" alt="Piscina 3">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000183085.jpg" alt="Piscina 4">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000183090.jpg" alt="Piscina 5">
-      </div>
-      <div class="carousel-slide-general">
-        <img src="images/1000183089.jpg" alt="Piscina 6">
-      </div>
+      <!-- tus imágenes de piscina -->
     </div>
-
     <button class="carousel-button-general prev-general">❮</button>
     <button class="carousel-button-general next-general">❯</button>
-
     <div class="carousel-indicators-general">
       <div class="indicator-general active"></div>
       <div class="indicator-general"></div>
@@ -222,33 +152,25 @@
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
-
-    <!-- Selección de cabaña -->
     <label for="cabaña">Selecciona cabaña</label>
     <select id="cabaña">
       <option value="campanilla">Cabaña Campanilla</option>
       <option value="tejo">Cabaña El Tejo</option>
     </select>
 
-    <!-- Selección de fechas con navegación -->
     <label for="fechas">Selecciona tus fechas</label>
-    
-    <!-- Contenedor de calendario con flechas -->
     <div id="fechas-container">
       <div id="mesAnterior">◀</div>
       <div id="fechas"></div>
       <div id="mesSiguiente">▶</div>
     </div>
     
-    <!-- Aviso fechas no disponibles -->
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
     </p>
 
-    <!-- Mensaje de urgencia -->
     <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
-    <!-- Datos personales -->
     <label for="nombre">Nombre completo</label>
     <input type="text" id="nombre" placeholder="Nombre">
 
@@ -258,15 +180,10 @@
     <label for="email">Email</label>
     <input type="email" id="email" placeholder="Email">
 
-    <!-- Botón calcular precio -->
     <button id="btnCalcular">Calcular precio</button>
-
-    <!-- Spinner -->
     <div class="spinner" id="spinner"></div>
 
-    <!-- Resultados de la reserva -->
     <div id="resultado" class="resumen-reserva" style="display:none;">
-
       <p><strong>Cabaña seleccionada:</strong> 
       <span id="cabañaSeleccionada"></span></p>
 
@@ -284,11 +201,11 @@
       <span id="resto"></span> €</p>
 
       <button id="btnPagar">Pagar</button>
-
     </div>
 
   </div>
 </section>
+
 <section id="contacto">
   <h2>Reservas personalizadas</h2>
   <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
@@ -305,6 +222,11 @@
   <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
+
+<!-- Botón flotante admin estilo WhatsApp -->
+<button id="btnBloquear" title="Modo Admin">
+  🔒
+</button>
 
 <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
