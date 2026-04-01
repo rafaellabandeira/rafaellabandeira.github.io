@@ -11,49 +11,22 @@ let reservasGlobal = { campanilla: [], tejo: [], bloqueados: [] };
 let mesBase = new Date();
 let inicioSeleccion = null;
 let finSeleccion = null;
+let modoAdmin = false;
 
-// ===== CARRUSEL =====
-function iniciarCarruseles() {
-  const carousels = document.querySelectorAll(".carousel-container-general");
-  carousels.forEach((c) => {
-    let slides = c.querySelectorAll(".carousel-slide-general");
-    let prev = c.querySelector(".prev-general");
-    let next = c.querySelector(".next-general");
-    let indicators = c.querySelectorAll(".indicator-general");
-    let index = 0;
-
-    function mostrarSlide(i){
-      slides.forEach(s => s.classList.remove("active"));
-      indicators.forEach(ind => ind.classList.remove("active"));
-      slides[i].classList.add("active");
-      if(indicators[i]) indicators[i].classList.add("active");
-    }
-
-    prev.addEventListener("click", () => {
-      index = (index-1+slides.length)%slides.length;
-      mostrarSlide(index);
-    });
-
-    next.addEventListener("click", () => {
-      index = (index+1)%slides.length;
-      mostrarSlide(index);
-    });
-
-    mostrarSlide(index);
-  });
-}
-
-// ===== CARGAR RESERVAS =====
-async function cargarReservas() {
-  try {
-    const res = await fetch("/backend/reservas.json");
-    if(!res.ok) throw new Error("Error cargando reservas");
-    reservasGlobal = await res.json();
+// ===== CARGAR RESERVAS DESDE LOCALSTORAGE =====
+function cargarReservasLocal() {
+  const data = localStorage.getItem("reservasGlobal");
+  if(data){
+    reservasGlobal = JSON.parse(data);
     if(!reservasGlobal.bloqueados) reservasGlobal.bloqueados = [];
-  } catch(err){
-    console.warn(err);
+  } else {
     reservasGlobal = { campanilla: [], tejo: [], bloqueados: [] };
   }
+}
+
+// ===== GUARDAR RESERVAS EN LOCALSTORAGE =====
+function guardarReservasLocal() {
+  localStorage.setItem("reservasGlobal", JSON.stringify(reservasGlobal));
 }
 
 // ===== TEMPORADA ALTA =====
@@ -120,6 +93,8 @@ function calcularReserva() {
 
 // ===== SELECCIÓN RANGO =====
 function seleccionarFecha(fecha) {
+  if(modoAdmin) return; // en admin no seleccionamos para reserva
+
   if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
     inicioSeleccion = fecha;
     finSeleccion = null;
@@ -184,7 +159,11 @@ function generarMes(baseDate){
     diaElem.innerText = d;
 
     // 🔴 Días pasados
-    if (fecha < hoy) diaElem.classList.add("reservado");
+    if (fecha < hoy) {
+      diaElem.classList.add("reservado");
+      diaElem.style.backgroundColor = "#ff6666";
+      diaElem.style.color = "#fff";
+    }
 
     const cabaña = document.getElementById("cabaña").value;
 
@@ -192,11 +171,23 @@ function generarMes(baseDate){
     if(reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
        reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
       diaElem.classList.add("reservado");
+      diaElem.style.backgroundColor = "#ff6666";
+      diaElem.style.color = "#fff";
     }
 
     diaElem.addEventListener("click", ()=>{
-      if(diaElem.classList.contains("reservado")) return;
-      seleccionarFecha(fecha);
+      if(modoAdmin){
+        // Bloquear/desbloquear día
+        if(reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
+          reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f!==diaElem.dataset.fecha);
+        } else {
+          reservasGlobal.bloqueados.push(diaElem.dataset.fecha);
+        }
+        guardarReservasLocal();
+        iniciarCalendario(); // refresca
+      } else if(!diaElem.classList.contains("reservado")){
+        seleccionarFecha(fecha);
+      }
     });
 
     mesContainer.appendChild(diaElem);
@@ -211,21 +202,50 @@ function iniciarCalendario(){
   container.innerHTML = "";
 
   container.appendChild(generarMes(mesBase));
+
   const siguiente = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 1);
   container.appendChild(generarMes(siguiente));
 }
 
+// ===== INICIAR CARRUSELES =====
+function iniciarCarruseles() {
+  const carousels = document.querySelectorAll(".carousel-container-general");
+  carousels.forEach((c) => {
+    let slides = c.querySelectorAll(".carousel-slide-general");
+    let prev = c.querySelector(".prev-general");
+    let next = c.querySelector(".next-general");
+    let indicators = c.querySelectorAll(".indicator-general");
+    let index = 0;
+
+    function mostrarSlide(i){
+      slides.forEach(s => s.classList.remove("active"));
+      indicators.forEach(ind => ind.classList.remove("active"));
+      slides[i].classList.add("active");
+      if(indicators[i]) indicators[i].classList.add("active");
+    }
+
+    prev.addEventListener("click", () => {
+      index = (index-1+slides.length)%slides.length;
+      mostrarSlide(index);
+    });
+
+    next.addEventListener("click", () => {
+      index = (index+1)%slides.length;
+      mostrarSlide(index);
+    });
+
+    mostrarSlide(index);
+  });
+}
+
 // ===== BOTÓN ADMIN =====
 function iniciarAdmin() {
-  const btn = document.createElement("div");
-  btn.id = "adminButton";
-  btn.innerText = "🔒";
-  document.body.appendChild(btn);
-
+  const btn = document.getElementById("adminButton");
   btn.addEventListener("click", ()=>{
     const pwd = prompt("Introduce la contraseña de administración");
     if(pwd==="8111"){
-      alert("Modo administrador activado (solo deshabilita días bloqueados)");
+      modoAdmin = !modoAdmin;
+      alert(`Modo administrador ${modoAdmin?"activado":"desactivado"}: ahora puedes bloquear/desbloquear días haciendo clic`);
     } else {
       alert("Contraseña incorrecta");
     }
@@ -241,10 +261,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 
 // ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded",async ()=>{
-  await cargarReservas();
+document.addEventListener("DOMContentLoaded",()=>{
+  cargarReservasLocal();
   iniciarCalendario();
-  iniciarCarruseles(); // <-- aquí se inicia el carrusel
+  iniciarCarruseles();
   iniciarAdmin();
 
   document.getElementById("cabaña")?.addEventListener("change", ()=>iniciarCalendario());
