@@ -12,7 +12,7 @@ let mesBase = new Date();
 let inicioSeleccion = null;
 let finSeleccion = null;
 
-// ===== CARRUSEL =====
+// ===== CARRUSELES =====
 function iniciarCarruseles() {
   const carousels = document.querySelectorAll(".carousel-container-general");
   carousels.forEach((c) => {
@@ -43,7 +43,7 @@ function iniciarCarruseles() {
   });
 }
 
-// ===== CARGAR RESERVAS DESDE SERVIDOR =====
+// ===== CARGAR RESERVAS =====
 async function cargarReservas() {
   try {
     const res = await fetch("/reservas");
@@ -127,7 +127,6 @@ function iniciarCalendario(){
   const mesContainer = document.createElement("div");
   mesContainer.classList.add("mes-calendario");
 
-  // Dias semana
   ["L","M","X","J","V","S","D"].forEach(dia=>{
     const dElem = document.createElement("div");
     dElem.classList.add("dia-semana");
@@ -135,7 +134,6 @@ function iniciarCalendario(){
     mesContainer.appendChild(dElem);
   });
 
-  // Espacios iniciales
   let primerDiaSemana = primerDia.getDay();
   primerDiaSemana = primerDiaSemana===0?6:primerDiaSemana-1;
   for(let i=0;i<primerDiaSemana;i++){
@@ -151,7 +149,6 @@ function iniciarCalendario(){
     diaElem.dataset.fecha = formatearLocal(fecha);
     diaElem.innerText = d;
 
-    // Días reservados o bloqueados
     const cabaña = document.getElementById("cabaña").value;
     if(reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) || reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
       diaElem.classList.add("reservado");
@@ -196,25 +193,52 @@ function iniciarAdmin() {
   btn.innerText = "🔒";
   document.body.appendChild(btn);
 
-  btn.addEventListener("click", async ()=>{
+  btn.addEventListener("click", async () => {
     const pwd = prompt("Introduce la contraseña de administración");
-    if(pwd==="8111"){
-      const fecha = prompt("Introduce la fecha a bloquear (YYYY-MM-DD)");
-      if(fecha && !reservasGlobal.bloqueados.includes(fecha)){
-        // 🔹 POST al backend para guardar
-        try{
-          const res = await fetch("/reservas", {
-            method:"POST",
-            headers: { "Content-Type":"application/json" },
-            body: JSON.stringify({ fecha })
-          });
-          if(!res.ok) throw new Error("Error al guardar fecha");
-          reservasGlobal.bloqueados.push(fecha);
-          alert(`Fecha ${fecha} bloqueada`);
-          iniciarCalendario();
-        } catch(err){ alert(err); }
-      }
-    } else alert("Contraseña incorrecta");
+    if(pwd !== "8111"){ alert("Contraseña incorrecta"); return; }
+
+    alert("Modo administración activado: haz clic en los días para bloquear o desbloquear");
+
+    document.querySelectorAll(".fila-dia").forEach(diaElem => {
+      if(diaElem.classList.contains("empty-dia")) return;
+
+      diaElem.style.cursor = "pointer";
+
+      diaElem.addEventListener("click", async () => {
+        const fecha = diaElem.dataset.fecha;
+        const bloqueado = reservasGlobal.bloqueados.includes(fecha);
+
+        if(!bloqueado){
+          // Bloquear
+          try{
+            const res = await fetch("/reservas", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ fecha })
+            });
+            const data = await res.json();
+            if(data.ok){
+              reservasGlobal.bloqueados.push(fecha);
+              diaElem.classList.add("reservado");
+              diaElem.style.backgroundColor = "#ff6666";
+              diaElem.style.color = "#fff";
+            } else {
+              alert(data.error || "Error al bloquear fecha");
+            }
+          } catch(err){
+            console.error(err);
+            alert("Error al comunicar con el servidor");
+          }
+        } else {
+          // Desbloquear visualmente
+          reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f!==fecha);
+          diaElem.classList.remove("reservado");
+          diaElem.style.backgroundColor = "";
+          diaElem.style.color = "";
+          // Para persistencia se requiere endpoint DELETE en el servidor
+        }
+      });
+    });
   });
 }
 
