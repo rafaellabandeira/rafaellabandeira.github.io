@@ -1,209 +1,266 @@
-// ===== FORMATEO FECHA LOCAL =====
-function formatearLocal(fecha) {
-  const y = fecha.getFullYear();
-  const m = String(fecha.getMonth() + 1).padStart(2,"0");
-  const d = String(fecha.getDate()).padStart(2,"0");
-  return `${y}-${m}-${d}`;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cabañas Río Mundo | Casas Rurales en Riópar</title>
+<meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">
+<meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">
+<link rel="canonical" href="https://casaruralriomundo.es">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="images/favicon.svg">
+
+<!-- Estilos originales -->
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/index-carousel.css"> 
+
+<!-- Flatpickr desde CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style>
+/* Estilos específicos para Flatpickr y no afectar tu web */
+.flatpickr-calendar { font-family: inherit; }
+.flatpickr-day { border-radius: 6px; }
+
+/* Botón flotante WhatsApp */
+#whatsappButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  z-index: 1000;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-color: #25D366;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#whatsappButton img { width: 35px; height: 35px; }
+
+/* Botón flotante Admin */
+#adminButton {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  z-index: 1000;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-color: #444;
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
-// ===== VARIABLES GLOBALES =====
-const BACKEND_URL = "/backend/reservas.json"; // Simulación de backend
-let reservasGlobal = {};
-let mesBase = new Date();
-let inicioSeleccion = null;
-let finSeleccion = null;
+/* Días bloqueados en rojo */
+.fila-dia.bloqueado { background-color: #f44336; color: #fff; cursor: not-allowed; }
+</style>
 
-// ===== CARGAR RESERVAS =====
-async function cargarReservas() {
-  try {
-    const res = await fetch(BACKEND_URL);
-    if(!res.ok) throw new Error("Error cargando reservas backend");
-    return await res.json();
-  } catch(err) {
-    console.error(err);
-    return { campanilla: [], tejo: [] };
-  }
-}
+</head>
+<body>
 
-// ===== CALCULO DE RESERVA =====
-function calcularReserva() {
-  const cabaña = document.getElementById("cabaña").value;
-  const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
-  if(!diasSeleccionados.length){ alert("Selecciona un rango de fechas"); return; }
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
+      <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
+      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank" rel="noopener">Experiencias</a></li>
+      <li><a href="#contacto" class="nav-link">Contacto</a></li>
+    </ul>
+  </div>
+</nav>
 
-  const nombre = document.getElementById("nombre").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const email = document.getElementById("email").value.trim();
-  if(!nombre || !telefono || !email){ alert("Completa todos los datos"); return; }
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="header-inner">
+    <div class="hero-title-top">Cabañas en Riopar</div>
+    <div class="hero-title-bottom">Complejo El Lagunazo</div>
+    <p class="hero-sub">
+      Escapadas, naturaleza y tranquilidad junto al espectacular
+      Nacimiento del Río Mundo, dentro del Parque Natural
+    </p>
+  </div>
+</header>
 
-  let total = 0;
-  const fechas = Array.from(diasSeleccionados).map(d=>new Date(d.dataset.fecha));
-  fechas.sort((a,b)=>a-b);
-  const fechaEntrada = fechas[0];
-  const fechaSalida = new Date(fechas[fechas.length-1]);
-  fechaSalida.setDate(fechaSalida.getDate()+1);
+<!-- ===== SECCIONES INFORMATIVAS ===== -->
+<section>
+  <h2>Tu escapada rural en Riópar</h2>
+  <p>Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
+     exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
+     Un entorno natural ideal para descansar, disfrutar en familia o realizar escapadas románticas durante todo el año.</p>
+</section>
 
-  const noches = (fechaSalida - fechaEntrada)/(1000*60*60*24);
+<section>
+  <h2>Nuestras exclusivas Cabañas</h2>
+  <div class="cabanias-grid">
+    <div class="cabin-card">
+      <h3>Cabaña Campanilla</h3>
+      <p>Capacidad para hasta 6 personas, dispone de 2 habitaciones y un altillo, perfecta para familias o grupos.</p>
+      <a class="boton" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>
+    </div>
+    <div class="cabin-card">
+      <h3>Cabaña El Tejo</h3>
+      <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>
+      <a class="boton" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>
+    </div>
+  </div>
+</section>
 
-  for(let i=0;i<noches;i++){
-    const dia = new Date(fechaEntrada);
-    dia.setDate(dia.getDate()+i);
-    const dow = dia.getDay();
-    let precio;
-    if(esTemporadaAlta(dia)) precio = 150;
-    else precio = (dow===5||dow===6)?(cabaña==="campanilla"?150:140):(cabaña==="campanilla"?115:110);
-    total += precio;
-  }
+<!-- ===== CARRUSEL GENERAL ===== -->
+<section class="carousel-general-section">
+  <h2>Galería General</h2>
+  <div class="carousel-container-general">
+    <div class="carousel-general-slides">
+      <!-- TODAS TUS IMÁGENES AQUÍ, idénticas a tu HTML original -->
+      <div class="carousel-slide-general active"><img src="images/1000150795.jpg" alt="Imagen general 1"></div>
+      <div class="carousel-slide-general"><img src="images/1000150768.jpg" alt="Imagen general 2"></div>
+      <div class="carousel-slide-general"><img src="images/1000150757.jpg" alt="Imagen general 3"></div>
+      <div class="carousel-slide-general"><img src="images/1000150758.jpg" alt="Imagen general 4"></div>
+      <div class="carousel-slide-general"><img src="images/1000150760.jpg" alt="Imagen general 5"></div>
+      <div class="carousel-slide-general"><img src="images/1000150761.jpg" alt="Imagen general 6"></div>
+      <div class="carousel-slide-general"><img src="images/1000150779.jpg" alt="Imagen general 7"></div>
+      <div class="carousel-slide-general"><img src="images/1000150780.jpg" alt="Imagen general 8"></div>
+      <div class="carousel-slide-general"><img src="images/1000150783.jpg" alt="Imagen general 9"></div>
+      <div class="carousel-slide-general"><img src="images/1000150788.jpg" alt="Imagen general 10"></div>
+      <div class="carousel-slide-general"><img src="images/1000150779.jpg" alt="Imagen general 11"></div>
+      <div class="carousel-slide-general"><img src="images/1000150800.jpg" alt="Imagen general 12"></div>
+      <div class="carousel-slide-general"><img src="images/1000150776.jpg" alt="Imagen general 13"></div>
+      <div class="carousel-slide-general"><img src="images/1000150806.jpg" alt="Imagen general 14"></div>
+      <div class="carousel-slide-general"><img src="images/1000150807.jpg" alt="Imagen general 15"></div>
+      <div class="carousel-slide-general"><img src="images/1000150816.jpg" alt="Imagen general 16"></div>
+      <div class="carousel-slide-general"><img src="images/1000150795.jpg" alt="Imagen general 17"></div>
+      <div class="carousel-slide-general"><img src="images/1000173072.jpg" alt="Imagen general 18"></div>
+      <div class="carousel-slide-general"><img src="images/1000173073.jpg" alt="Imagen general 19"></div>
+      <div class="carousel-slide-general"><img src="images/1000173071.jpg" alt="Imagen general 20"></div>
+      <div class="carousel-slide-general"><img src="images/1000173065.jpg" alt="Imagen general 21"></div>
+      <div class="carousel-slide-general"><img src="images/1000173061.jpg" alt="Imagen general 22"></div>
+      <div class="carousel-slide-general"><img src="images/1000173057.jpg" alt="Imagen general 23"></div>
+    </div>
+    <button class="carousel-button-general prev-general">❮</button>
+    <button class="carousel-button-general next-general">❯</button>
+    <div class="carousel-indicators-general">
+      <div class="indicator-general active"></div>
+      <div class="indicator-general"></div>
+      <div class="indicator-general"></div>
+      <div class="indicator-general"></div>
+    </div>
+  </div>
+</section>
 
-  let descuento = 0;
-  if(noches>=6 && esTemporadaAlta(fechaEntrada)) descuento = total*0.10;
-  else if(noches>=3 && !esTemporadaAlta(fechaEntrada)) descuento = total*0.10;
+<!-- ===== SECCIONES PISCINA Y DEMÁS (igual que tu HTML) ===== -->
+<section class="carousel-general-section">
+  <h2>Piscina en temporada de verano</h2>
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>
+  <div class="carousel-container-general">
+    <div class="carousel-general-slides">
+      <div class="carousel-slide-general active"><img src="images/1000183084.jpg" alt="Piscina 1"></div>
+      <div class="carousel-slide-general"><img src="images/1000183086.jpg" alt="Piscina 2"></div>
+      <div class="carousel-slide-general"><img src="images/1000183088.jpg" alt="Piscina 3"></div>
+      <div class="carousel-slide-general"><img src="images/1000183085.jpg" alt="Piscina 4"></div>
+      <div class="carousel-slide-general"><img src="images/1000183090.jpg" alt="Piscina 5"></div>
+      <div class="carousel-slide-general"><img src="images/1000183089.jpg" alt="Piscina 6"></div>
+    </div>
+    <button class="carousel-button-general prev-general">❮</button>
+    <button class="carousel-button-general next-general">❯</button>
+    <div class="carousel-indicators-general">
+      <div class="indicator-general active"></div>
+      <div class="indicator-general"></div>
+      <div class="indicator-general"></div>
+      <div class="indicator-general"></div>
+    </div>
+  </div>
+</section>
 
-  total -= descuento;
+<!-- ===== MOTOR DE RESERVAS ===== -->
+<section id="reserva-online">
+  <h2>Reserva Online</h2>
+  <div class="reserva-box">
 
-  // Mostrar resultados
-  const opciones = { day:"numeric", month:"short" };
-  document.getElementById("fechasSeleccionadas").innerHTML = 
-    `📅 ${fechaEntrada.toLocaleDateString("es-ES",opciones)} - ${fechaSalida.toLocaleDateString("es-ES",opciones)}<br>🛏 ${noches} ${noches===1?"noche":"noches"}`;
-  document.getElementById("cabañaSeleccionada").innerText = cabaña==="campanilla"?"Cabaña Campanilla":"Cabaña El Tejo";
-  document.getElementById("total").innerText = total.toFixed(2);
-  document.getElementById("descuento").innerText = descuento.toFixed(2);
-  document.getElementById("resto").innerText = (total-50).toFixed(2);
-  document.getElementById("resultado").style.display="block";
-}
+    <!-- Selección de cabaña -->
+    <label for="cabaña">Selecciona cabaña</label>
+    <select id="cabaña">
+      <option value="campanilla">Cabaña Campanilla</option>
+      <option value="tejo">Cabaña El Tejo</option>
+    </select>
 
-// ===== TEMPORADA ALTA =====
-function esTemporadaAlta(fecha){
-  const mes = fecha.getMonth()+1;
-  const dia = fecha.getDate();
-  return (mes===7||mes===8||(mes===12&&dia>=22)||(mes===1&&dia<=7));
-}
+    <!-- Selección de fechas con navegación -->
+    <label for="fechas">Selecciona tus fechas</label>
+    <div id="fechas-container">
+      <div id="mesAnterior">◀</div>
+      <div id="fechas"></div>
+      <div id="mesSiguiente">▶</div>
+    </div>
+    
+    <p id="avisoFechas" class="aviso-fechas" style="display:none;">
+      ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
+    </p>
 
-// ===== INICIAR CALENDARIO =====
-async function iniciarCalendario(){
-  reservasGlobal = await cargarReservas();
-  const container = document.getElementById("fechas");
-  container.innerHTML = "";
+    <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
-  function crearMes(ano, mes){
-    const primerDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes+1,0);
+    <label for="nombre">Nombre completo</label>
+    <input type="text" id="nombre" placeholder="Nombre">
 
-    const mesContainer = document.createElement("div");
-    mesContainer.classList.add("mes-calendario");
+    <label for="telefono">Teléfono</label>
+    <input type="tel" id="telefono" placeholder="Teléfono">
 
-    const tituloMes = document.createElement("div");
-    tituloMes.classList.add("titulo-mes");
-    tituloMes.innerText = primerDia.toLocaleString("es-ES",{month:"long",year:"numeric"});
-    mesContainer.appendChild(tituloMes);
+    <label for="email">Email</label>
+    <input type="email" id="email" placeholder="Email">
 
-    const diasSemana = ["L","M","X","J","V","S","D"];
-    diasSemana.forEach(dia=>{
-      const dElem = document.createElement("div");
-      dElem.classList.add("dia-semana");
-      dElem.innerText = dia;
-      mesContainer.appendChild(dElem);
-    });
+    <button id="btnCalcular">Calcular precio</button>
+    <div class="spinner" id="spinner"></div>
 
-    let primerDiaSemana = primerDia.getDay();
-    primerDiaSemana = primerDiaSemana===0?6:primerDiaSemana-1;
-    for(let i=0;i<primerDiaSemana;i++){
-      const empty = document.createElement("div");
-      empty.classList.add("fila-dia","empty-dia");
-      mesContainer.appendChild(empty);
-    }
+    <div id="resultado" class="resumen-reserva" style="display:none;">
+      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
+      <p><strong>Fechas de estancia:</strong> <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
+      <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
+      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
+      <p><strong>Reserva ahora:</strong> 50 €</p>
+      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
+      <button id="btnPagar">Pagar</button>
+    </div>
 
-    for(let d=1;d<=ultimoDia.getDate();d++){
-      const fecha = new Date(ano,mes,d);
-      const diaElem = document.createElement("div");
-      diaElem.classList.add("fila-dia");
-      diaElem.innerText = d;
-      diaElem.dataset.fecha = formatearLocal(fecha);
+  </div>
+</section>
 
-      const cabaña = document.getElementById("cabaña")?.value.toLowerCase();
-      if(cabaña && reservasGlobal[cabaña]?.includes(formatearLocal(fecha))) {
-        diaElem.classList.add("reservado");
-      }
+<section id="contacto">
+  <h2>Reservas personalizadas</h2>
+  <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
+  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
+</section>
 
-      diaElem.addEventListener("click",()=>{
-        if(diaElem.classList.contains("reservado")) return;
-        if(!inicioSeleccion||(inicioSeleccion && finSeleccion)){ inicioSeleccion=fecha; finSeleccion=null; }
-        else if(!finSeleccion){ if(fecha<inicioSeleccion){ finSeleccion=inicioSeleccion; inicioSeleccion=fecha; } else finSeleccion=fecha; }
+<section>
+  <h2>Ubicación</h2>
+  <p>📍 Complejo EL Lagunazo, Riópar</p>
+  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+</section>
 
-        const todosDias = document.querySelectorAll(".fila-dia");
-        todosDias.forEach(d=>d.classList.remove("seleccionado"));
-        todosDias.forEach(d=>{
-          const f = new Date(d.dataset.fecha);
-          if(inicioSeleccion && finSeleccion && f>=inicioSeleccion && f<=finSeleccion) d.classList.add("seleccionado");
-        });
-      });
+<footer>
+  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
+  <p>© Cabañas Río Mundo · Riópar</p>
+</footer>
 
-      mesContainer.appendChild(diaElem);
-    }
+<!-- ===== BOTONES FLOTANTES ===== -->
+<a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+</a>
 
-    container.appendChild(mesContainer);
-  }
+<div id="adminButton" title="Administración">🔒</div>
 
-  crearMes(mesBase.getFullYear(), mesBase.getMonth());
-  const siguiente = new Date(mesBase);
-  siguiente.setMonth(siguiente.getMonth()+1);
-  crearMes(siguiente.getFullYear(), siguiente.getMonth());
-}
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="js/main.js"></script>
 
-// ===== BOTÓN FLOTANTE ADMIN =====
-function crearBotonAdmin() {
-  const btn = document.createElement("button");
-  btn.id="adminBoton";
-  btn.innerText="🔒 Admin";
-  Object.assign(btn.style, {
-    position:"fixed", bottom:"20px", right:"20px", padding:"12px 16px",
-    borderRadius:"50px", border:"none", backgroundColor:"#25D366",
-    color:"#fff", cursor:"pointer", zIndex:1000, fontSize:"16px", boxShadow:"0 2px 6px rgba(0,0,0,0.3)"
-  });
-  document.body.appendChild(btn);
-
-  btn.addEventListener("click",()=>{
-    const clave = prompt("Introduce contraseña de administrador:");
-    if(clave==="8111"){
-      const cabaña = document.getElementById("cabaña").value.toLowerCase();
-      const fecha = prompt("Introduce fecha a bloquear (YYYY-MM-DD):");
-      if(fecha){
-        if(!reservasGlobal[cabaña]) reservasGlobal[cabaña]=[];
-        if(!reservasGlobal[cabaña].includes(fecha)){
-          reservasGlobal[cabaña].push(fecha);
-          alert("Día bloqueado correctamente.");
-          iniciarCalendario(); // Refresca calendario
-        } else alert("Ese día ya está bloqueado.");
-      }
-    } else alert("Contraseña incorrecta");
-  });
-}
-
-// ===== CARRUSEL =====
-function iniciarCarrusel(){
-  document.querySelectorAll(".carousel-container-general").forEach(container => {
-    const slides = container.querySelectorAll(".carousel-slide-general");
-    const prev = container.querySelector(".prev-general");
-    const next = container.querySelector(".next-general");
-    const indicators = container.querySelectorAll(".indicator-general");
-    let index = 0;
-
-    function showSlide(i){
-      slides.forEach((s,idx)=>s.classList.toggle("active", idx===i));
-      indicators.forEach((ind,idx)=>ind.classList.toggle("active", idx===i));
-    }
-
-    prev.addEventListener("click", ()=>{ index=(index-1+slides.length)%slides.length; showSlide(index); });
-    next.addEventListener("click", ()=>{ index=(index+1)%slides.length; showSlide(index); });
-    indicators.forEach((ind,idx)=>ind.addEventListener("click", ()=>{ index=idx; showSlide(index); }));
-  });
-}
-
-// ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded",()=>{
-  iniciarCalendario();
-  iniciarCarrusel();
-  crearBotonAdmin();
-  document.getElementById("cabaña")?.addEventListener("change",()=>iniciarCalendario());
-  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
-});
+</body>
+</html>
