@@ -93,7 +93,7 @@ function calcularReserva() {
 
 // ===== SELECCIÓN RANGO =====
 function seleccionarFecha(fecha) {
-  if(modoAdmin) return; // en admin no seleccionamos para reserva
+  if(modoAdmin) return;
 
   if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
     inicioSeleccion = fecha;
@@ -109,7 +109,6 @@ function seleccionarFecha(fecha) {
 
   const todosDias = document.querySelectorAll(".fila-dia");
   todosDias.forEach(d=>d.classList.remove("seleccionado"));
-
   todosDias.forEach(d=>{
     const f = new Date(d.dataset.fecha);
     if(inicioSeleccion && finSeleccion && f>=inicioSeleccion && f<=finSeleccion){
@@ -177,14 +176,13 @@ function generarMes(baseDate){
 
     diaElem.addEventListener("click", ()=>{
       if(modoAdmin){
-        // Bloquear/desbloquear día
         if(reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
           reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f!==diaElem.dataset.fecha);
         } else {
           reservasGlobal.bloqueados.push(diaElem.dataset.fecha);
         }
         guardarReservasLocal();
-        iniciarCalendario(); // refresca
+        iniciarCalendario();
       } else if(!diaElem.classList.contains("reservado")){
         seleccionarFecha(fecha);
       }
@@ -196,40 +194,71 @@ function generarMes(baseDate){
   return mesContainer;
 }
 
-// ===== CALENDARIO PRINCIPAL =====
+// ===== CALENDARIO PRINCIPAL CON NAVEGACIÓN =====
 function iniciarCalendario(){
   const container = document.getElementById("fechas");
   container.innerHTML = "";
 
-  container.appendChild(generarMes(mesBase));
+  const nav = document.createElement("div");
+  nav.style.display="flex";
+  nav.style.justifyContent="space-between";
+  nav.style.marginBottom="0.5rem";
 
-  const siguiente = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 1);
-  container.appendChild(generarMes(siguiente));
+  const prevBtn = document.createElement("button");
+  prevBtn.innerText = "◀";
+  const nextBtn = document.createElement("button");
+  nextBtn.innerText = "▶";
+
+  nav.appendChild(prevBtn);
+  nav.appendChild(nextBtn);
+  container.appendChild(nav);
+
+  const mesesDiv = document.createElement("div");
+  mesesDiv.id = "meses-container";
+  mesesDiv.style.display="flex";
+  mesesDiv.style.gap="1rem";
+  container.appendChild(mesesDiv);
+
+  function renderMeses(){
+    mesesDiv.innerHTML = "";
+    mesesDiv.appendChild(generarMes(mesBase));
+    const siguiente = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 1);
+    mesesDiv.appendChild(generarMes(siguiente));
+  }
+
+  prevBtn.addEventListener("click", ()=>{
+    mesBase.setMonth(mesBase.getMonth()-1);
+    renderMeses();
+  });
+  nextBtn.addEventListener("click", ()=>{
+    mesBase.setMonth(mesBase.getMonth()+1);
+    renderMeses();
+  });
+
+  renderMeses();
 }
 
 // ===== INICIAR CARRUSELES =====
 function iniciarCarruseles() {
   const carousels = document.querySelectorAll(".carousel-container-general");
   carousels.forEach((c) => {
-    let slides = c.querySelectorAll(".carousel-slide-general");
-    let prev = c.querySelector(".prev-general");
-    let next = c.querySelector(".next-general");
-    let indicators = c.querySelectorAll(".indicator-general");
+    const slides = c.querySelectorAll(".carousel-slide-general");
+    const prev = c.querySelector(".prev-general");
+    const next = c.querySelector(".next-general");
+
     let index = 0;
 
     function mostrarSlide(i){
       slides.forEach(s => s.classList.remove("active"));
-      indicators.forEach(ind => ind.classList.remove("active"));
       slides[i].classList.add("active");
-      if(indicators[i]) indicators[i].classList.add("active");
     }
 
-    prev.addEventListener("click", () => {
+    prev.addEventListener("click", ()=>{
       index = (index-1+slides.length)%slides.length;
       mostrarSlide(index);
     });
 
-    next.addEventListener("click", () => {
+    next.addEventListener("click", ()=>{
       index = (index+1)%slides.length;
       mostrarSlide(index);
     });
