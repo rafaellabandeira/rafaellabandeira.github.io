@@ -11,6 +11,7 @@ let reservasGlobal = { campanilla: [], tejo: [], bloqueados: [] };
 let mesBase = new Date();
 let inicioSeleccion = null;
 let finSeleccion = null;
+let modoAdmin = false;
 
 // ===== CARRUSELES =====
 function iniciarCarruseles() {
@@ -43,7 +44,7 @@ function iniciarCarruseles() {
   });
 }
 
-// ===== CARGAR RESERVAS =====
+// ===== CARGAR RESERVAS DESDE SERVER =====
 async function cargarReservas() {
   try {
     const res = await fetch("/reservas");
@@ -63,7 +64,7 @@ function esTemporadaAlta(fecha){
   return (mes===7 || mes===8 || (mes===12 && dia>=22) || (mes===1 && dia<=7));
 }
 
-// ===== CALCULO DE RESERVA =====
+// ===== CÁLCULO DE RESERVA =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
@@ -127,6 +128,7 @@ function iniciarCalendario(){
   const mesContainer = document.createElement("div");
   mesContainer.classList.add("mes-calendario");
 
+  // Dias semana
   ["L","M","X","J","V","S","D"].forEach(dia=>{
     const dElem = document.createElement("div");
     dElem.classList.add("dia-semana");
@@ -134,6 +136,7 @@ function iniciarCalendario(){
     mesContainer.appendChild(dElem);
   });
 
+  // Espacios iniciales
   let primerDiaSemana = primerDia.getDay();
   primerDiaSemana = primerDiaSemana===0?6:primerDiaSemana-1;
   for(let i=0;i<primerDiaSemana;i++){
@@ -149,6 +152,7 @@ function iniciarCalendario(){
     diaElem.dataset.fecha = formatearLocal(fecha);
     diaElem.innerText = d;
 
+    // Días reservados o bloqueados
     const cabaña = document.getElementById("cabaña").value;
     if(reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) || reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
       diaElem.classList.add("reservado");
@@ -156,7 +160,47 @@ function iniciarCalendario(){
       diaElem.style.color = "#fff";
     }
 
-    diaElem.addEventListener("click", ()=>{
+    // CLICK ADMIN O CLIENTE
+    diaElem.addEventListener("click", async ()=>{
+      if(modoAdmin){
+        const fecha = diaElem.dataset.fecha;
+        if(diaElem.classList.contains("reservado")){
+          // DESBLOQUEAR
+          try {
+            const res = await fetch("/reservas", {
+              method: "DELETE",
+              headers: {"Content-Type":"application/json"},
+              body: JSON.stringify({fecha})
+            });
+            const data = await res.json();
+            if(data.ok){
+              diaElem.classList.remove("reservado");
+              diaElem.style.backgroundColor = "";
+              diaElem.style.color = "";
+              reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f=>f!==fecha);
+            }
+          } catch(e){ console.warn(e); }
+        } else {
+          // BLOQUEAR
+          try {
+            const res = await fetch("/reservas", {
+              method: "POST",
+              headers: {"Content-Type":"application/json"},
+              body: JSON.stringify({fecha})
+            });
+            const data = await res.json();
+            if(data.ok){
+              diaElem.classList.add("reservado");
+              diaElem.style.backgroundColor = "#ff6666";
+              diaElem.style.color = "#fff";
+              reservasGlobal.bloqueados.push(fecha);
+            }
+          } catch(e){ console.warn(e); }
+        }
+        return;
+      }
+
+      // CLIENTE → selección normal
       if(diaElem.classList.contains("reservado")) return;
       if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
         inicioSeleccion = fecha;
@@ -193,52 +237,12 @@ function iniciarAdmin() {
   btn.innerText = "🔒";
   document.body.appendChild(btn);
 
-  btn.addEventListener("click", async () => {
+  btn.addEventListener("click", async ()=>{
     const pwd = prompt("Introduce la contraseña de administración");
-    if(pwd !== "8111"){ alert("Contraseña incorrecta"); return; }
-
-    alert("Modo administración activado: haz clic en los días para bloquear o desbloquear");
-
-    document.querySelectorAll(".fila-dia").forEach(diaElem => {
-      if(diaElem.classList.contains("empty-dia")) return;
-
-      diaElem.style.cursor = "pointer";
-
-      diaElem.addEventListener("click", async () => {
-        const fecha = diaElem.dataset.fecha;
-        const bloqueado = reservasGlobal.bloqueados.includes(fecha);
-
-        if(!bloqueado){
-          // Bloquear
-          try{
-            const res = await fetch("/reservas", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ fecha })
-            });
-            const data = await res.json();
-            if(data.ok){
-              reservasGlobal.bloqueados.push(fecha);
-              diaElem.classList.add("reservado");
-              diaElem.style.backgroundColor = "#ff6666";
-              diaElem.style.color = "#fff";
-            } else {
-              alert(data.error || "Error al bloquear fecha");
-            }
-          } catch(err){
-            console.error(err);
-            alert("Error al comunicar con el servidor");
-          }
-        } else {
-          // Desbloquear visualmente
-          reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f!==fecha);
-          diaElem.classList.remove("reservado");
-          diaElem.style.backgroundColor = "";
-          diaElem.style.color = "";
-          // Para persistencia se requiere endpoint DELETE en el servidor
-        }
-      });
-    });
+    if(pwd==="8111"){
+      modoAdmin = !modoAdmin;
+      alert(`Modo admin ${modoAdmin?"activado":"desactivado"}`);
+    } else alert("Contraseña incorrecta");
   });
 }
 
