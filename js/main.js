@@ -7,42 +7,73 @@ function formatearLocal(fecha) {
 }
 
 // ===== VARIABLES GLOBALES =====
-const BACKEND_URL = "/backend/reservas.json"; // Simulación backend
-let reservasGlobal = {};
+let reservasGlobal = { campanilla: [], tejo: [], bloqueados: [] };
 let mesBase = new Date();
 let inicioSeleccion = null;
 let finSeleccion = null;
 
-// ===== CARGAR RESERVAS =====
+// ===== CARRUSEL =====
+function iniciarCarruseles() {
+  const carousels = document.querySelectorAll(".carousel-container-general");
+  carousels.forEach((c) => {
+    let slides = c.querySelectorAll(".carousel-slide-general");
+    let prev = c.querySelector(".prev-general");
+    let next = c.querySelector(".next-general");
+    let indicators = c.querySelectorAll(".indicator-general");
+    let index = 0;
+
+    function mostrarSlide(i){
+      slides.forEach(s => s.classList.remove("active"));
+      indicators.forEach(ind => ind.classList.remove("active"));
+      slides[i].classList.add("active");
+      if(indicators[i]) indicators[i].classList.add("active");
+    }
+
+    prev.addEventListener("click", () => {
+      index = (index-1+slides.length)%slides.length;
+      mostrarSlide(index);
+    });
+
+    next.addEventListener("click", () => {
+      index = (index+1)%slides.length;
+      mostrarSlide(index);
+    });
+
+    mostrarSlide(index);
+  });
+}
+
+// ===== CARGAR RESERVAS SIMULADAS =====
 async function cargarReservas() {
   try {
-    const res = await fetch(BACKEND_URL);
-    if(!res.ok) throw new Error("Error cargando reservas backend");
-    return await res.json();
-  } catch(err) {
-    console.error(err);
-    return { campanilla: [], tejo: [] };
+    const res = await fetch("/backend/reservas.json");
+    if(!res.ok) throw new Error("Error cargando reservas");
+    reservasGlobal = await res.json();
+    if(!reservasGlobal.bloqueados) reservasGlobal.bloqueados = [];
+  } catch(err){
+    console.warn(err);
+    reservasGlobal = { campanilla: [], tejo: [], bloqueados: [] };
   }
 }
 
-// ===== CALCULO RESERVA =====
+// ===== TEMPORADA ALTA =====
+function esTemporadaAlta(fecha){
+  const mes = fecha.getMonth()+1;
+  const dia = fecha.getDate();
+  return (mes===7 || mes===8 || (mes===12 && dia>=22) || (mes===1 && dia<=7));
+}
+
+// ===== CALCULO DE RESERVA =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
 
-  if(!diasSeleccionados.length) {
-    alert("Selecciona un rango de fechas");
-    return;
-  }
+  if(!diasSeleccionados.length){ alert("Selecciona un rango de fechas"); return; }
 
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
-  
-  if(!nombre || !telefono || !email) {
-    alert("Completa todos los datos correctamente");
-    return;
-  }
+  if(!nombre || !telefono || !email){ alert("Completa todos los datos"); return; }
 
   let total = 0;
   const fechas = Array.from(diasSeleccionados).map(d => new Date(d.dataset.fecha));
@@ -58,7 +89,6 @@ function calcularReserva() {
     dia.setDate(dia.getDate()+i);
     const dow = dia.getDay();
     let precio;
-
     if(esTemporadaAlta(dia)){
       precio = 150;
     } else {
@@ -72,7 +102,6 @@ function calcularReserva() {
   let descuento = 0;
   if(noches>=6 && esTemporadaAlta(fechaEntrada)) descuento = total*0.10;
   else if(noches>=3 && !esTemporadaAlta(fechaEntrada)) descuento = total*0.10;
-
   total -= descuento;
 
   // Mostrar resultados
@@ -88,181 +117,112 @@ function calcularReserva() {
   document.getElementById("resultado").style.display="block";
 }
 
-// ===== TEMPORADA ALTA =====
-function esTemporadaAlta(fecha){
-  const mes = fecha.getMonth()+1;
-  const dia = fecha.getDate();
-  return (mes===7 || mes===8 || (mes===12 && dia>=22) || (mes===1 && dia<=7));
-}
-
-// ===== INICIAR CALENDARIO =====
-async function iniciarCalendario(){
-  reservasGlobal = await cargarReservas();
+// ===== CALENDARIO =====
+function iniciarCalendario(){
   const container = document.getElementById("fechas");
   container.innerHTML = "";
 
-  function crearMes(ano, mes){
-    const primerDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes+1,0);
+  const primerDia = new Date(mesBase.getFullYear(), mesBase.getMonth(), 1);
+  const ultimoDia = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 0);
+  const mesContainer = document.createElement("div");
+  mesContainer.classList.add("mes-calendario");
 
-    const mesContainer = document.createElement("div");
-    mesContainer.classList.add("mes-calendario");
+  // Dias semana
+  ["L","M","X","J","V","S","D"].forEach(dia=>{
+    const dElem = document.createElement("div");
+    dElem.classList.add("dia-semana");
+    dElem.innerText = dia;
+    mesContainer.appendChild(dElem);
+  });
 
-    const tituloMes = document.createElement("div");
-    tituloMes.classList.add("titulo-mes");
-    tituloMes.innerText = primerDia.toLocaleString("es-ES",{month:"long",year:"numeric"});
-    mesContainer.appendChild(tituloMes);
+  // Espacios iniciales
+  let primerDiaSemana = primerDia.getDay();
+  primerDiaSemana = primerDiaSemana===0?6:primerDiaSemana-1;
+  for(let i=0;i<primerDiaSemana;i++){
+    const empty = document.createElement("div");
+    empty.classList.add("fila-dia","empty-dia");
+    mesContainer.appendChild(empty);
+  }
 
-    const diasSemana = ["L","M","X","J","V","S","D"];
-    diasSemana.forEach(dia=>{
-      const dElem = document.createElement("div");
-      dElem.classList.add("dia-semana");
-      dElem.innerText = dia;
-      mesContainer.appendChild(dElem);
-    });
+  for(let d=1; d<=ultimoDia.getDate(); d++){
+    const fecha = new Date(mesBase.getFullYear(), mesBase.getMonth(), d);
+    const diaElem = document.createElement("div");
+    diaElem.classList.add("fila-dia");
+    diaElem.dataset.fecha = formatearLocal(fecha);
+    diaElem.innerText = d;
 
-    let primerDiaSemana = primerDia.getDay();
-    primerDiaSemana = primerDiaSemana===0?6:primerDiaSemana-1;
-    for(let i=0;i<primerDiaSemana;i++){
-      const empty = document.createElement("div");
-      empty.classList.add("fila-dia","empty-dia");
-      mesContainer.appendChild(empty);
+    // Días reservados o bloqueados
+    const cabaña = document.getElementById("cabaña").value;
+    if(reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) || reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
+      diaElem.classList.add("reservado");
+      diaElem.style.backgroundColor = "#ff6666";
+      diaElem.style.color = "#fff";
     }
 
-    for(let d=1;d<=ultimoDia.getDate();d++){
-      const fecha = new Date(ano,mes,d);
-      const diaElem = document.createElement("div");
-      diaElem.classList.add("fila-dia");
-      diaElem.innerText = d;
-      diaElem.dataset.fecha = formatearLocal(fecha);
-
-      const cabaña = document.getElementById("cabaña")?.value.toLowerCase();
-      if(cabaña && reservasGlobal[cabaña]?.includes(formatearLocal(fecha))) {
-        diaElem.classList.add("reservado");
+    diaElem.addEventListener("click", ()=>{
+      if(diaElem.classList.contains("reservado")) return;
+      if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
+        inicioSeleccion = fecha;
+        finSeleccion = null;
+      } else if(!finSeleccion){
+        if(fecha<inicioSeleccion){
+          finSeleccion=inicioSeleccion;
+          inicioSeleccion=fecha;
+        } else {
+          finSeleccion = fecha;
+        }
       }
 
-      diaElem.addEventListener("click",()=>{
-        if(diaElem.classList.contains("reservado")) return;
-        if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
-          inicioSeleccion = fecha;
-          finSeleccion = null;
-        } else if(!finSeleccion){
-          if(fecha<inicioSeleccion){
-            finSeleccion=inicioSeleccion;
-            inicioSeleccion=fecha;
-          } else {
-            finSeleccion = fecha;
-          }
+      const todosDias = document.querySelectorAll(".fila-dia");
+      todosDias.forEach(d=>d.classList.remove("seleccionado"));
+      todosDias.forEach(d=>{
+        const f = new Date(d.dataset.fecha);
+        if(inicioSeleccion && finSeleccion && f>=inicioSeleccion && f<=finSeleccion){
+          d.classList.add("seleccionado");
         }
-
-        const todosDias = document.querySelectorAll(".fila-dia");
-        todosDias.forEach(d=>d.classList.remove("seleccionado"));
-        todosDias.forEach(d=>{
-          const f = new Date(d.dataset.fecha);
-          if(inicioSeleccion && finSeleccion && f>=inicioSeleccion && f<=finSeleccion){
-            d.classList.add("seleccionado");
-          }
-        });
       });
+    });
 
-      mesContainer.appendChild(diaElem);
-    }
-
-    container.appendChild(mesContainer);
+    mesContainer.appendChild(diaElem);
   }
 
-  crearMes(mesBase.getFullYear(), mesBase.getMonth());
-  const siguiente = new Date(mesBase);
-  siguiente.setMonth(siguiente.getMonth()+1);
-  crearMes(siguiente.getFullYear(), siguiente.getMonth());
+  container.appendChild(mesContainer);
 }
 
-// ===== CARRUSEL =====
-function iniciarCarruseles(){
-  document.querySelectorAll(".carousel-container-general").forEach(container=>{
-    const slides = container.querySelectorAll(".carousel-slide-general");
-    const prev = container.querySelector(".prev-general");
-    const next = container.querySelector(".next-general");
-    const indicators = container.querySelectorAll(".indicator-general");
-    let index = 0;
-
-    function mostrarSlide(i){
-      slides.forEach(s=>s.classList.remove("active"));
-      indicators.forEach(ind=>ind.classList.remove("active"));
-      slides[i].classList.add("active");
-      if(indicators[i]) indicators[i].classList.add("active");
-    }
-
-    prev.addEventListener("click",()=>{
-      index = (index-1+slides.length)%slides.length;
-      mostrarSlide(index);
-    });
-    next.addEventListener("click",()=>{
-      index = (index+1)%slides.length;
-      mostrarSlide(index);
-    });
-
-    mostrarSlide(index);
-  });
-}
-
-// ===== BOTÓN ADMINISTRACIÓN =====
-function crearBotonAdmin(){
-  const btn = document.createElement("button");
-  btn.id = "btnAdmin";
+// ===== BOTÓN ADMIN =====
+function iniciarAdmin() {
+  const btn = document.createElement("div");
+  btn.id = "adminButton";
   btn.innerText = "🔒";
-  btn.style.position = "fixed";
-  btn.style.bottom = "20px";
-  btn.style.left = "20px";
-  btn.style.zIndex = "9999";
-  btn.style.fontSize = "1.5rem";
-  btn.style.padding = "10px";
-  btn.style.borderRadius = "50%";
-  btn.style.cursor = "pointer";
-  btn.title = "Administración - Bloquear fechas";
-
-  btn.addEventListener("click",()=>{
-    const password = prompt("Introduce la contraseña:");
-    if(password==="8111"){
-      alert("Modo administración activado. Haz click en días para bloquear/desbloquear.");
-      document.querySelectorAll(".fila-dia").forEach(d=>{
-        if(!d.classList.contains("empty-dia")){
-          d.addEventListener("click", bloquearDiaAdmin);
-        }
-      });
-    } else {
-      alert("Contraseña incorrecta");
-    }
-  });
-
   document.body.appendChild(btn);
+
+  btn.addEventListener("click", ()=>{
+    const pwd = prompt("Introduce la contraseña de administración");
+    if(pwd==="8111"){
+      const fecha = prompt("Introduce la fecha a bloquear (YYYY-MM-DD)");
+      if(fecha && !reservasGlobal.bloqueados.includes(fecha)){
+        reservasGlobal.bloqueados.push(fecha);
+        alert(`Fecha ${fecha} bloqueada`);
+        iniciarCalendario();
+      }
+    } else alert("Contraseña incorrecta");
+  });
 }
 
-function bloquearDiaAdmin(e){
-  e.preventDefault();
-  const dia = e.currentTarget;
-  const cabaña = document.getElementById("cabaña").value.toLowerCase();
-  if(dia.classList.contains("reservado")){
-    dia.classList.remove("reservado");
-    reservasGlobal[cabaña] = reservasGlobal[cabaña].filter(f=>f!==dia.dataset.fecha);
-  } else {
-    dia.classList.add("reservado");
-    if(!reservasGlobal[cabaña]) reservasGlobal[cabaña]=[];
-    reservasGlobal[cabaña].push(dia.dataset.fecha);
-  }
-  // Aquí se podría guardar en backend real
-  console.log("Reservas actualizadas:", reservasGlobal);
-}
+// ===== BOTÓN PAGO SIMULADO =====
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar")?.addEventListener("click", ()=>{
+    alert("Aquí se abriría el pago con Square (simulación)");
+  });
+});
 
 // ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",async ()=>{
+  await cargarReservas();
   iniciarCalendario();
   iniciarCarruseles();
-  crearBotonAdmin();
+  iniciarAdmin();
 
-  document.getElementById("cabaña")?.addEventListener("change",()=>{
-    iniciarCalendario();
-  });
-
-  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
+  document.getElementById("cabaña")?.addEventListener("change", ()=>iniciarCalendario());
 });
