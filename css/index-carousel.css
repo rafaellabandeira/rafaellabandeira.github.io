@@ -8,11 +8,11 @@
 
 /* Cabañas */
 .cabin-card {
-  border: 2px solid #4CAF50 !important; /* verde */
+  border: 2px solid #4CAF50 !important;
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
   padding: 1rem;
-  margin-bottom: 1rem; /* separación vertical */
+  margin-bottom: 1rem;
   background-color: #fff;
   box-sizing: border-box;
 }
@@ -24,9 +24,10 @@
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
   overflow: hidden;
-  max-width: 600px; /* tamaño igual al de las cabañas */
-  margin: 1rem auto; /* centrado y separación vertical */
-  position: relative; /* para botones absolutos */
+  max-width: 600px;
+  width: 100%;                    /* ← Importante para móvil */
+  margin: 1rem auto;
+  position: relative;
   background-color: #fff;
   box-sizing: border-box;
 }
@@ -37,15 +38,15 @@
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
   padding: 10px;
-  max-width: 600px; /* igual tamaño que cabañas */
-  margin: 1rem auto; /* separación vertical y centrado */
+  max-width: 600px;
+  margin: 1rem auto;
   background-color: #fff;
   box-sizing: border-box;
 }
 
 #ubicacion iframe {
   width: 100%;
-  border: none; /* quita borde interno */
+  border: none;
   height: 350px;
   display: block;
 }
@@ -57,34 +58,40 @@
   border-radius: 8px;
   padding: 1rem;
   max-width: 600px;
-  margin: 1rem auto; /* separación vertical */
+  margin: 1rem auto;
   background-color: #fff;
   box-sizing: border-box;
 }
 
 /* -----------------------
-   IMÁGENES DEL CARRUSEL
+   IMÁGENES DEL CARRUSEL (CORREGIDO)
    ----------------------- */
 
 /* Contenedor de slides */
-.carousel, .carousel-general-slides {
+.carousel, 
+.carousel-general-slides {
   display: flex;
-  transition: transform 0.5s ease-in-out;
-  width: 100%;
+  transition: transform 0.6s ease-in-out;
+  width: 100%;                    /* ← Importante */
 }
 
 /* Cada slide */
-.carousel-slide, .carousel-slide-general {
+.carousel-slide, 
+.carousel-slide-general {
   min-width: 100%;
+  width: 100%;                    /* ← Importante para móvil */
+  flex-shrink: 0;                 /* ← Evita que se compriman */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.carousel-slide img, .carousel-slide-general img {
+/* Imágenes del carrusel */
+.carousel-slide img, 
+.carousel-slide-general img {
   width: 100%;
-  height: 350px; /* mismo tamaño que cabañas */
-  object-fit: cover; /* mantiene ratio horizontal */
+  height: 350px;
+  object-fit: cover;
   display: block;
   margin: 0 auto;
 }
@@ -93,7 +100,6 @@
    BOTONES DEL CARRUSEL
    ----------------------- */
 
-/* Posición sobre el carrusel, centrados verticalmente */
 .carousel-button,
 .carousel-button-general {
   position: absolute;
@@ -112,6 +118,13 @@
 .prev, .prev-general { left: 10px; }
 .next, .next-general { right: 10px; }
 
+/* Hover en botones */
+.carousel-button-general:hover,
+.carousel-button:hover {
+  background: rgba(76, 175, 80, 1);
+  transform: translateY(-50%) scale(1.1);
+}
+
 /* -----------------------
    INDICADORES
    ----------------------- */
@@ -119,8 +132,8 @@
 .carousel-indicators-general {
   display: flex;
   justify-content: center;
-  margin-top: 0.5rem;
-  gap: 5px;
+  margin-top: 0.8rem;
+  gap: 8px;
 }
 
 .indicator,
@@ -129,7 +142,9 @@
   height: 12px;
   border-radius: 50%;
   background-color: #ccc;
+  border: none;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 .indicator.active,
@@ -141,53 +156,33 @@
    AJUSTES ADICIONALES
    ----------------------- */
 
-/* Separación entre secciones */
 section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-/* Box-sizing global para estos containers */
+/* Box-sizing global */
 .carousel-container,
 .carousel-container-general,
 .cabin-card,
 #ubicacion,
 #contacto {
   box-sizing: border-box;
-
 }
 
-/* Asegura que el calendario pueda salir por encima de todo */
+/* Asegura que el calendario Flatpickr no quede cortado */
+.reserva-box {
+  position: relative;
+  overflow: visible !important;
+}
+
 .flatpickr-calendar {
   z-index: 9999 !important;
 }
 
-/* Evita que contenedores padres corten el calendario */
-.reserva-box {
-  position: relative; /* ya lo tenías, pero reforzamos */
-  overflow: visible !important; /* importante */
-}
-
-/* Inputs de fecha visibles y con suficiente ancho */
+/* Inputs de fecha */
 #entrada, #salida {
   width: 100%;
   box-sizing: border-box;
   position: relative;
   z-index: 2;
-}
-
-/* =======================
-   AJUSTE FLATPICKR PARA VISIBILIDAD
-   ======================= */
-.reserva-box {
-  position: relative; /* para que los elementos hijos z-index funcionen */
-  overflow: visible !important; /* importante para que el calendario no quede recortado */
-}
-
-.reserva-box input {
-  position: relative;
-  z-index: 2;
-}
-
-.flatpickr-calendar {
-  z-index: 9999 !important; /* se asegura de que esté por encima de todo */
 }
