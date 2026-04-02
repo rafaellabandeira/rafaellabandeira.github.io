@@ -2,7 +2,7 @@
    1️⃣ HERO PORTADA
    ============================== */
 .hero {
-  background-image: url('../images/hero.jpg');
+  background-image: url('../images/hero.jpg'); /* Cambia a tu imagen real */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -168,139 +168,42 @@
 }
 
 /* ==============================
-   4️⃣ CALENDARIO FLATPICKR
+   4️⃣ CARRUSEL DE IMÁGENES
    ============================== */
-.flatpickr-calendar {
-  z-index: 1000;
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
-.flatpickr-day {
-  border-radius: 6px;
+.carousel {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
 }
 
-.flatpickr-day.disponible {
-  background: #e8f5e9 !important;
-  color: #000 !important;
+.carousel-slide img {
+  width: 100%;
+  border-radius: 8px;
 }
 
-.flatpickr-day.ocupado {
-  background: #e53935 !important;
-  color: #fff !important;
-  cursor: not-allowed;
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 50%;
 }
 
-.flatpickr-day.pasado,
-.flatpickr-day.prevMonthDay {
-  background: #ececec !important;
-  color: #999 !important;
-}
-
-.flatpickr-day.disponible:hover {
-  background: #66bb6a !important;
-  color: #fff !important;
-}
-
-.flatpickr-months {
-  background: #2e7d32;
-  color: white;
-}
+.carousel-button.prev { left: 10px; }
+.carousel-button.next { right: 10px; }
 
 /* ==============================
-   5️⃣ CALENDARIO PERSONALIZADO
+   5️⃣ AJUSTES VARIOS (solo visuales)
    ============================== */
-.mes-calendario {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  margin-bottom: 25px;
-}
-
-.titulo-mes {
-  font-size: 20px;
-  font-weight: bold;
-  color: #2e7d32;
-  text-transform: uppercase;
-  text-align: center;
-  flex: 1;
-}
-
-.dia-semana {
-  text-align: center;
-  font-weight: bold;
-  padding: 5px 0;
-  color: #555;
-}
-
-.fila-dia {
-  text-align: center;
-  padding: 10px 0;
-  border-radius: 8px;
-  background: #f5f5f5;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.empty-dia {
-  background: transparent !important;
-  cursor: default !important;
-}
-
-.fila-dia.seleccionado {
-  background: #4caf50 !important;
-  color: #fff !important;
-  font-weight: bold;
-}
-
-.fila-dia.reservado {
-  background: #e53935 !important;
-  color: white !important;
-  cursor: not-allowed !important;
-  opacity: 0.85;
-}
-
-.fila-dia.pasado {
-  background: #ddd !important;
-  color: #777 !important;
-  cursor: not-allowed !important;
-}
-
-.fila-dia:not(.reservado):not(.pasado):hover {
-  background: #c8e6c9 !important;
-  color: #000;
-}
-
-.calendario-1-mes {
-  width: 100%;
-  max-width: 350px;
-  margin: 0 auto;
-}
-
-.cal-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-/* Flechas */
-.flecha-mes {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#tituloMes {
-  font-size: 20px;
-  font-weight: bold;
-  text-transform: uppercase;
-  flex: 1;
-  text-align: center;
-}
+/* Puedes agregar aquí otros estilos visuales que no afecten el calendario ni la disposición de flechas */
