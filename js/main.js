@@ -103,10 +103,17 @@ function calcularReserva() {
   document.getElementById("resultado").style.display = "block";
 }
 
-// ===== SELECCIÓN RANGO =====
+// ===== SELECCIÓN RANGO AJUSTADA =====
 function seleccionarFecha(fecha) {
   if (modoAdmin) return;
 
+  const todosDias = document.querySelectorAll(".fila-dia");
+
+  // Si el día clicado está bloqueado, no hacer nada
+  const diaClicado = Array.from(todosDias).find(d => d.dataset.fecha === formatearLocal(fecha));
+  if (!diaClicado || diaClicado.classList.contains("reservado")) return;
+
+  // Reset si no hay inicio o ya hay rango completo
   if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
     inicioSeleccion = fecha;
     finSeleccion = null;
@@ -117,14 +124,29 @@ function seleccionarFecha(fecha) {
     } else {
       finSeleccion = fecha;
     }
+
+    // Verificar si hay días bloqueados dentro del rango
+    const rango = Array.from(todosDias)
+      .filter(d => {
+        const f = new Date(d.dataset.fecha);
+        return f >= inicioSeleccion && f <= fecha;
+      });
+
+    const bloqueadoDentro = rango.some(d => d.classList.contains("reservado"));
+    if (bloqueadoDentro) {
+      alert("No se puede seleccionar días bloqueados dentro del rango");
+      finSeleccion = null;
+      return;
+    }
   }
 
-  const todosDias = document.querySelectorAll(".fila-dia");
+  // Limpiar selección anterior
   todosDias.forEach(d => d.classList.remove("seleccionado"));
 
+  // Marcar días seleccionados, ignorando los bloqueados
   todosDias.forEach(d => {
     const f = new Date(d.dataset.fecha);
-    if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
+    if (inicioSeleccion && (!finSeleccion || f <= finSeleccion) && f >= inicioSeleccion) {
       if (!d.classList.contains("reservado")) {
         d.classList.add("seleccionado");
       }
@@ -132,7 +154,7 @@ function seleccionarFecha(fecha) {
   });
 }
 
-// ===== GENERAR MES =====
+// ===== GENERAR MES AJUSTADO =====
 function generarMes(baseDate) {
   const primerDia = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
   const ultimoDia = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
@@ -171,18 +193,12 @@ function generarMes(baseDate) {
     diaElem.dataset.fecha = formatearLocal(fecha);
     diaElem.innerText = d;
 
-    // 🔴 Pasado
-    if (fecha < hoy) {
-      diaElem.classList.add("reservado");
-    }
+    if (fecha < hoy) diaElem.classList.add("reservado");
 
     const cabaña = document.getElementById("cabaña").value;
 
-    // 🔴 Reservado o bloqueado
-    if (
-      reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
-      reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)
-    ) {
+    if (reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
+        reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
       diaElem.classList.add("reservado");
     }
 
@@ -195,8 +211,10 @@ function generarMes(baseDate) {
         }
         guardarReservasLocal();
         iniciarCalendario();
-      } else if (!diaElem.classList.contains("reservado")) {
-        seleccionarFecha(fecha);
+      } else {
+        if (!diaElem.classList.contains("reservado")) {
+          seleccionarFecha(fecha);
+        }
       }
     });
 
@@ -299,4 +317,5 @@ document.addEventListener("DOMContentLoaded", () => {
   iniciarAdmin();
 
   document.getElementById("cabaña")?.addEventListener("change", iniciarCalendario);
+  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
 });
