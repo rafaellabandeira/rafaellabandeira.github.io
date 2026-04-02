@@ -11,20 +11,15 @@
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="images/favicon.svg">
 
-<!-- Estilos originales -->
-<link rel="stylesheet" href="css/global.css">
-<link rel="stylesheet" href="css/index.css">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/index-carousel.css"> 
+<!-- Estilos -->
+<link rel="stylesheet" href="global.css">
+<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="style.css">
 
 <!-- Flatpickr desde CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-/* Estilos específicos para Flatpickr */
-.flatpickr-calendar { font-family: inherit; }
-.flatpickr-day { border-radius: 6px; }
-
 /* WhatsApp abajo derecha */
 #whatsappButton {
   position: fixed;
@@ -70,6 +65,32 @@
 
 /* Botones del carrusel */
 .carousel-button-general { cursor: pointer; }
+
+/* ===== PUNTO 1: CABAÑAS BORDES VERDES Y SOMBRAS ===== */
+.cabanias-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cabin-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 1 1 280px;
+  max-width: 300px;
+
+  border: 3px solid #4CAF50; /* Borde verde */
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3); /* Sombra verde suave */
+
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+}
+
+.cabin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(76,175,80,0.5);
+}
 </style>
 </head>
 <body>
@@ -169,7 +190,6 @@
     </select>
 
     <label for="fechas">Selecciona tus fechas</label>
-    <!-- Contenedor del calendario integrado -->
     <div id="fechas-container" class="calendario-1-mes">
       <div id="fechas" class="calendario-grid"></div>
     </div>
