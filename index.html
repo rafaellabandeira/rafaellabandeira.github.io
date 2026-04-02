@@ -1,256 +1,184 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cabañas Río Mundo | Casas Rurales en Riópar</title>
-<meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">
-<meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">
-<link rel="canonical" href="https://casaruralriomundo.es">
-<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="images/favicon.svg">
+<!DOCTYPE html>  <html lang="es">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Cabañas Río Mundo | Casas Rurales en Riópar</title>  
+<meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">  
+<meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">  
+<link rel="canonical" href="https://casaruralriomundo.es">  
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">  
+<link rel="apple-touch-icon" href="images/favicon.svg">  <!-- Estilos originales -->  <link rel="stylesheet" href="css/global.css">  
+<link rel="stylesheet" href="css/index.css">  
+<link rel="stylesheet" href="css/style.css">  
+<link rel="stylesheet" href="css/index-carousel.css">   <!-- Flatpickr desde CDN -->  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">  <style>  
+/* Estilos específicos para Flatpickr */  
+.flatpickr-calendar { font-family: inherit; }  
+.flatpickr-day { border-radius: 6px; }  
+  
+/* WhatsApp abajo derecha */  
+#whatsappButton {  
+  position: fixed;  
+  bottom: 20px;  
+  right: 20px;  
+  width: 60px;  
+  height: 60px;  
+  z-index: 1000;  
+  border-radius: 50%;  
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);  
+  background-color: #25D366;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+}  
+#whatsappButton img { width: 35px; height: 35px; }  
+  
+/* Candado abajo izquierda */  
+#adminButton {  
+  position: fixed;  
+  bottom: 20px;  
+  left: 20px;  
+  width: 50px;  
+  height: 50px;  
+  z-index: 1000;  
+  border-radius: 50%;  
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);  
+  background-color: #444;  
+  color: #fff;  
+  font-size: 24px;  
+  display: flex;  
+  justify-content: center;  
+  align-items: center;  
+  cursor: pointer;  
+}  
+  
+/* Días bloqueados */  
+.fila-dia.reservado {  
+  background-color: #f44336;  
+  color: white;  
+  cursor: not-allowed;  
+}  
+  
+/* Botones del carrusel */  
+.carousel-button-general { cursor: pointer; }  
+</style>  </head>  
+<body>  <!-- ===== NAVBAR ===== -->  <nav class="navbar">  
+  <div class="nav-container">  
+    <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>  
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>  
+    <ul class="nav-menu" id="navMenu">  
+      <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>  
+      <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>  
+      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank" rel="noopener">Experiencias</a></li>  
+      <li><a href="#contacto" class="nav-link">Contacto</a></li>  
+    </ul>  
+  </div>  
+</nav>  <!-- ===== HERO ===== -->  <header class="hero">  
+  <div class="header-inner">  
+    <div class="hero-title-top">Cabañas en Riopar</div>  
+    <div class="hero-title-bottom">Complejo El Lagunazo</div>  
+    <p class="hero-sub">  
+      Escapadas, naturaleza y tranquilidad junto al espectacular  
+      Nacimiento del Río Mundo, dentro del Parque Natural  
+    </p>  
+  </div>  
+</header>  <!-- ===== SECCIONES INFORMATIVAS ===== -->  <section>  
+  <h2>Tu escapada rural en Riópar</h2>  
+  <p>Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el  
+     exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.  
+     Un entorno natural ideal para descansar, disfrutar en familia o realizar escapadas románticas durante todo el año.</p>  
+</section>  <section>  
+  <h2>Nuestras exclusivas Cabañas</h2>  
+  <div class="cabanias-grid">  
+    <div class="cabin-card">  
+      <h3>Cabaña Campanilla</h3>  
+      <p>Capacidad para hasta 6 personas, dispone de 2 habitaciones y un altillo, perfecta para familias o grupos.</p>  
+      <a class="boton" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>  
+    </div>  
+    <div class="cabin-card">  
+      <h3>Cabaña El Tejo</h3>  
+      <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>  
+      <a class="boton" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>  
+    </div>  
+  </div>  
+</section>  <!-- ===== CARRUSEL GENERAL ===== -->  <section class="carousel-general-section">  
+  <h2>Galería General</h2>  
+  <div class="carousel-container-general">  
+    <div class="carousel-general-slides">  
+      <div class="carousel-slide-general active"><img src="images/1000150795.jpg" alt="Imagen general 1"></div>  
+      <div class="carousel-slide-general"><img src="images/1000150768.jpg" alt="Imagen general 2"></div>  
+      <div class="carousel-slide-general"><img src="images/1000150757.jpg" alt="Imagen general 3"></div>  
+    </div>  <button class="carousel-button-general prev-general">❮</button>  
+<button class="carousel-button-general next-general">❯</button>  
+<div class="carousel-indicators-general"></div>
 
-<!-- Estilos -->
-<link rel="stylesheet" href="global.css">
-<link rel="stylesheet" href="index.css">
-<link rel="stylesheet" href="style.css">
+  </div>  
+</section>  <!-- ===== CARRUSEL PISCINA ===== -->  <section class="carousel-general-section">  
+  <h2>Piscina en temporada de verano</h2>  
+  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>    <div class="carousel-container-general">  
+    <div class="carousel-general-slides">  
+      <div class="carousel-slide-general active"><img src="images/1000183084.jpg" alt="Piscina 1"></div>  
+      <div class="carousel-slide-general"><img src="images/1000183086.jpg" alt="Piscina 2"></div>  
+      <div class="carousel-slide-general"><img src="images/1000183088.jpg" alt="Piscina 3"></div>  
+    </div>  <button class="carousel-button-general prev-general">❮</button>  
+<button class="carousel-button-general next-general">❯</button>  
+<div class="carousel-indicators-general"></div>
 
-<!-- Flatpickr desde CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  </div>  
+</section>  <!-- ===== MOTOR DE RESERVAS ===== -->  <section id="reserva-online">  
+  <h2>Reserva Online</h2>  
+  <div class="reserva-box">  
+    <label for="cabaña">Selecciona cabaña</label>  
+    <select id="cabaña">  
+      <option value="campanilla">Cabaña Campanilla</option>  
+      <option value="tejo">Cabaña El Tejo</option>  
+    </select>  <label for="fechas">Selecciona tus fechas</label>  
+<!-- Contenedor del calendario integrado -->  
+<div id="fechas-container" class="calendario-1-mes">  
+  <div id="fechas" class="calendario-grid"></div>  
+</div>  
 
-<style>
-/* WhatsApp abajo derecha */
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1000;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  background-color: #25D366;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#whatsappButton img { width: 35px; height: 35px; }
+<p id="avisoFechas" class="aviso-fechas" style="display:none;">  
+  ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.  
+</p>  
 
-/* Candado abajo izquierda */
-#adminButton {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  z-index: 1000;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  background-color: #444;
-  color: #fff;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
+<div id="mensajeUrgencia" class="mensaje-urgencia"></div>  
 
-/* Días bloqueados */
-.fila-dia.reservado {
-  background-color: #f44336;
-  color: white;
-  cursor: not-allowed;
-}
+<label for="nombre">Nombre completo</label>  
+<input type="text" id="nombre" placeholder="Nombre">  
 
-/* Botones del carrusel */
-.carousel-button-general { cursor: pointer; }
+<label for="telefono">Teléfono</label>  
+<input type="tel" id="telefono" placeholder="Teléfono">  
 
-/* ===== PUNTO 1: CABAÑAS BORDES VERDES Y SOMBRAS ===== */
-.cabanias-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
-}
+<label for="email">Email</label>  
+<input type="email" id="email" placeholder="Email">  
 
-.cabin-card {
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  flex: 1 1 280px;
-  max-width: 300px;
+<button id="btnCalcular">Calcular precio</button>  
+<div class="spinner" id="spinner"></div>  
 
-  border: 3px solid #4CAF50; /* Borde verde */
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3); /* Sombra verde suave */
+<div id="resultado" class="resumen-reserva" style="display:none;">  
+  <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>  
+  <p><strong>Fechas de estancia:</strong> <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>  
+  <p><strong>Total estancia:</strong> <span id="total"></span> €</p>  
+  <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>  
+  <p><strong>Reserva ahora:</strong> 50 €</p>  
+  <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>  
+  <button id="btnPagar">Pagar</button>  
+</div>
 
-  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
-}
-
-.cabin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(76,175,80,0.5);
-}
-</style>
-</head>
-<body>
-
-<!-- ===== NAVBAR ===== -->
-<nav class="navbar">
-  <div class="nav-container">
-    <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
-    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
-    <ul class="nav-menu" id="navMenu">
-      <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
-      <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
-      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank" rel="noopener">Experiencias</a></li>
-      <li><a href="#contacto" class="nav-link">Contacto</a></li>
-    </ul>
-  </div>
-</nav>
-
-<!-- ===== HERO ===== -->
-<header class="hero">
-  <div class="header-inner">
-    <div class="hero-title-top">Cabañas en Riopar</div>
-    <div class="hero-title-bottom">Complejo El Lagunazo</div>
-    <p class="hero-sub">
-      Escapadas, naturaleza y tranquilidad junto al espectacular
-      Nacimiento del Río Mundo, dentro del Parque Natural
-    </p>
-  </div>
-</header>
-
-<!-- ===== SECCIONES INFORMATIVAS ===== -->
-<section>
-  <h2>Tu escapada rural en Riópar</h2>
-  <p>Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
-     exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
-     Un entorno natural ideal para descansar, disfrutar en familia o realizar escapadas románticas durante todo el año.</p>
-</section>
-
-<section>
-  <h2>Nuestras exclusivas Cabañas</h2>
-  <div class="cabanias-grid">
-    <div class="cabin-card">
-      <h3>Cabaña Campanilla</h3>
-      <p>Capacidad para hasta 6 personas, dispone de 2 habitaciones y un altillo, perfecta para familias o grupos.</p>
-      <a class="boton" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>
-    </div>
-    <div class="cabin-card">
-      <h3>Cabaña El Tejo</h3>
-      <p>Cabaña para hasta 4 personas, ideal para parejas o pequeñas familias que buscan tranquilidad y naturaleza.</p>
-      <a class="boton" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CARRUSEL GENERAL ===== -->
-<section class="carousel-general-section">
-  <h2>Galería General</h2>
-  <div class="carousel-container-general">
-    <div class="carousel-general-slides">
-      <div class="carousel-slide-general active"><img src="images/1000150795.jpg" alt="Imagen general 1"></div>
-      <div class="carousel-slide-general"><img src="images/1000150768.jpg" alt="Imagen general 2"></div>
-      <div class="carousel-slide-general"><img src="images/1000150757.jpg" alt="Imagen general 3"></div>
-    </div>
-
-    <button class="carousel-button-general prev-general">❮</button>
-    <button class="carousel-button-general next-general">❯</button>
-    <div class="carousel-indicators-general"></div>
-  </div>
-</section>
-
-<!-- ===== CARRUSEL PISCINA ===== -->
-<section class="carousel-general-section">
-  <h2>Piscina en temporada de verano</h2>
-  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>
-
-  <div class="carousel-container-general">
-    <div class="carousel-general-slides">
-      <div class="carousel-slide-general active"><img src="images/1000183084.jpg" alt="Piscina 1"></div>
-      <div class="carousel-slide-general"><img src="images/1000183086.jpg" alt="Piscina 2"></div>
-      <div class="carousel-slide-general"><img src="images/1000183088.jpg" alt="Piscina 3"></div>
-    </div>
-
-    <button class="carousel-button-general prev-general">❮</button>
-    <button class="carousel-button-general next-general">❯</button>
-    <div class="carousel-indicators-general"></div>
-  </div>
-</section>
-
-<!-- ===== MOTOR DE RESERVAS ===== -->
-<section id="reserva-online">
-  <h2>Reserva Online</h2>
-  <div class="reserva-box">
-    <label for="cabaña">Selecciona cabaña</label>
-    <select id="cabaña">
-      <option value="campanilla">Cabaña Campanilla</option>
-      <option value="tejo">Cabaña El Tejo</option>
-    </select>
-
-    <label for="fechas">Selecciona tus fechas</label>
-    <div id="fechas-container" class="calendario-1-mes">
-      <div id="fechas" class="calendario-grid"></div>
-    </div>
-
-    <p id="avisoFechas" class="aviso-fechas" style="display:none;">
-      ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
-    </p>
-
-    <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
-
-    <label for="nombre">Nombre completo</label>
-    <input type="text" id="nombre" placeholder="Nombre">
-
-    <label for="telefono">Teléfono</label>
-    <input type="tel" id="telefono" placeholder="Teléfono">
-
-    <label for="email">Email</label>
-    <input type="email" id="email" placeholder="Email">
-
-    <button id="btnCalcular">Calcular precio</button>
-    <div class="spinner" id="spinner"></div>
-
-    <div id="resultado" class="resumen-reserva" style="display:none;">
-      <p><strong>Cabaña seleccionada:</strong> <span id="cabañaSeleccionada"></span></p>
-      <p><strong>Fechas de estancia:</strong> <span id="fechasSeleccionadas" class="fechas-seleccionadas"></span></p>
-      <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
-      <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
-      <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
-      <button id="btnPagar">Pagar</button>
-    </div>
-  </div>
-</section>
-
-<section id="contacto">
-  <h2>Reservas personalizadas</h2>
-  <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
-  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
-</section>
-
-<section>
-  <h2>Ubicación</h2>
-  <p>📍 Complejo EL Lagunazo, Riópar</p>
-  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-</section>
-
-<footer>
-  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
-  <p>© Cabañas Río Mundo · Riópar</p>
-</footer>
-
-<!-- BOTONES FLOTANTES -->
-<a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
-</a>
-<div id="adminButton">🔒</div>
-
-<!-- JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="js/main.js"></script>
-<script src="js/index-carousel.js"></script>
-
-</body>
-</html>
+  </div>  
+</section>  <section id="contacto">  
+  <h2>Reservas personalizadas</h2>  
+  <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>  
+  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>  
+</section>  <section>  
+  <h2>Ubicación</h2>  
+  <p>📍 Complejo EL Lagunazo, Riópar</p>  
+  <iframe src="https://www.google.com/maps?q=38.4880635,-2.4343093&z=17&output=embed" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>  
+</section>  <footer>  
+  <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>  
+  <p>© Cabañas Río Mundo · Riópar</p>  
+</footer>  <!-- BOTONES FLOTANTES -->  <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">  
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />  
+</a>  
+<div id="adminButton">🔒</div>  <!-- JS -->  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>  <script src="js/main.js"></script>  <script src="js/index-carousel.js"></script>  </body>  
+</html>  
