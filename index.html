@@ -190,11 +190,18 @@
     </select>
 
     <label for="fechas">Selecciona tus fechas</label>
-    <div id="fechas-container">
-      <div id="mesAnterior">◀</div>
-      <div id="fechas"></div>
-      <div id="mesSiguiente">▶</div>
-    </div>
+
+<div id="fechas-container" class="calendario-1-mes">
+
+  <div class="cal-top">
+    <button id="mesAnterior" class="flecha-mes">◀</button>
+    <h3 id="tituloMes"></h3>
+    <button id="mesSiguiente" class="flecha-mes">▶</button>
+  </div>
+
+  <div id="fechas" class="calendario-grid"></div>
+
+</div>
 
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
