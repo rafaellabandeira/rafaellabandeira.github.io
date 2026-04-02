@@ -10,7 +10,7 @@
   border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 12px rgba(76,175,80,0.4); /* sombra verde permanente */
   font-size: 13px; /* tamaño general más pequeño */
 }
 
@@ -76,7 +76,7 @@
   border-radius: 6px;
   user-select: none;
   font-size: 12px;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
 /* Días vacíos */
@@ -89,11 +89,15 @@
 .fila-dia.seleccionado {
   background-color: #007BFF;
   color: white;
+  box-shadow: 0 0 8px rgba(76,175,80,0.5); /* resplandor verde */
+  transform: translateY(-1px);
 }
 
 /* Hover de días disponibles */
 .fila-dia:not(.reservado):hover {
-  background-color: #e0f0ff;
+  background-color: #e0f0ff; /* azul claro */
+  box-shadow: 0 0 8px rgba(76,175,80,0.5); /* resplandor verde */
+  transform: translateY(-2px);
 }
 
 /* Días bloqueados */
@@ -216,7 +220,7 @@
   margin: 1rem auto;
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(76,175,80,0.3);
+  box-shadow: 0 2px 8px rgba(76,175,80,0.3); /* sombra verde */
   position: relative;
 }
 
