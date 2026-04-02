@@ -255,7 +255,8 @@ function iniciarCalendario() {
   renderMes();
 }
 
-// ===== CARRUSELES (VERSIÓN MEJORADA - SLIDE) =====
+
+     // ===== CARRUSELES (VERSIÓN CORREGIDA - SLIDE) =====
 function iniciarCarruseles() {
   const carousels = document.querySelectorAll(".carousel-container-general");
 
@@ -270,14 +271,16 @@ function iniciarCarruseles() {
 
     let currentIndex = 0;
     let autoplayInterval = null;
-    const autoplayTime = 5000; // 5 segundos
+    const autoplayTime = 5000;
 
-    // Preparar el track para movimiento horizontal
+    // Preparación importante para móvil
     track.style.display = "flex";
     track.style.transition = "transform 0.6s ease-in-out";
+    track.style.width = `${slides.length * 100}%`;   // ← Clave
 
     slides.forEach(slide => {
-      slide.style.minWidth = "100%";
+      slide.style.minWidth = "100%";     // ← Importante
+      slide.style.width = "100%";        // ← Añadido para móvil
       slide.style.flexShrink = "0";
     });
 
@@ -295,9 +298,7 @@ function iniciarCarruseles() {
 
     function updateIndicators() {
       const dots = indicatorsContainer?.querySelectorAll(".indicator-general");
-      dots?.forEach((dot, i) => {
-        dot.classList.toggle("active", i === currentIndex);
-      });
+      dots?.forEach((dot, i) => dot.classList.toggle("active", i === currentIndex));
     }
 
     function goToSlide(index) {
@@ -320,9 +321,7 @@ function iniciarCarruseles() {
     // Autoplay
     function startAutoplay() {
       if (autoplayInterval) clearInterval(autoplayInterval);
-      autoplayInterval = setInterval(() => {
-        goToSlide(currentIndex + 1);
-      }, autoplayTime);
+      autoplayInterval = setInterval(() => goToSlide(currentIndex + 1), autoplayTime);
     }
 
     function resetAutoplay() {
@@ -330,17 +329,16 @@ function iniciarCarruseles() {
       startAutoplay();
     }
 
-    // Pausar autoplay al pasar el ratón
-    container.addEventListener("mouseenter", () => {
-      if (autoplayInterval) clearInterval(autoplayInterval);
-    });
+    container.addEventListener("mouseenter", () => clearInterval(autoplayInterval));
     container.addEventListener("mouseleave", startAutoplay);
 
-    // Iniciar carrusel
+    // Iniciar
     goToSlide(0);
     startAutoplay();
   });
 }
+
+    
 
 // ===== ADMIN =====
 function iniciarAdmin() {
