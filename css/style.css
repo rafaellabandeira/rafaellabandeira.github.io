@@ -1,286 +1,110 @@
-/* ==============================
-   1️⃣ HERO PORTADA
-   ============================== */
-.hero {
-  background-image: url('../images/hero.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 80vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 1;
-}
+/* ============================
+   CALENDARIO Y RESERVAS
+============================ */
 
-.header-inner {
-  text-align: center;
-  color: white;
-  padding: 0 20px;
-}
-
-.hero-title-top {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
-}
-
-.hero-title-bottom {
-  font-size: 2rem;
-  font-weight: 500;
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-}
-
-.hero-sub {
-  font-size: 1.25rem;
-  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-/* ==============================
-   2️⃣ TARJETAS DE CABAÑAS
-   ============================== */
-.cabanias-grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 20px;
-  justify-content: center;
-}
-
-.cabin-card {
-  flex: 1 1 300px;
-  border: 2px solid #FFD700;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  background-color: #fff;
-  text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.cabin-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
-.cabin-card h3 {
-  margin-top: 0;
-  color: #333;
-}
-
-.cabin-card p {
-  color: #555;
-  font-size: 0.95rem;
-}
-
-.cabin-card .boton {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #4caf50;
-  color: #fff;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.cabin-card .boton:hover {
-  background-color: #45a049;
-}
-
-/* ==============================
-   3️⃣ MOTOR DE RESERVAS
-   ============================== */
-.reserva-box {
-  border: 2px solid #4caf50;
-  border-radius: 12px;
-  padding: 25px;
-  background-color: #f9f9f9;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  max-width: 520px;
-  margin: 20px auto;
-}
-
-.reserva-box h2 {
-  color: #4caf50;
-  margin-top: 0;
-}
-
-.reserva-box label {
-  display: block;
-  margin-top: 12px;
-  font-weight: bold;
-  color: #333;
-}
-
-.reserva-box input,
-.reserva-box select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  font-size: 15px;
-  box-sizing: border-box;
-}
-
-.reserva-box button {
-  width: 100%;
-  margin-top: 18px;
-  padding: 12px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.reserva-box button:hover {
-  background-color: #45a049;
-}
-
-.resumen-reserva {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #f7f7f7;
-  border-left: 5px solid #4caf50;
-}
-
-.spinner {
-  display: none;
-  width: 30px;
-  height: 30px;
-  border: 4px solid #ddd;
-  border-top: 4px solid #4caf50;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 15px auto;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ==============================
-   4️⃣ CALENDARIO PERSONALIZADO
-   ============================== */
+/* Contenedor calendario */
 .calendario-1-mes {
-  width: 100%;
   max-width: 350px;
-  margin: 0 auto 25px;
-  background: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  margin: 20px auto;
+  font-family: inherit;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
+/* Barra superior: mes + flechas */
 .cal-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-}
-
-.flecha-mes {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  font-size: 18px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-#tituloMes {
-  font-size: 20px;
+  background-color: #f7f7f7;
+  padding: 8px 12px;
   font-weight: bold;
-  text-transform: uppercase;
+  font-size: 16px;
+}
+
+/* Flechas del mes */
+.flecha-mes {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s;
+}
+.flecha-mes:hover {
+  color: #007BFF;
+}
+
+/* Título del mes */
+#tituloMes {
   flex: 1;
   text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
 }
 
-/* GRID CALENDARIO */
-.mes-calendario {
+/* Grid calendario */
+.calendario-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin-top: 10px;
+  gap: 2px;
+  padding: 8px;
+  background-color: #fff;
 }
 
+/* Días de la semana */
 .dia-semana {
   text-align: center;
   font-weight: bold;
-  padding: 5px 0;
   color: #555;
+  padding: 6px 0;
+  background-color: #f0f0f0;
+  font-size: 14px;
 }
 
+/* Cada día */
 .fila-dia {
   text-align: center;
   padding: 10px 0;
-  border-radius: 8px;
-  background: #f5f5f5;
   cursor: pointer;
-  transition: 0.2s;
+  border-radius: 6px;
+  user-select: none;
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
 }
 
-.fila-dia.empty-dia {
-  background: transparent !important;
-  cursor: default !important;
+/* Días vacíos */
+.empty-dia {
+  cursor: default;
+  background: transparent;
 }
 
+/* Días seleccionados */
 .fila-dia.seleccionado {
-  background: #4caf50 !important;
-  color: #fff !important;
-  font-weight: bold;
+  background-color: #007BFF;
+  color: white;
 }
 
+/* Hover de días disponibles */
+.fila-dia:not(.reservado):hover {
+  background-color: #e0f0ff;
+}
+
+/* Días bloqueados */
 .fila-dia.reservado {
-  background: #e53935 !important;
-  color: white !important;
-  cursor: not-allowed !important;
-  opacity: 0.85;
+  background-color: #f44336;
+  color: white;
+  cursor: not-allowed;
 }
 
-.fila-dia.pasado {
-  background: #ddd !important;
-  color: #777 !important;
-  cursor: not-allowed !important;
-}
+/* ============================
+   BOTONES FLOTANTES
+============================ */
 
-.fila-dia:not(.reservado):not(.pasado):hover {
-  background: #c8e6c9 !important;
-  color: #000;
-}
-
-/* ==============================
-   5️⃣ RESPONSIVE CALENDARIO
-   ============================== */
-@media (max-width: 480px) {
-  .cal-top {
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 6px;
-  }
-  #tituloMes {
-    font-size: 18px;
-  }
-  .flecha-mes {
-    padding: 4px 8px;
-    font-size: 16px;
-  }
-}
-
-/* ==============================
-   6️⃣ BOTONES FLOTANTES
-   ============================== */
+/* WhatsApp abajo derecha */
 #whatsappButton {
   position: fixed;
   bottom: 20px;
@@ -297,6 +121,7 @@
 }
 #whatsappButton img { width: 35px; height: 35px; }
 
+/* Candado abajo izquierda */
 #adminButton {
   position: fixed;
   bottom: 20px;
@@ -315,9 +140,82 @@
   cursor: pointer;
 }
 
-/* ==============================
-   7️⃣ CARRUSELES
-   ============================== */
-.carousel-button-general {
+/* ============================
+   RESUMEN Y FORMULARIOS
+============================ */
+
+.reserva-box {
+  max-width: 400px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: inherit;
+}
+
+.reserva-box label {
+  font-weight: 600;
+}
+
+.reserva-box input,
+.reserva-box select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#btnCalcular, #btnPagar {
+  padding: 10px 15px;
+  background-color: #007BFF;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+#btnCalcular:hover, #btnPagar:hover {
+  background-color: #0056b3;
+}
+
+/* Mensajes de aviso */
+.aviso-fechas {
+  color: #f44336;
+  font-weight: bold;
+  text-align: center;
+}
+.mensaje-urgencia {
+  color: #ff9800;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Resumen reserva */
+.resumen-reserva {
+  margin-top: 10px;
+  background-color: #f7f7f7;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ============================
+   CARRUSEL
+============================ */
+.carousel-button-general { cursor: pointer; }
+
+/* ============================
+   RESPONSIVE
+============================ */
+@media screen and (max-width: 420px) {
+  .calendario-1-mes {
+    max-width: 95%;
+  }
+  .cal-top { font-size: 14px; padding: 6px; }
+  .fila-dia { padding: 8px 0; font-size: 12px; }
+  .dia-semana { font-size: 12px; padding: 4px 0; }
+  #btnCalcular, #btnPagar { font-size: 14px; padding: 8px 10px; }
 }
