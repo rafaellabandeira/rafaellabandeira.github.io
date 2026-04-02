@@ -3,7 +3,7 @@ function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return `\( {y}- \){m}-${d}`;
 }
 
 // ===== VARIABLES GLOBALES =====
@@ -44,7 +44,6 @@ function calcularReserva() {
     return;
   }
 
-  // Comprobar si hay días bloqueados dentro de la selección
   const bloqueados = Array.from(diasSeleccionados).some(d => d.classList.contains("reservado"));
   if (bloqueados) {
     alert("Algunas de las fechas seleccionadas no están disponibles");
@@ -60,7 +59,6 @@ function calcularReserva() {
   }
 
   let total = 0;
-
   const fechas = Array.from(diasSeleccionados).map(d => new Date(d.dataset.fecha));
   fechas.sort((a, b) => a - b);
 
@@ -115,9 +113,10 @@ function seleccionarFecha(fecha) {
   if (modoAdmin) return;
 
   const todosDias = document.querySelectorAll(".fila-dia");
-
-  // No permitir seleccionar días bloqueados o pasados
-  const diaBloqueado = Array.from(todosDias).find(d => new Date(d.dataset.fecha).getTime() === fecha.getTime() && d.classList.contains("reservado"));
+  const diaBloqueado = Array.from(todosDias).find(d => 
+    new Date(d.dataset.fecha).getTime() === fecha.getTime() && 
+    d.classList.contains("reservado")
+  );
   if (diaBloqueado) return;
 
   if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
@@ -183,12 +182,10 @@ function generarMes(baseDate) {
     diaElem.dataset.fecha = formatearLocal(fecha);
     diaElem.innerText = d;
 
-    // Pasado
     if (fecha < hoy) diaElem.classList.add("reservado");
 
     const cabaña = document.getElementById("cabaña").value;
 
-    // Reservado o bloqueado
     if (
       reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
       reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)
@@ -200,7 +197,6 @@ function generarMes(baseDate) {
       if (!diaElem.classList.contains("reservado")) {
         seleccionarFecha(fecha);
       } else if (modoAdmin) {
-        // Admin toggle bloqueado
         if (reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
           reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f !== diaElem.dataset.fecha);
         } else {
@@ -259,32 +255,90 @@ function iniciarCalendario() {
   renderMes();
 }
 
-// ===== CARRUSELES =====
+// ===== CARRUSELES (VERSIÓN MEJORADA - SLIDE) =====
 function iniciarCarruseles() {
   const carousels = document.querySelectorAll(".carousel-container-general");
 
-  carousels.forEach(c => {
-    const slides = c.querySelectorAll(".carousel-slide-general");
-    const prev = c.querySelector(".prev-general");
-    const next = c.querySelector(".next-general");
-    let index = 0;
+  carousels.forEach(container => {
+    const track = container.querySelector(".carousel-general-slides");
+    const slides = container.querySelectorAll(".carousel-slide-general");
+    const prevBtn = container.querySelector(".prev-general");
+    const nextBtn = container.querySelector(".next-general");
+    const indicatorsContainer = container.querySelector(".carousel-indicators-general");
 
-    function mostrar(i) {
-      slides.forEach(s => s.classList.remove("active"));
-      slides[i].classList.add("active");
+    if (!track || slides.length <= 1) return;
+
+    let currentIndex = 0;
+    let autoplayInterval = null;
+    const autoplayTime = 5000; // 5 segundos
+
+    // Preparar el track para movimiento horizontal
+    track.style.display = "flex";
+    track.style.transition = "transform 0.6s ease-in-out";
+
+    slides.forEach(slide => {
+      slide.style.minWidth = "100%";
+      slide.style.flexShrink = "0";
+    });
+
+    // Crear indicadores
+    if (indicatorsContainer) {
+      indicatorsContainer.innerHTML = "";
+      slides.forEach((_, i) => {
+        const dot = document.createElement("button");
+        dot.classList.add("indicator-general");
+        if (i === 0) dot.classList.add("active");
+        dot.addEventListener("click", () => goToSlide(i));
+        indicatorsContainer.appendChild(dot);
+      });
     }
 
-    prev?.addEventListener("click", () => {
-      index = (index - 1 + slides.length) % slides.length;
-      mostrar(index);
+    function updateIndicators() {
+      const dots = indicatorsContainer?.querySelectorAll(".indicator-general");
+      dots?.forEach((dot, i) => {
+        dot.classList.toggle("active", i === currentIndex);
+      });
+    }
+
+    function goToSlide(index) {
+      currentIndex = (index + slides.length) % slides.length;
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+      updateIndicators();
+    }
+
+    // Botones
+    prevBtn?.addEventListener("click", () => {
+      goToSlide(currentIndex - 1);
+      resetAutoplay();
     });
 
-    next?.addEventListener("click", () => {
-      index = (index + 1) % slides.length;
-      mostrar(index);
+    nextBtn?.addEventListener("click", () => {
+      goToSlide(currentIndex + 1);
+      resetAutoplay();
     });
 
-    mostrar(0);
+    // Autoplay
+    function startAutoplay() {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+      autoplayInterval = setInterval(() => {
+        goToSlide(currentIndex + 1);
+      }, autoplayTime);
+    }
+
+    function resetAutoplay() {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+      startAutoplay();
+    }
+
+    // Pausar autoplay al pasar el ratón
+    container.addEventListener("mouseenter", () => {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+    });
+    container.addEventListener("mouseleave", startAutoplay);
+
+    // Iniciar carrusel
+    goToSlide(0);
+    startAutoplay();
   });
 }
 
@@ -306,7 +360,7 @@ function iniciarAdmin() {
 document.addEventListener("DOMContentLoaded", () => {
   cargarReservasLocal();
   iniciarCalendario();
-  iniciarCarruseles();
+  iniciarCarruseles();     // ← Carrusel mejorado
   iniciarAdmin();
 
   document.getElementById("cabaña")?.addEventListener("change", iniciarCalendario);
