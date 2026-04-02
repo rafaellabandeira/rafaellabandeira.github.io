@@ -206,6 +206,38 @@
 }
 
 /* ============================
+   CABAÑAS
+============================ */
+.cabanias-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.cabin-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  flex: 1 1 280px;
+  max-width: 300px;
+
+  /* Borde verde */
+  border: 3px solid #4CAF50;
+
+  /* Sombra verde suave */
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+
+  /* Transiciones suaves */
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+}
+
+.cabin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(76,175,80,0.5);
+}
+
+/* ============================
    CARRUSEL
 ============================ */
 
@@ -280,32 +312,6 @@
 .indicator-general.active { background-color: #4CAF50; }
 
 /* ============================
-   CABAÑAS - BORDES Y SOMBRAS VERDES
-============================ */
-
-.cabanias-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  justify-content: center;
-}
-
-.cabin-card {
-  flex: 1 1 250px;
-  background-color: #fff;
-  padding: 15px;
-  border: 2px solid green;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,128,0,0.3);
-  transition: box-shadow 0.3s, border 0.3s;
-}
-
-.cabin-card:hover {
-  box-shadow: 0 6px 16px rgba(0,128,0,0.5);
-  border: 2px solid darkgreen;
-}
-
-/* ============================
    RESPONSIVE
 ============================ */
 @media screen and (max-width: 420px) {
@@ -317,7 +323,4 @@
 
   /* Carrusel responsivo */
   .carousel-slide-general img { max-height: 200px; }
-
-  /* Cabañas responsivo */
-  .cabin-card { flex: 1 1 90%; }
 }
