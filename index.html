@@ -70,6 +70,32 @@
 
 /* Botones del carrusel */
 .carousel-button-general { cursor: pointer; }
+
+/* CALENDARIO PERSONALIZADO */
+.cal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.flecha-mes {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#tituloMes {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  flex: 1;
+}
 </style>
 </head>
 <body>
@@ -124,45 +150,11 @@
   </div>
 </section>
 
-<!-- ===== CARRUSEL GENERAL ===== -->
-<section class="carousel-general-section">
-  <h2>Galería General</h2>
-  <div class="carousel-container-general">
-    <div class="carousel-general-slides">
-      <!-- Slides repetidos omitidos para abreviar -->
-      <div class="carousel-slide-general active"><img src="images/1000150795.jpg" alt="Imagen general 1"></div>
-      <div class="carousel-slide-general"><img src="images/1000150768.jpg" alt="Imagen general 2"></div>
-      <div class="carousel-slide-general"><img src="images/1000150757.jpg" alt="Imagen general 3"></div>
-      <!-- ... -->
-    </div>
-    <button class="carousel-button-general prev-general">❮</button>
-    <button class="carousel-button-general next-general">❯</button>
-    <div class="carousel-indicators-general"></div>
-  </div>
-</section>
-
-<!-- ===== CARRUSEL PISCINA ===== -->
-<section class="carousel-general-section">
-  <h2>Piscina en temporada de verano</h2>
-  <p>Durante los meses de verano, nuestros huéspedes pueden disfrutar de una piscina en plena naturaleza y totalmente rodeados de pinos, convirtiendo la estancia en una experiencia única y refrescante.</p>
-  
-  <div class="carousel-container-general">
-    <div class="carousel-general-slides">
-      <div class="carousel-slide-general active"><img src="images/1000183084.jpg" alt="Piscina 1"></div>
-      <div class="carousel-slide-general"><img src="images/1000183086.jpg" alt="Piscina 2"></div>
-      <div class="carousel-slide-general"><img src="images/1000183088.jpg" alt="Piscina 3"></div>
-      <!-- ... -->
-    </div>
-    <button class="carousel-button-general prev-general">❮</button>
-    <button class="carousel-button-general next-general">❯</button>
-    <div class="carousel-indicators-general"></div>
-  </div>
-</section>
-
 <!-- ===== MOTOR DE RESERVAS ===== -->
 <section id="reserva-online">
   <h2>Reserva Online</h2>
   <div class="reserva-box">
+    
     <label for="cabaña">Selecciona cabaña</label>
     <select id="cabaña">
       <option value="campanilla">Cabaña Campanilla</option>
@@ -172,7 +164,14 @@
     <label for="fechas">Selecciona tus fechas</label>
 
     <div id="fechas-container" class="calendario-1-mes">
-      <!-- Flechas eliminadas, JS se encarga de generarlas -->
+      <!-- Contenedor superior con flechas y título -->
+      <div class="cal-top">
+        <button id="mesAnterior" class="flecha-mes">❮</button>
+        <div id="tituloMes">Abril 2026</div>
+        <button id="mesSiguiente" class="flecha-mes">❯</button>
+      </div>
+
+      <!-- Calendario -->
       <div id="fechas" class="calendario-grid"></div>
     </div>
 
@@ -203,6 +202,7 @@
       <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
       <button id="btnPagar">Pagar</button>
     </div>
+    
   </div>
 </section>
 
