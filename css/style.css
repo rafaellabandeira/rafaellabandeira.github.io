@@ -213,7 +213,6 @@
 /* ==============================
    5️⃣ CALENDARIO PERSONALIZADO
    ============================== */
-
 .mes-calendario {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -227,12 +226,12 @@
 
 /* Título del mes */
 .titulo-mes {
-  grid-column: span 7;
-  text-align: center;
   font-size: 20px;
   font-weight: bold;
-  margin-bottom: 10px;
   color: #2e7d32;
+  text-transform: uppercase;
+  text-align: center;
+  flex: 1;
 }
 
 /* Días de la semana */
@@ -286,12 +285,15 @@
   background: #c8e6c9 !important;
   color: #000;
 }
+
+/* Contenedor calendario de 1 mes */
 .calendario-1-mes {
   width: 100%;
   max-width: 350px;
   margin: 0 auto;
 }
 
+/* Contenedor superior: título + flechas */
 .cal-top {
   display: flex;
   justify-content: space-between;
@@ -299,6 +301,7 @@
   margin-bottom: 10px;
 }
 
+/* Flechas */
 .flecha-mes {
   background: #4CAF50;
   color: white;
@@ -309,8 +312,11 @@
   cursor: pointer;
 }
 
+/* Título al centro */
 #tituloMes {
   font-size: 20px;
   font-weight: bold;
   text-transform: uppercase;
+  flex: 1;
+  text-align: center;
 }
