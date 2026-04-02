@@ -320,3 +320,20 @@
   flex: 1;
   text-align: center;
 }
+/* RESPONSIVE CALENDARIO */
+@media (max-width: 480px) {
+  .cal-top {
+    flex-direction: column; /* Flechas arriba y abajo del título */
+    gap: 6px;
+  }
+  #tituloMes {
+    order: 1; /* Mantiene el título en medio */
+    text-align: center;
+  }
+  #mesAnterior, #mesSiguiente {
+    order: 0; /* Flechas arriba o abajo del título */
+    width: 40px;
+    padding: 4px 8px;
+    font-size: 16px;
+  }
+}
