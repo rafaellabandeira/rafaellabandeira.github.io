@@ -4,14 +4,14 @@
 
 /* Contenedor calendario */
 .calendario-1-mes {
-  max-width: 320px;
+  max-width: 320px; /* más compacto */
   margin: 20px auto;
   font-family: inherit;
-  border: 2px solid #4CAF50; /* borde verde */
+  border: 1px solid #ddd;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 8px rgba(76, 175, 80, 0.3); /* sombra verde */
-  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-size: 13px; /* tamaño general más pequeño */
 }
 
 /* Barra superior: mes + flechas */
@@ -56,7 +56,6 @@
   gap: 1px;
   padding: 4px;
   background-color: #fff;
-  border-top: 2px solid #4CAF50;
 }
 
 /* Días de la semana */
@@ -77,30 +76,24 @@
   border-radius: 6px;
   user-select: none;
   font-size: 12px;
-  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
-  border: 1px solid transparent;
+  transition: background 0.2s, color 0.2s;
 }
 
 /* Días vacíos */
 .empty-dia {
   cursor: default;
   background: transparent;
-  border: none;
 }
 
 /* Días seleccionados */
 .fila-dia.seleccionado {
   background-color: #007BFF;
   color: white;
-  border: 2px solid #4CAF50;
-  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5);
 }
 
 /* Hover de días disponibles */
 .fila-dia:not(.reservado):hover {
   background-color: #e0f0ff;
-  border: 2px solid #4CAF50;
-  box-shadow: 0 0 4px rgba(76, 175, 80, 0.4);
 }
 
 /* Días bloqueados */
@@ -161,10 +154,6 @@
   flex-direction: column;
   gap: 10px;
   font-family: inherit;
-  border: 2px solid #4CAF50;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 0 8px rgba(76,175,80,0.3);
 }
 
 .reserva-box label {
@@ -214,14 +203,11 @@
   padding: 10px;
   border-radius: 8px;
   font-size: 14px;
-  border: 2px solid #4CAF50;
-  box-shadow: 0 0 6px rgba(76, 175, 80, 0.4);
 }
 
 /* ============================
    CABAÑAS
 ============================ */
-
 .cabanias-grid {
   display: flex;
   flex-wrap: wrap;
@@ -235,13 +221,20 @@
   border-radius: 10px;
   flex: 1 1 280px;
   max-width: 300px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1), 0 0 6px rgba(76,175,80,0.3); /* sombra verde */
-  border: 2px solid #4CAF50; /* borde verde */
-  transition: transform 0.2s, box-shadow 0.2s;
+
+  /* Borde verde */
+  border: 3px solid #4CAF50;
+
+  /* Sombra verde suave */
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+
+  /* Transiciones suaves */
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
 }
+
 .cabin-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15), 0 0 8px rgba(76,175,80,0.4);
+  box-shadow: 0 6px 16px rgba(76,175,80,0.5);
 }
 
 /* ============================
@@ -255,8 +248,7 @@
   margin: 1rem auto;
   overflow: hidden;
   border-radius: 8px;
-  border: 2px solid #4CAF50;
-  box-shadow: 0 2px 8px rgba(76,175,80,0.3), 0 0 6px rgba(76,175,80,0.3);
+  box-shadow: 0 2px 8px rgba(76,175,80,0.3);
   position: relative;
 }
 
