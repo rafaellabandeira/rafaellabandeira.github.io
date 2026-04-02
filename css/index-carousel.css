@@ -2,141 +2,85 @@
    INDEX CAROUSEL & CONTAINERS
    ======================= */
 
-/* -----------------------
-   BORDES VERDES SOMBREADOS
-   ----------------------- */
-
-/* Cabañas */
-.cabin-card {
-  border: 2px solid #4CAF50 !important;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #fff;
-  box-sizing: border-box;
-}
-
-/* Carruseles (general y piscina) */
-.carousel-container,
-.carousel-container-general {
-  border: 2px solid #4CAF50 !important;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
-  border-radius: 8px;
-  overflow: hidden;
-  max-width: 600px;
-  width: 100%;                    /* ← Importante para móvil */
-  margin: 1rem auto;
-  position: relative;
-  background-color: #fff;
-  box-sizing: border-box;
-}
-
-/* Contenedor de ubicación */
-#ubicacion {
-  border: 2px solid #4CAF50 !important;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
-  border-radius: 8px;
-  padding: 10px;
-  max-width: 600px;
-  margin: 1rem auto;
-  background-color: #fff;
-  box-sizing: border-box;
-}
-
-#ubicacion iframe {
-  width: 100%;
-  border: none;
-  height: 350px;
-  display: block;
-}
-
-/* Sección de contacto */
+/* Bordes verdes sombreados */
+.cabin-card,
+.carousel-container-general,
+#ubicacion,
 #contacto {
   border: 2px solid #4CAF50 !important;
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
   border-radius: 8px;
-  padding: 1rem;
-  max-width: 600px;
-  margin: 1rem auto;
   background-color: #fff;
   box-sizing: border-box;
 }
 
-/* -----------------------
-   IMÁGENES DEL CARRUSEL (CORREGIDO)
-   ----------------------- */
+.cabin-card { padding: 1rem; margin-bottom: 1rem; }
+#ubicacion, #contacto { padding: 1rem; margin: 1rem auto; max-width: 600px; }
 
-/* Contenedor de slides */
-.carousel, 
+/* Carrusel container */
+.carousel-container-general {
+  overflow: hidden;
+  max-width: 600px;
+  width: 100%;
+  margin: 1rem auto;
+  position: relative;
+}
+
+/* Contenedor de slides (el track) */
 .carousel-general-slides {
   display: flex;
   transition: transform 0.6s ease-in-out;
-  width: 100%;                    /* ← Importante */
+  width: 100%;
 }
 
-/* Cada slide */
-.carousel-slide, 
+/* Cada slide individual */
 .carousel-slide-general {
   min-width: 100%;
-  width: 100%;                    /* ← Importante para móvil */
-  flex-shrink: 0;                 /* ← Evita que se compriman */
+  width: 100%;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Imágenes del carrusel */
-.carousel-slide img, 
+/* Imágenes - clave para que no se vean gigantes ni cortadas */
 .carousel-slide-general img {
   width: 100%;
-  height: 350px;
-  object-fit: cover;
+  height: 320px;           /* Reducido un poco para que quepa mejor */
+  object-fit: cover;       /* Mantiene proporción sin distorsionar */
   display: block;
-  margin: 0 auto;
 }
 
-/* -----------------------
-   BOTONES DEL CARRUSEL
-   ----------------------- */
-
-.carousel-button,
+/* Botones */
 .carousel-button-general {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(76, 175, 80, 0.8);
+  background: rgba(76, 175, 80, 0.85);
   color: #fff;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 10px 14px;
   cursor: pointer;
-  font-size: 1.5rem;
-  border-radius: 4px;
+  font-size: 1.6rem;
+  border-radius: 6px;
   z-index: 10;
 }
 
-.prev, .prev-general { left: 10px; }
-.next, .next-general { right: 10px; }
+.prev-general { left: 12px; }
+.next-general { right: 12px; }
 
-/* Hover en botones */
-.carousel-button-general:hover,
-.carousel-button:hover {
+.carousel-button-general:hover {
   background: rgba(76, 175, 80, 1);
-  transform: translateY(-50%) scale(1.1);
 }
 
-/* -----------------------
-   INDICADORES
-   ----------------------- */
-.carousel-indicators,
+/* Indicadores */
 .carousel-indicators-general {
   display: flex;
   justify-content: center;
-  margin-top: 0.8rem;
+  margin-top: 12px;
   gap: 8px;
 }
 
-.indicator,
 .indicator-general {
   width: 12px;
   height: 12px;
@@ -144,45 +88,22 @@
   background-color: #ccc;
   border: none;
   cursor: pointer;
-  transition: background 0.3s;
 }
 
-.indicator.active,
 .indicator-general.active {
   background-color: #4CAF50;
 }
 
-/* -----------------------
-   AJUSTES ADICIONALES
-   ----------------------- */
+/* Ajustes generales */
+section { margin-bottom: 1.5rem; }
 
-section {
-  margin-bottom: 1.5rem;
-}
-
-/* Box-sizing global */
-.carousel-container,
-.carousel-container-general,
-.cabin-card,
-#ubicacion,
-#contacto {
-  box-sizing: border-box;
-}
-
-/* Asegura que el calendario Flatpickr no quede cortado */
+/* === IMPORTANTE PARA EL CALENDARIO === */
 .reserva-box {
   position: relative;
   overflow: visible !important;
+  z-index: 1;
 }
 
 .flatpickr-calendar {
   z-index: 9999 !important;
-}
-
-/* Inputs de fecha */
-#entrada, #salida {
-  width: 100%;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 2;
 }
