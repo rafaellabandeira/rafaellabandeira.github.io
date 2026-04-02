@@ -4,14 +4,14 @@
 
 /* Contenedor calendario */
 .calendario-1-mes {
-  max-width: 320px; /* más compacto */
+  max-width: 320px;
   margin: 20px auto;
   font-family: inherit;
-  border: 1px solid #ddd;
+  border: 2px solid #4CAF50; /* borde verde */
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 12px rgba(76,175,80,0.4); /* sombra verde permanente */
-  font-size: 13px; /* tamaño general más pequeño */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 8px rgba(76, 175, 80, 0.3); /* sombra verde */
+  font-size: 13px;
 }
 
 /* Barra superior: mes + flechas */
@@ -56,6 +56,7 @@
   gap: 1px;
   padding: 4px;
   background-color: #fff;
+  border-top: 2px solid #4CAF50;
 }
 
 /* Días de la semana */
@@ -76,28 +77,30 @@
   border-radius: 6px;
   user-select: none;
   font-size: 12px;
-  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  border: 1px solid transparent;
 }
 
 /* Días vacíos */
 .empty-dia {
   cursor: default;
   background: transparent;
+  border: none;
 }
 
 /* Días seleccionados */
 .fila-dia.seleccionado {
   background-color: #007BFF;
   color: white;
-  box-shadow: 0 0 8px rgba(76,175,80,0.5); /* resplandor verde */
-  transform: translateY(-1px);
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.5); /* sombra verde */
 }
 
 /* Hover de días disponibles */
 .fila-dia:not(.reservado):hover {
-  background-color: #e0f0ff; /* azul claro */
-  box-shadow: 0 0 8px rgba(76,175,80,0.5); /* resplandor verde */
-  transform: translateY(-2px);
+  background-color: #e0f0ff;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 4px rgba(76, 175, 80, 0.4); /* sombra verde suave */
 }
 
 /* Días bloqueados */
@@ -158,6 +161,10 @@
   flex-direction: column;
   gap: 10px;
   font-family: inherit;
+  border: 2px solid #4CAF50;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1), 0 0 8px rgba(76,175,80,0.3); /* sombra verde */
 }
 
 .reserva-box label {
@@ -207,6 +214,8 @@
   padding: 10px;
   border-radius: 8px;
   font-size: 14px;
+  border: 2px solid #4CAF50;
+  box-shadow: 0 0 6px rgba(76, 175, 80, 0.4); /* sombra verde */
 }
 
 /* ============================
@@ -220,7 +229,8 @@
   margin: 1rem auto;
   overflow: hidden;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(76,175,80,0.3); /* sombra verde */
+  border: 2px solid #4CAF50;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.3), 0 0 6px rgba(76,175,80,0.3); /* sombra verde */
   position: relative;
 }
 
