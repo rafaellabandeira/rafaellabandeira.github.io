@@ -2,145 +2,87 @@
    CALENDARIO Y RESERVAS
 ============================ */
 
-/* Contenedor calendario */
 .calendario-1-mes {
-  max-width: 320px; /* más compacto */
-  margin: 20px auto;
-  font-family: inherit;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  font-size: 13px; /* tamaño general más pequeño */
+  max-width: 320px !important;
+  margin: 20px auto !important;
+  font-family: inherit !important;
+  border: 3px solid #4CAF50 !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
+  font-size: 13px !important;
 }
 
-/* Barra superior: mes + flechas */
 .cal-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 5px;
-  background-color: #f7f7f7;
-  padding: 6px 8px;
-  font-weight: bold;
-  font-size: 14px;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background-color: #f7f7f7 !important;
+  padding: 6px 8px !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
 }
 
-/* Flechas del mes */
 .flecha-mes {
-  background: none;
-  border: none;
-  font-size: 18px;
-  padding: 2px 6px;
-  cursor: pointer;
-  color: #333;
-  transition: color 0.2s;
+  background: none !important;
+  border: none !important;
+  font-size: 18px !important;
+  padding: 2px 6px !important;
+  cursor: pointer !important;
+  color: #333 !important;
+  transition: color 0.2s !important;
 }
-.flecha-mes:hover {
-  color: #007BFF;
-}
+.flecha-mes:hover { color: #007BFF !important; }
 
-/* Título del mes */
 #tituloMes {
-  flex: 1;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
-  color: #333;
+  flex: 1 !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #333 !important;
 }
 
-/* Grid calendario */
 .calendario-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  padding: 4px;
-  background-color: #fff;
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 1px !important;
+  padding: 4px !important;
+  background-color: #fff !important;
 }
 
-/* Días de la semana */
 .dia-semana {
-  text-align: center;
-  font-weight: bold;
-  color: #555;
-  padding: 4px 0;
-  background-color: #f0f0f0;
-  font-size: 12px;
+  text-align: center !important;
+  font-weight: bold !important;
+  color: #555 !important;
+  padding: 4px 0 !important;
+  background-color: #f0f0f0 !important;
+  font-size: 12px !important;
 }
 
-/* Cada día */
 .fila-dia {
-  text-align: center;
-  padding: 6px 0;
-  cursor: pointer;
-  border-radius: 6px;
-  user-select: none;
-  font-size: 12px;
-  transition: background 0.2s, color 0.2s;
+  text-align: center !important;
+  padding: 6px 0 !important;
+  cursor: pointer !important;
+  border-radius: 6px !important;
+  user-select: none !important;
+  font-size: 12px !important;
+  transition: background 0.2s, color 0.2s !important;
 }
 
-/* Días vacíos */
-.empty-dia {
-  cursor: default;
-  background: transparent;
-}
+.empty-dia { cursor: default !important; background: transparent !important; }
 
-/* Días seleccionados */
 .fila-dia.seleccionado {
-  background-color: #007BFF;
-  color: white;
+  background-color: #007BFF !important;
+  color: white !important;
 }
 
-/* Hover de días disponibles */
-.fila-dia:not(.reservado):hover {
-  background-color: #e0f0ff;
-}
+.fila-dia:not(.reservado):hover { background-color: #e0f0ff !important; }
 
-/* Días bloqueados */
 .fila-dia.reservado {
-  background-color: #f44336;
-  color: white;
-  cursor: not-allowed;
-}
-
-/* ============================
-   BOTONES FLOTANTES
-============================ */
-
-/* WhatsApp abajo derecha */
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1000;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  background-color: #25D366;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#whatsappButton img { width: 35px; height: 35px; }
-
-/* Candado abajo izquierda */
-#adminButton {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  z-index: 1000;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  background-color: #444;
-  color: #fff;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+  background-color: #f44336 !important;
+  color: white !important;
+  cursor: not-allowed !important;
 }
 
 /* ============================
@@ -148,179 +90,150 @@
 ============================ */
 
 .reserva-box {
-  max-width: 400px;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  font-family: inherit;
+  max-width: 400px !important;
+  margin: 20px auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  font-family: inherit !important;
+  border: 3px solid #4CAF50 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
+  padding: 15px !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
 }
 
-.reserva-box label {
-  font-weight: 600;
-}
+.reserva-box label { font-weight: 600 !important; }
 
 .reserva-box input,
 .reserva-box select {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  width: 100%;
-  box-sizing: border-box;
+  padding: 8px 10px !important;
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 #btnCalcular, #btnPagar {
-  padding: 10px 15px;
-  background-color: #007BFF;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
+  padding: 10px 15px !important;
+  background-color: #007BFF !important;
+  color: white !important;
+  font-weight: bold !important;
+  border: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
 }
-#btnCalcular:hover, #btnPagar:hover {
-  background-color: #0056b3;
-}
+#btnCalcular:hover, #btnPagar:hover { background-color: #0056b3 !important; }
 
-/* Mensajes de aviso */
-.aviso-fechas {
-  color: #f44336;
-  font-weight: bold;
-  text-align: center;
-}
-.mensaje-urgencia {
-  color: #ff9800;
-  font-weight: bold;
-  text-align: center;
-}
+.aviso-fechas { color: #f44336 !important; font-weight: bold !important; text-align: center !important; }
+.mensaje-urgencia { color: #ff9800 !important; font-weight: bold !important; text-align: center !important; }
 
-/* Resumen reserva */
 .resumen-reserva {
-  margin-top: 10px;
-  background-color: #f7f7f7;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
+  margin-top: 10px !important;
+  background-color: #f7f7f7 !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  border: 3px solid #4CAF50 !important;
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
 }
 
 /* ============================
    CABAÑAS
 ============================ */
+
 .cabanias-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  justify-content: center !important;
 }
 
 .cabin-card {
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 10px;
-  flex: 1 1 280px;
-  max-width: 300px;
-
-  /* Borde verde */
-  border: 3px solid #4CAF50;
-
-  /* Sombra verde suave */
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3);
-
-  /* Transiciones suaves */
-  transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+  background-color: #fff !important;
+  padding: 15px !important;
+  border-radius: 10px !important;
+  flex: 1 1 280px !important;
+  max-width: 300px !important;
+  border: 3px solid #4CAF50 !important;
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
+  transition: transform 0.2s, box-shadow 0.2s, border 0.2s !important;
 }
 
 .cabin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(76,175,80,0.5);
+  transform: translateY(-4px) !important;
+  box-shadow: 0 6px 16px rgba(76,175,80,0.5) !important;
 }
 
 /* ============================
    CARRUSEL
 ============================ */
 
-/* Contenedor general */
 .carousel-container-general {
-  max-width: 600px;
-  width: 100%;
-  margin: 1rem auto;
-  overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(76,175,80,0.3);
-  position: relative;
+  max-width: 600px !important;
+  width: 100% !important;
+  margin: 1rem auto !important;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+  border: 3px solid #4CAF50 !important;
+  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
+  position: relative !important;
 }
 
-/* Track */
-.carousel-general-slides {
-  display: flex;
-  transition: transform 0.6s ease-in-out;
-}
-
-/* Cada slide */
+.carousel-general-slides { display: flex !important; transition: transform 0.6s ease-in-out !important; }
 .carousel-slide-general {
-  flex-shrink: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  overflow: hidden !important;
 }
+.carousel-slide-general img { width: 100% !important; max-height: 320px !important; object-fit: cover !important; display: block !important; }
 
-/* Imágenes del slide */
-.carousel-slide-general img {
-  width: 100%;
-  max-height: 320px;
-  object-fit: cover;
-  display: block;
-}
-
-/* Botones */
 .carousel-button-general {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(76, 175, 80, 0.85);
-  color: #fff;
-  border: none;
-  padding: 10px 14px;
-  cursor: pointer;
-  font-size: 1.6rem;
-  border-radius: 6px;
-  z-index: 10;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: rgba(76, 175, 80, 0.85) !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 10px 14px !important;
+  cursor: pointer !important;
+  font-size: 1.6rem !important;
+  border-radius: 6px !important;
+  z-index: 10 !important;
 }
-.prev-general { left: 12px; }
-.next-general { right: 12px; }
-.carousel-button-general:hover { background: rgba(76,175,80,1); }
+.prev-general { left: 12px !important; }
+.next-general { right: 12px !important; }
+.carousel-button-general:hover { background: rgba(76,175,80,1) !important; }
 
-/* Indicadores */
 .carousel-indicators-general {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-  gap: 8px;
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 12px !important;
+  gap: 8px !important;
 }
 .indicator-general {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: #ccc;
-  border: none;
-  cursor: pointer;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  background-color: #ccc !important;
+  border: none !important;
+  cursor: pointer !important;
 }
-.indicator-general.active { background-color: #4CAF50; }
+.indicator-general.active { background-color: #4CAF50 !important; }
 
 /* ============================
    RESPONSIVE
 ============================ */
 @media screen and (max-width: 420px) {
-  .calendario-1-mes { max-width: 95%; }
-  .cal-top { font-size: 14px; padding: 6px; }
-  .fila-dia { padding: 8px 0; font-size: 12px; }
-  .dia-semana { font-size: 12px; padding: 4px 0; }
-  #btnCalcular, #btnPagar { font-size: 14px; padding: 8px 10px; }
-
-  /* Carrusel responsivo */
-  .carousel-slide-general img { max-height: 200px; }
+  .calendario-1-mes { max-width: 95% !important; }
+  .cal-top { font-size: 14px !important; padding: 6px !important; }
+  .fila-dia { padding: 8px 0 !important; font-size: 12px !important; }
+  .dia-semana { font-size: 12px !important; padding: 4px 0 !important; }
+  #btnCalcular, #btnPagar { font-size: 14px !important; padding: 8px 10px !important; }
+  .carousel-slide-general img { max-height: 200px !important; }
 }
