@@ -1,8 +1,8 @@
 // ===== FORMATEO FECHA LOCAL =====
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
-  const m = String(fecha.getMonth() + 1).padStart(2,"0");
-  const d = String(fecha.getDate()).padStart(2,"0");
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
 }
 
@@ -13,93 +13,105 @@ let inicioSeleccion = null;
 let finSeleccion = null;
 let modoAdmin = false;
 
-// ===== CARGAR RESERVAS DESDE LOCALSTORAGE =====
+// ===== CARGAR RESERVAS =====
 function cargarReservasLocal() {
   const data = localStorage.getItem("reservasGlobal");
-  if(data){
+  if (data) {
     reservasGlobal = JSON.parse(data);
-    if(!reservasGlobal.bloqueados) reservasGlobal.bloqueados = [];
-  } else {
-    reservasGlobal = { campanilla: [], tejo: [], bloqueados: [] };
+    if (!reservasGlobal.bloqueados) reservasGlobal.bloqueados = [];
   }
 }
 
-// ===== GUARDAR RESERVAS EN LOCALSTORAGE =====
+// ===== GUARDAR RESERVAS =====
 function guardarReservasLocal() {
   localStorage.setItem("reservasGlobal", JSON.stringify(reservasGlobal));
 }
 
 // ===== TEMPORADA ALTA =====
-function esTemporadaAlta(fecha){
-  const mes = fecha.getMonth()+1;
+function esTemporadaAlta(fecha) {
+  const mes = fecha.getMonth() + 1;
   const dia = fecha.getDate();
-  return (mes===7 || mes===8 || (mes===12 && dia>=22) || (mes===1 && dia<=7));
+  return (mes === 7 || mes === 8 || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7));
 }
 
-// ===== CALCULO DE RESERVA =====
+// ===== CALCULAR RESERVA =====
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   const diasSeleccionados = document.querySelectorAll(".fila-dia.seleccionado");
 
-  if(!diasSeleccionados.length){ alert("Selecciona un rango de fechas"); return; }
+  if (!diasSeleccionados.length) {
+    alert("Selecciona un rango de fechas");
+    return;
+  }
 
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
-  if(!nombre || !telefono || !email){ alert("Completa todos los datos"); return; }
+  if (!nombre || !telefono || !email) {
+    alert("Completa todos los datos");
+    return;
+  }
 
   let total = 0;
+
   const fechas = Array.from(diasSeleccionados).map(d => new Date(d.dataset.fecha));
-  fechas.sort((a,b) => a-b);
+  fechas.sort((a, b) => a - b);
+
   const fechaEntrada = fechas[0];
-  const fechaSalida = new Date(fechas[fechas.length-1]);
-  fechaSalida.setDate(fechaSalida.getDate()+1);
+  const fechaSalida = new Date(fechas[fechas.length - 1]);
+  fechaSalida.setDate(fechaSalida.getDate() + 1);
 
-  const noches = (fechaSalida - fechaEntrada)/(1000*60*60*24);
+  const noches = (fechaSalida - fechaEntrada) / (1000 * 60 * 60 * 24);
 
-  for(let i=0;i<noches;i++){
+  for (let i = 0; i < noches; i++) {
     const dia = new Date(fechaEntrada);
-    dia.setDate(dia.getDate()+i);
+    dia.setDate(dia.getDate() + i);
+
     const dow = dia.getDay();
     let precio;
 
-    if(esTemporadaAlta(dia)){
+    if (esTemporadaAlta(dia)) {
       precio = 150;
     } else {
-      precio = (dow===5 || dow===6) 
-        ? (cabaña==="campanilla"?150:140) 
-        : (cabaña==="campanilla"?115:110);
+      precio = (dow === 5 || dow === 6)
+        ? (cabaña === "campanilla" ? 150 : 140)
+        : (cabaña === "campanilla" ? 115 : 110);
     }
 
     total += precio;
   }
 
   let descuento = 0;
-  if(noches>=6 && esTemporadaAlta(fechaEntrada)) descuento = total*0.10;
-  else if(noches>=3 && !esTemporadaAlta(fechaEntrada)) descuento = total*0.10;
+  if (noches >= 6 && esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
+  else if (noches >= 3 && !esTemporadaAlta(fechaEntrada)) descuento = total * 0.10;
+
   total -= descuento;
 
-  const opciones = { day:"numeric", month:"short" };
-  document.getElementById("fechasSeleccionadas").innerHTML = 
-    `📅 ${fechaEntrada.toLocaleDateString("es-ES",opciones)} - ${fechaSalida.toLocaleDateString("es-ES",opciones)}<br>🛏 ${noches} ${noches===1?"noche":"noches"}`;
-  
-  document.getElementById("cabañaSeleccionada").innerText = cabaña==="campanilla"?"Cabaña Campanilla":"Cabaña El Tejo";
+  const opciones = { day: "numeric", month: "short" };
+
+  document.getElementById("fechasSeleccionadas").innerHTML =
+    `📅 ${fechaEntrada.toLocaleDateString("es-ES", opciones)} - ${fechaSalida.toLocaleDateString("es-ES", opciones)}<br>
+     🛏 ${noches} noches`;
+
+  document.getElementById("cabañaSeleccionada").innerText =
+    cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+
   document.getElementById("total").innerText = total.toFixed(2);
   document.getElementById("descuento").innerText = descuento.toFixed(2);
-  document.getElementById("resto").innerText = (total-50).toFixed(2);
+  document.getElementById("resto").innerText = (total - 50).toFixed(2);
 
-  document.getElementById("resultado").style.display="block";
+  document.getElementById("resultado").style.display = "block";
 }
 
 // ===== SELECCIÓN RANGO =====
 function seleccionarFecha(fecha) {
-  if(modoAdmin) return;
+  if (modoAdmin) return;
 
-  if(!inicioSeleccion || (inicioSeleccion && finSeleccion)){
+  if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
     inicioSeleccion = fecha;
     finSeleccion = null;
-  } else if(!finSeleccion){
-    if(fecha < inicioSeleccion){
+  } else if (!finSeleccion) {
+    if (fecha < inicioSeleccion) {
       finSeleccion = inicioSeleccion;
       inicioSeleccion = fecha;
     } else {
@@ -108,30 +120,32 @@ function seleccionarFecha(fecha) {
   }
 
   const todosDias = document.querySelectorAll(".fila-dia");
-  todosDias.forEach(d=>d.classList.remove("seleccionado"));
-  todosDias.forEach(d=>{
+  todosDias.forEach(d => d.classList.remove("seleccionado"));
+
+  todosDias.forEach(d => {
     const f = new Date(d.dataset.fecha);
-    if(inicioSeleccion && finSeleccion && f>=inicioSeleccion && f<=finSeleccion){
-      d.classList.add("seleccionado");
+    if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
+      if (!d.classList.contains("reservado")) {
+        d.classList.add("seleccionado");
+      }
     }
   });
 }
 
-// ===== GENERA UN MES INDIVIDUAL =====
-function generarMes(baseDate){
+// ===== GENERAR MES =====
+function generarMes(baseDate) {
   const primerDia = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
-  const ultimoDia = new Date(baseDate.getFullYear(), baseDate.getMonth()+1, 0);
+  const ultimoDia = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
+
   const mesContainer = document.createElement("div");
   mesContainer.classList.add("mes-calendario");
 
-  // Título del mes
   const titulo = document.createElement("div");
   titulo.classList.add("titulo-mes");
   titulo.innerText = baseDate.toLocaleDateString("es-ES", { month: "long", year: "numeric" }).toUpperCase();
   mesContainer.appendChild(titulo);
 
-  // Días semana
-  ["L","M","X","J","V","S","D"].forEach(dia=>{
+  ["L", "M", "X", "J", "V", "S", "D"].forEach(dia => {
     const dElem = document.createElement("div");
     dElem.classList.add("dia-semana");
     dElem.innerText = dia;
@@ -139,51 +153,49 @@ function generarMes(baseDate){
   });
 
   const hoy = new Date();
-  hoy.setHours(0,0,0,0);
+  hoy.setHours(0, 0, 0, 0);
 
   let primerDiaSemana = primerDia.getDay();
-  primerDiaSemana = primerDiaSemana===0?6:primerDiaSemana-1;
+  primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
 
-  for(let i=0;i<primerDiaSemana;i++){
+  for (let i = 0; i < primerDiaSemana; i++) {
     const empty = document.createElement("div");
-    empty.classList.add("fila-dia","empty-dia");
+    empty.classList.add("fila-dia", "empty-dia");
     mesContainer.appendChild(empty);
   }
 
-  for(let d=1; d<=ultimoDia.getDate(); d++){
+  for (let d = 1; d <= ultimoDia.getDate(); d++) {
     const fecha = new Date(baseDate.getFullYear(), baseDate.getMonth(), d);
     const diaElem = document.createElement("div");
     diaElem.classList.add("fila-dia");
     diaElem.dataset.fecha = formatearLocal(fecha);
     diaElem.innerText = d;
 
-    // 🔴 Días pasados
+    // 🔴 Pasado
     if (fecha < hoy) {
       diaElem.classList.add("reservado");
-      diaElem.style.backgroundColor = "#ff6666";
-      diaElem.style.color = "#fff";
     }
 
     const cabaña = document.getElementById("cabaña").value;
 
-    // 🔴 Reservados o bloqueados
-    if(reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
-       reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
+    // 🔴 Reservado o bloqueado
+    if (
+      reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) ||
+      reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)
+    ) {
       diaElem.classList.add("reservado");
-      diaElem.style.backgroundColor = "#ff6666";
-      diaElem.style.color = "#fff";
     }
 
-    diaElem.addEventListener("click", ()=>{
-      if(modoAdmin){
-        if(reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)){
-          reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f!==diaElem.dataset.fecha);
+    diaElem.addEventListener("click", () => {
+      if (modoAdmin) {
+        if (reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
+          reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f !== diaElem.dataset.fecha);
         } else {
           reservasGlobal.bloqueados.push(diaElem.dataset.fecha);
         }
         guardarReservasLocal();
         iniciarCalendario();
-      } else if(!diaElem.classList.contains("reservado")){
+      } else if (!diaElem.classList.contains("reservado")) {
         seleccionarFecha(fecha);
       }
     });
@@ -194,107 +206,97 @@ function generarMes(baseDate){
   return mesContainer;
 }
 
-// ===== CALENDARIO PRINCIPAL CON NAVEGACIÓN =====
-function iniciarCalendario(){
+// ===== CALENDARIO PRINCIPAL (1 MES) =====
+function iniciarCalendario() {
   const container = document.getElementById("fechas");
   container.innerHTML = "";
 
   const nav = document.createElement("div");
-  nav.style.display="flex";
-  nav.style.justifyContent="space-between";
-  nav.style.marginBottom="0.5rem";
+  nav.classList.add("nav-meses");
 
   const prevBtn = document.createElement("button");
+  prevBtn.classList.add("btn-nav");
   prevBtn.innerText = "◀";
+
   const nextBtn = document.createElement("button");
+  nextBtn.classList.add("btn-nav");
   nextBtn.innerText = "▶";
 
   nav.appendChild(prevBtn);
   nav.appendChild(nextBtn);
   container.appendChild(nav);
 
-  const mesesDiv = document.createElement("div");
-  mesesDiv.id = "meses-container";
-  mesesDiv.style.display="flex";
-  mesesDiv.style.gap="1rem";
-  container.appendChild(mesesDiv);
+  const mesDiv = document.createElement("div");
+  mesDiv.id = "meses-container";
+  container.appendChild(mesDiv);
 
-  function renderMeses(){
-    mesesDiv.innerHTML = "";
-    mesesDiv.appendChild(generarMes(mesBase));
-    const siguiente = new Date(mesBase.getFullYear(), mesBase.getMonth()+1, 1);
-    mesesDiv.appendChild(generarMes(siguiente));
+  function renderMes() {
+    mesDiv.innerHTML = "";
+    mesDiv.appendChild(generarMes(mesBase));
   }
 
-  prevBtn.addEventListener("click", ()=>{
-    mesBase.setMonth(mesBase.getMonth()-1);
-    renderMeses();
-  });
-  nextBtn.addEventListener("click", ()=>{
-    mesBase.setMonth(mesBase.getMonth()+1);
-    renderMeses();
+  prevBtn.addEventListener("click", () => {
+    mesBase.setMonth(mesBase.getMonth() - 1);
+    renderMes();
   });
 
-  renderMeses();
+  nextBtn.addEventListener("click", () => {
+    mesBase.setMonth(mesBase.getMonth() + 1);
+    renderMes();
+  });
+
+  renderMes();
 }
 
-// ===== INICIAR CARRUSELES =====
+// ===== CARRUSELES =====
 function iniciarCarruseles() {
   const carousels = document.querySelectorAll(".carousel-container-general");
-  carousels.forEach((c) => {
+
+  carousels.forEach(c => {
     const slides = c.querySelectorAll(".carousel-slide-general");
     const prev = c.querySelector(".prev-general");
     const next = c.querySelector(".next-general");
-
     let index = 0;
 
-    function mostrarSlide(i){
+    function mostrar(i) {
       slides.forEach(s => s.classList.remove("active"));
       slides[i].classList.add("active");
     }
 
-    prev.addEventListener("click", ()=>{
-      index = (index-1+slides.length)%slides.length;
-      mostrarSlide(index);
+    prev?.addEventListener("click", () => {
+      index = (index - 1 + slides.length) % slides.length;
+      mostrar(index);
     });
 
-    next.addEventListener("click", ()=>{
-      index = (index+1)%slides.length;
-      mostrarSlide(index);
+    next?.addEventListener("click", () => {
+      index = (index + 1) % slides.length;
+      mostrar(index);
     });
 
-    mostrarSlide(index);
+    mostrar(0);
   });
 }
 
-// ===== BOTÓN ADMIN =====
+// ===== ADMIN =====
 function iniciarAdmin() {
   const btn = document.getElementById("adminButton");
-  btn.addEventListener("click", ()=>{
+  btn.addEventListener("click", () => {
     const pwd = prompt("Introduce la contraseña de administración");
-    if(pwd==="8111"){
+    if (pwd === "8111") {
       modoAdmin = !modoAdmin;
-      alert(`Modo administrador ${modoAdmin?"activado":"desactivado"}: ahora puedes bloquear/desbloquear días haciendo clic`);
+      alert(`Modo administrador ${modoAdmin ? "activado" : "desactivado"}`);
     } else {
       alert("Contraseña incorrecta");
     }
   });
 }
 
-// ===== BOTÓN PAGO =====
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
-  document.getElementById("btnPagar")?.addEventListener("click", ()=>{
-    alert("Aquí se abriría el pago con Square (simulación)");
-  });
-});
-
 // ===== INICIALIZACIÓN =====
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
   cargarReservasLocal();
   iniciarCalendario();
   iniciarCarruseles();
   iniciarAdmin();
 
-  document.getElementById("cabaña")?.addEventListener("change", ()=>iniciarCalendario());
+  document.getElementById("cabaña")?.addEventListener("change", iniciarCalendario);
 });
