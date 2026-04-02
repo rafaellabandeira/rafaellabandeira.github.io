@@ -208,17 +208,87 @@
 /* ============================
    CARRUSEL
 ============================ */
-.carousel-button-general { cursor: pointer; }
+
+/* Contenedor general */
+.carousel-container-general {
+  max-width: 600px;
+  width: 100%;
+  margin: 1rem auto;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(76,175,80,0.3);
+  position: relative;
+}
+
+/* Track */
+.carousel-general-slides {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+}
+
+/* Cada slide */
+.carousel-slide-general {
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Imágenes del slide */
+.carousel-slide-general img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Botones */
+.carousel-button-general {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(76, 175, 80, 0.85);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 1.6rem;
+  border-radius: 6px;
+  z-index: 10;
+}
+.prev-general { left: 12px; }
+.next-general { right: 12px; }
+.carousel-button-general:hover { background: rgba(76,175,80,1); }
+
+/* Indicadores */
+.carousel-indicators-general {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  gap: 8px;
+}
+.indicator-general {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ccc;
+  border: none;
+  cursor: pointer;
+}
+.indicator-general.active { background-color: #4CAF50; }
 
 /* ============================
    RESPONSIVE
 ============================ */
 @media screen and (max-width: 420px) {
-  .calendario-1-mes {
-    max-width: 95%;
-  }
+  .calendario-1-mes { max-width: 95%; }
   .cal-top { font-size: 14px; padding: 6px; }
   .fila-dia { padding: 8px 0; font-size: 12px; }
   .dia-semana { font-size: 12px; padding: 4px 0; }
   #btnCalcular, #btnPagar { font-size: 14px; padding: 8px 10px; }
+
+  /* Carrusel responsivo */
+  .carousel-slide-general img { max-height: 200px; }
 }
