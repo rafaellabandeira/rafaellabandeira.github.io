@@ -286,3 +286,31 @@
   background: #c8e6c9 !important;
   color: #000;
 }
+.calendario-1-mes {
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.cal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.flecha-mes {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#tituloMes {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
