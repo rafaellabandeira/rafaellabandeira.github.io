@@ -2,7 +2,7 @@
    1️⃣ HERO PORTADA
    ============================== */
 .hero {
-  background-image: url('../images/hero.jpg'); /* Cambia a tu imagen real */
+  background-image: url('../images/hero.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -29,7 +29,7 @@
 
 .hero-title-bottom {
   font-size: 2rem;
-  margin-bottom: 1rem;
+  font-weight: 500;
   text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
 }
 
@@ -86,7 +86,7 @@
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;
-  transition: background 0.3s;
+  transition: 0.3s;
 }
 
 .cabin-card .boton:hover {
@@ -146,6 +146,14 @@
   background-color: #45a049;
 }
 
+.resumen-reserva {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  border-left: 5px solid #4caf50;
+}
+
 .spinner {
   display: none;
   width: 30px;
@@ -161,21 +169,13 @@
   to { transform: rotate(360deg); }
 }
 
-.resumen-reserva {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #f7f7f7;
-  border-left: 5px solid #4caf50;
-}
-
 /* ==============================
    4️⃣ CALENDARIO PERSONALIZADO
    ============================== */
 .calendario-1-mes {
   width: 100%;
   max-width: 350px;
-  margin: 0 auto;
+  margin: 0 auto 25px;
   background: #fff;
   padding: 15px;
   border-radius: 12px;
@@ -189,39 +189,32 @@
   margin-bottom: 10px;
 }
 
-#tituloMes {
-  font-size: 20px;
-  font-weight: bold;
-  text-transform: uppercase;
-  text-align: center;
-  flex: 1;
-}
-
-/* Flechas dentro del título */
 .flecha-mes {
-  background: #4caf50;
+  background: #4CAF50;
   color: white;
   border: none;
   padding: 6px 12px;
   font-size: 18px;
   border-radius: 6px;
   cursor: pointer;
-  flex-shrink: 0;
-  transition: background 0.3s;
 }
 
-.flecha-mes:hover {
-  background: #45a049;
+#tituloMes {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  flex: 1;
+  text-align: center;
 }
 
-/* Grid de días */
-.calendario-grid {
+/* GRID CALENDARIO */
+.mes-calendario {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
+  margin-top: 10px;
 }
 
-/* Días de la semana */
 .dia-semana {
   text-align: center;
   font-weight: bold;
@@ -229,7 +222,6 @@
   color: #555;
 }
 
-/* Día normal */
 .fila-dia {
   text-align: center;
   padding: 10px 0;
@@ -239,20 +231,17 @@
   transition: 0.2s;
 }
 
-/* Día vacío (mes anterior o siguiente) */
-.empty-dia {
+.fila-dia.empty-dia {
   background: transparent !important;
   cursor: default !important;
 }
 
-/* Día seleccionado */
 .fila-dia.seleccionado {
   background: #4caf50 !important;
   color: #fff !important;
   font-weight: bold;
 }
 
-/* Día reservado */
 .fila-dia.reservado {
   background: #e53935 !important;
   color: white !important;
@@ -260,42 +249,33 @@
   opacity: 0.85;
 }
 
-/* Días pasados */
 .fila-dia.pasado {
   background: #ddd !important;
   color: #777 !important;
   cursor: not-allowed !important;
 }
 
-/* Hover solo si es disponible */
 .fila-dia:not(.reservado):not(.pasado):hover {
   background: #c8e6c9 !important;
   color: #000;
 }
 
 /* ==============================
-   5️⃣ CARRUSEL GENERAL Y PISCINA
+   5️⃣ RESPONSIVE CALENDARIO
    ============================== */
-.carousel-button-general {
-  cursor: pointer;
-  border: none;
-  background: rgba(0,0,0,0.3);
-  color: #fff;
-  font-size: 24px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
-}
-
-.carousel-button-general.prev-general { left: 10px; }
-.carousel-button-general.next-general { right: 10px; }
-
-.carousel-indicators-general {
-  text-align: center;
-  margin-top: 10px;
+@media (max-width: 480px) {
+  .cal-top {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  #tituloMes {
+    font-size: 18px;
+  }
+  .flecha-mes {
+    padding: 4px 8px;
+    font-size: 16px;
+  }
 }
 
 /* ==============================
@@ -336,19 +316,8 @@
 }
 
 /* ==============================
-   7️⃣ RESPONSIVE
+   7️⃣ CARRUSELES
    ============================== */
-@media (max-width: 480px) {
-  .cal-top {
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 6px;
-  }
-  #tituloMes {
-    font-size: 18px;
-  }
-  .flecha-mes {
-    padding: 4px 8px;
-    font-size: 16px;
-  }
+.carousel-button-general {
+  cursor: pointer;
 }
