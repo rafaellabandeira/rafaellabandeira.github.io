@@ -1,62 +1,76 @@
 
-<!DOCTYPE html>  <html lang="es">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Cabañas Río Mundo | Casas Rurales en Riópar</title>  
-<meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">  
-<meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">  
-<link rel="canonical" href="https://casaruralriomundo.es">  
-<link rel="icon" href="images/favicon.svg" type="image/svg+xml">  
-<link rel="apple-touch-icon" href="images/favicon.svg">  <!-- Estilos originales -->  <link rel="stylesheet" href="css/global.css">  
-<link rel="stylesheet" href="css/index.css">  
-<link rel="stylesheet" href="css/style.css">    
+<!DOCTYPE html>  
+<html lang="es">  
+
+ <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cabañas Río Mundo | Casas Rurales en Riópar</title>
+
+<meta name="description" content="Cabañas rurales en Riópar, junto al Nacimiento del Río Mundo. Piscina en verano, entorno natural y contacto directo por WhatsApp.">
+<meta name="keywords" content="cabañas río mundo, casas rurales riópar, alojamiento rural albacete">
+
+<link rel="canonical" href="https://casaruralriomundo.es">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="images/favicon.svg">
+
+<!-- Estilos -->
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+/* WhatsApp abajo derecha */
+#whatsappButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  z-index: 1000;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-color: #25D366;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#whatsappButton img { width: 35px; height: 35px; }
+
+/* Candado abajo izquierda */
+#adminButton {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  z-index: 1000;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background-color: #444;
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Días bloqueados */
+.fila-dia.reservado {
+  background-color: #f44336;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* Botones del carrusel */
+.carousel-button-general {
+  cursor: pointer;
+}
+</style>
+
+</head>
   
-/* WhatsApp abajo derecha */  
-#whatsappButton {  
-  position: fixed;  
-  bottom: 20px;  
-  right: 20px;  
-  width: 60px;  
-  height: 60px;  
-  z-index: 1000;  
-  border-radius: 50%;  
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);  
-  background-color: #25D366;  
-  display: flex;  
-  justify-content: center;  
-  align-items: center;  
-}  
-#whatsappButton img { width: 35px; height: 35px; }  
-  
-/* Candado abajo izquierda */  
-#adminButton {  
-  position: fixed;  
-  bottom: 20px;  
-  left: 20px;  
-  width: 50px;  
-  height: 50px;  
-  z-index: 1000;  
-  border-radius: 50%;  
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);  
-  background-color: #444;  
-  color: #fff;  
-  font-size: 24px;  
-  display: flex;  
-  justify-content: center;  
-  align-items: center;  
-  cursor: pointer;  
-}  
-  
-/* Días bloqueados */  
-.fila-dia.reservado {  
-  background-color: #f44336;  
-  color: white;  
-  cursor: not-allowed;  
-}  
-  
-/* Botones del carrusel */  
-.carousel-button-general { cursor: pointer; }  
-</style>  </head>  
 <body>  <!-- ===== NAVBAR ===== -->  <nav class="navbar">  
   <div class="nav-container">  
     <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>  
