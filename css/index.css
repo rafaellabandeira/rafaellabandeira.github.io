@@ -1,284 +1,244 @@
-/* ================= INDEX.CSS LIMPIO ================= */
+/* ================= INDEX.CSS - VERSIÓN ARREGLADA ================= */
 
-/* ===== NAVBAR MÁS DELGADO ===== */
+/* ===== NAVBAR ===== */
 .navbar {
-  background: #fff !important;
-  padding: 6px 20px !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1000 !important;
+  background: #fff;
+  padding: 6px 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .nav-logo {
-  font-weight: bold !important;
-  font-size: 20px !important;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 .nav-menu {
-  list-style: none !important;
-  display: flex !important;
-  gap: 15px !important;
+  list-style: none;
+  display: flex;
+  gap: 15px;
 }
 
 .nav-link {
-  color: #212121 !important;
-  font-weight: 500 !important;
-  padding: 6px 8px !important;
+  color: #212121;
+  font-weight: 500;
+  padding: 6px 8px;
 }
 
-/* ===== HERO AJUSTADO ===== */
+/* ===== HERO ===== */
 .hero {
-  background-image: url('/images/1000173073.jpg') !important;
-  background-size: cover !important;
-  background-position: bottom center !important;
-  background-repeat: no-repeat !important;
-  height: 70vh !important;
-  min-height: 350px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
-  color: #fff !important;
-  text-align: center !important;
+  background-image: url('/images/1000173073.jpg');
+  background-size: cover;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  height: 70vh;
+  min-height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #fff;
+  text-align: center;
 }
 
 .hero::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  background: rgba(0,0,0,0.35) !important;
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
 }
 
 .header-inner {
-  position: relative !important;
-  z-index: 2 !important;
-  padding: 20px !important;
-  max-width: 900px !important;
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  max-width: 900px;
 }
 
 .hero-title-top {
-  font-size: 32px !important;
-  color: #ffffff !important;
-  font-weight: 600 !important;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
-  margin-bottom: 6px !important;
+  font-size: 32px;
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
+  margin-bottom: 6px;
 }
 
 .hero-title-bottom {
-  font-size: 28px !important;
-  color: #FFD54F !important;
-  font-weight: 600 !important;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6) !important;
+  font-size: 28px;
+  color: #FFD54F;
+  font-weight: 600;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
 }
 
 /* ===== SECCIONES ===== */
 section {
-  padding: 40px 20px !important;
-  max-width: 1200px !important;
-  margin: auto !important;
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
 }
 
 /* ===== CABAÑAS GRID ===== */
 .cabanias-grid {
-  display: flex !important;
-  gap: 20px !important;
-  flex-wrap: wrap !important;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .cabin-card {
-  background: #fff !important;
-  padding: 20px !important;
-  border-radius: 10px !important;
-  flex: 1 1 300px !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
-  border: 1px solid #eee !important;
-  transition: 0.25s !important;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1 1 300px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: 1px solid #eee;
+  transition: 0.25s;
 }
 
 .cabin-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
-}
-
-/* ===== CARRUSEL ===== */
-.carousel-container {
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-.carousel {
-  display: flex !important;
-  transition: transform 0.3s ease-in-out !important;
-}
-
-.carousel-slide img {
-  width: 100% !important;
-  border-radius: 8px !important;
-}
-
-.carousel-button {
-  position: absolute !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  background: rgba(0,0,0,0.35) !important;
-  color: #fff !important;
-  border: none !important;
-  font-size: 24px !important;
-  cursor: pointer !important;
-  padding: 8px 12px !important;
-  border-radius: 50% !important;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 
 /* ===== MOTOR DE RESERVAS ===== */
 .reserva-box {
-  max-width: 720px !important;
-  margin: 0 auto !important;
-  background: #ffffff !important;
-  border: 3px solid #4caf50 !important;
-  border-radius: 14px !important;
-  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18) !important;
-  padding: 28px 26px !important;
-  transition: 0.3s ease !important;
+  max-width: 720px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 3px solid #4caf50;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18);
+  padding: 28px 26px;
+  transition: 0.3s ease;
 }
 
 .reserva-box:hover {
-  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28) !important;
+  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28);
 }
 
 .reserva-box label {
-  display: block !important;
-  margin-top: 12px !important;
-  font-weight: 500 !important;
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
 }
 
 .reserva-box input,
 .reserva-box select {
-  border-radius: 6px !important;
-  border: 1px solid #ddd !important;
-  padding: 10px !important;
-  margin-bottom: 14px !important;
-  width: 100% !important;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 14px;
+  width: 100%;
 }
 
 .reserva-box .resumen-reserva {
-  margin-top: 12px !important;
-  background: #f0f0f0 !important;
-  padding: 10px !important;
-  border-radius: 6px !important;
+  margin-top: 12px;
+  background: #f0f0f0;
+  padding: 10px;
+  border-radius: 6px;
 }
 
-.reserva-box button {
-  margin-top: 10px !important;
-}
-
-.spinner {
-  display: none !important;
-  width: 40px !important;
-  height: 40px !important;
-  border: 4px solid #ccc !important;
-  border-top: 4px solid #4caf50 !important;
-  border-radius: 50% !important;
-  animation: girar 1s linear infinite !important;
-  margin: 10px auto !important;
-}
-
-@keyframes girar {
-  100% { transform: rotate(360deg) !important; }
-}
-
-/* ===== FLATPICKR ===== */
-.flatpickr-calendar {
-  font-family: inherit !important;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-  z-index: 1000 !important;
-}
-
-.flatpickr-day {
-  border-radius: 6px !important;
-}
-
-/* Días disponibles */
-.flatpickr-day.disponible {
-  background: #e8f5e9 !important;
-  color: #000 !important;
-}
-
-/* Días ocupados */
-.flatpickr-day.ocupado {
-  background: #e53935 !important;
-  color: #fff !important;
-  cursor: not-allowed !important;
-}
-
-/* Días pasados */
-.flatpickr-day.pasado {
-  background: #212121 !important;
-  color: #fff !important;
-  cursor: not-allowed !important;
-}
-
-/* Hover solo días disponibles */
-.flatpickr-day.disponible:hover {
-  background: #66bb6a !important;
-  color: #fff !important;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  background: #212121 !important;
-  color: #fff !important;
-  text-align: center !important;
-  padding: 20px !important;
-  margin-top: 40px !important;
-}
-
-footer a {
-  color: #4caf50 !important;
-}
-
-/* ===== BOTÓN WHATSAPP ===== */
-#whatsappButton {
-  position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
-  width: 60px !important;
-  height: 60px !important;
-  z-index: 1000 !important;
-}
-
-#whatsappButton img {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .cabanias-grid { flex-direction: column !important; }
-  .nav-menu { flex-direction: column !important; gap: 10px !important; }
-
-  .hero { height: 50vh !important; }
-  .hero-title { font-size: 26px !important; }
-  .hero-sub { font-size: 16px !important; }
-}
-
-/* ===== MARCO MOTOR DE RESERVAS ===== */
-#reserva-online {
-  padding: 40px 20px !important;
-}
-
-/* ===== FIX CARRUSELES INDEX ===== */
-
+/* ===== CARRUSEL ===== */
+.carousel-container-general,
 .carousel-container {
   position: relative;
   overflow: hidden;
 }
 
-.carousel-slide {
-  display: none;
+/* Estilos específicos para tu carrusel actual (slide) */
+.carousel-general-slides {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
   width: 100%;
 }
 
-.carousel-slide.active {
-  display: block;
+.carousel-slide-general {
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* ===== CALENDARIO - CORREGIDO (Alta prioridad) ===== */
+.calendario-1-mes {
+  max-width: 360px;
+  width: 100%;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+}
+
+.calendario-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 4px;
+  padding: 12px;
+  background: #fff;
+}
+
+.dia-semana,
+.fila-dia {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px 4px !important;
+  min-height: 44px !important;
+  font-size: 14.5px;
+}
+
+.fila-dia.seleccionado {
+  background-color: #007BFF !important;
+  color: white !important;
+}
+
+.fila-dia.reservado {
+  background-color: #f44336 !important;
+  color: white !important;
+  cursor: not-allowed !important;
+}
+
+/* Responsive calendario */
+@media (max-width: 480px) {
+  .calendario-1-mes {
+    max-width: 100%;
+  }
+  .calendario-grid {
+    gap: 3px;
+    padding: 8px;
+  }
+  .dia-semana, .fila-dia {
+    min-height: 38px;
+    font-size: 13.5px;
+    padding: 8px 2px;
+  }
+}
+
+/* ===== SPINNER ===== */
+.spinner {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #4caf50;
+  border-radius: 50%;
+  animation: girar 1s linear infinite;
+  margin: 10px auto;
+}
+
+@keyframes girar {
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE GENERAL ===== */
+@media (max-width: 768px) {
+  .cabanias-grid { flex-direction: column; }
+  .nav-menu { flex-direction: column; gap: 10px; }
+  .hero { height: 50vh; }
+}
+
+/* ===== MARCO MOTOR DE RESERVAS ===== */
+#reserva-online {
+  padding: 40px 20px;
 }
