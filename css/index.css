@@ -1,8 +1,8 @@
-/* ================= INDEX.CSS - VERSIÓN LIMPIA Y SIN CONFLICTOS ================= */
+/* ================= INDEX.CSS - VERSIÓN LIMPIA + CALENDARIO FUERTE ================= */
 
-/* Básicos */
 * { box-sizing: border-box; }
 
+/* Básicos */
 body { font-family: Arial, sans-serif; }
 
 /* Navbar y Hero */
@@ -49,72 +49,63 @@ body { font-family: Arial, sans-serif; }
 
 /* ==================== CALENDARIO ==================== */
 .calendario-1-mes {
-  width: 100%;
-  max-width: 380px;
-  margin: 20px auto;
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  border: 1px solid #ddd;
+  width: 100% !important;
+  max-width: 380px !important;
+  margin: 20px auto !important;
+  background: #fff !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+  border: 1px solid #ddd !important;
 }
 
 .cal-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f7f7f7;
-  padding: 14px 16px;
-  font-weight: bold;
-  font-size: 15px;
-  border-bottom: 1px solid #eee;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: #f7f7f7 !important;
+  padding: 14px 16px !important;
+  font-weight: bold !important;
+  font-size: 15px !important;
+  border-bottom: 1px solid #eee !important;
 }
 
 .calendario-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-  padding: 12px;
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 5px !important;
+  padding: 12px !important;
 }
 
 .dia-semana, .fila-dia {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 42px;
-  padding: 8px 4px;
-  font-size: 14px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 42px !important;
+  padding: 8px 4px !important;
+  font-size: 14px !important;
 }
 
-.fila-dia.seleccionado {
-  background-color: #007BFF;
-  color: white;
-}
-
-.fila-dia.reservado {
-  background-color: #f44336;
-  color: white;
-  cursor: not-allowed;
-}
+.fila-dia.seleccionado { background-color: #007BFF !important; color: white !important; }
+.fila-dia.reservado { background-color: #f44336 !important; color: white !important; cursor: not-allowed !important; }
 
 .flecha-mes {
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  padding: 4px 10px;
+  background: none !important;
+  border: none !important;
+  font-size: 22px !important;
+  cursor: pointer !important;
+  padding: 4px 10px !important;
 }
 
 /* Responsive */
 @media (max-width: 480px) {
-  .calendario-1-mes { max-width: 100%; }
-  .cal-top { padding: 12px; font-size: 14px; }
-  .calendario-grid { gap: 4px; padding: 10px; }
-  .dia-semana, .fila-dia { min-height: 38px; font-size: 13px; }
+  .calendario-1-mes { max-width: 100% !important; }
+  .cal-top { padding: 12px !important; font-size: 14px !important; }
+  .calendario-grid { gap: 4px !important; padding: 10px !important; }
+  .dia-semana, .fila-dia { min-height: 38px !important; font-size: 13px !important; }
 }
 
-/* Resto de estilos básicos */
+/* Resto básico */
 section { padding: 40px 20px; max-width: 1200px; margin: auto; }
-
 .cabanias-grid { display: flex; gap: 20px; flex-wrap: wrap; }
 .cabin-card { flex: 1 1 300px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
