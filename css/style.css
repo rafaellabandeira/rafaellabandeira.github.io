@@ -264,3 +264,102 @@
   justify-content: space-between !important;
   align-items: center !important;
 }
+
+/* ===========================================
+   FIX FINAL CALENDARIO — PRIORIDAD MÁXIMA
+=========================================== */
+
+/* Contenedor */
+.calendario-1-mes {
+  max-width: 360px !important;
+  margin: 20px auto !important;
+  border: 3px solid #4CAF50 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 6px 16px rgba(76,175,80,0.35) !important;
+  background: #fff !important;
+}
+
+/* Cabecera */
+.cal-top {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 10px !important;
+  background: #f7f7f7 !important;
+  font-weight: bold !important;
+  font-size: 15px !important;
+}
+
+#tituloMes {
+  flex: 1 !important;
+  text-align: center !important;
+}
+
+/* Flechas */
+.flecha-mes {
+  background: none !important;
+  border: none !important;
+  font-size: 20px !important;
+  color: #333 !important;
+  cursor: pointer !important;
+}
+
+/* Cuadrícula */
+.calendario-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 1px !important;
+  background: #fff !important;
+  width: 100% !important;
+  padding: 4px !important;
+}
+
+/* Encabezado días de semana */
+.dia-semana {
+  background: #f0f0f0 !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 34px !important;
+}
+
+/* Días */
+.fila-dia {
+  background: #fff !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+}
+
+/* Días vacíos */
+.empty-dia {
+  background: transparent !important;
+  cursor: default !important;
+}
+
+/* Días seleccionados */
+.fila-dia.seleccionado {
+  background: #007BFF !important;
+  color: white !important;
+}
+
+/* Hover */
+.fila-dia:not(.reservado):not(.empty-dia):hover {
+  background: #c9efce !important;
+}
+
+/* Reservado */
+.fila-dia.reservado {
+  background: #e53935 !important;
+  color: white !important;
+  cursor: not-allowed !important;
+}
