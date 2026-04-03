@@ -1,365 +1,106 @@
-/* ============================
-   CALENDARIO Y RESERVAS
-============================ */
+/* ======= CALENDARIO — ESTILO PRINCIPAL ======= */
 
 .calendario-1-mes {
-  max-width: 320px !important;
-  margin: 20px auto !important;
-  font-family: inherit !important;
-  border: 3px solid #4CAF50 !important;
-  border-radius: 10px !important;
-  overflow: hidden !important;
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
-  font-size: 13px !important;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
 }
 
+/* Mes y botones */
 .cal-top {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  gap: 5px !important;
-  background-color: #f7f7f7 !important;
-  padding: 6px 8px !important;
-  font-weight: bold !important;
-  font-size: 14px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.flecha-mes {
-  background: none !important;
-  border: none !important;
-  font-size: 18px !important;
-  padding: 2px 6px !important;
-  cursor: pointer !important;
-  color: #333 !important;
-  transition: color 0.2s !important;
-}
-.flecha-mes:hover { color: #007BFF !important; }
-
-#tituloMes {
-  flex: 1 !important;
-  text-align: center !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  color: #333 !important;
+.cal-top h3 {
+  font-size: 20px;
+  margin: 0;
 }
 
+.cal-btn {
+  background: #f3f3f3;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Grid principal */
 .calendario-grid {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 1px !important;
-  padding: 4px !important;
-  background-color: #fff !important;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
 }
 
+/* Días de la semana */
 .dia-semana {
-  text-align: center !important;
-  font-weight: bold !important;
-  color: #555 !important;
-  padding: 4px 0 !important;
-  background-color: #f0f0f0 !important;
-  font-size: 12px !important;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 13px;
+  color: #444;
 }
 
-.fila-dia {
-  text-align: center !important;
-  padding: 6px 0 !important;
-  cursor: pointer !important;
-  border-radius: 6px !important;
-  user-select: none !important;
-  font-size: 12px !important;
-  transition: background 0.2s, color 0.2s !important;
-}
-
-.empty-dia { cursor: default !important; background: transparent !important; }
-
-.fila-dia.seleccionado {
-  background-color: #007BFF !important;
-  color: white !important;
-}
-
-.fila-dia:not(.reservado):hover { background-color: #e0f0ff !important; }
-
-.fila-dia.reservado {
-  background-color: #f44336 !important;
-  color: white !important;
-  cursor: not-allowed !important;
-}
-
-/* ============================
-   RESUMEN Y FORMULARIOS
-============================ */
-
-.reserva-box {
-  max-width: 400px !important;
-  margin: 20px auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-  font-family: inherit !important;
-  border: 3px solid #4CAF50 !important;
-  border-radius: 10px !important;
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
-  padding: 15px !important;
-  transition: transform 0.2s, box-shadow 0.2s !important;
-}
-
-.reserva-box label { font-weight: 600 !important; }
-
-.reserva-box input,
-.reserva-box select {
-  padding: 8px 10px !important;
-  border-radius: 6px !important;
-  border: 1px solid #ccc !important;
-  font-size: 14px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-#btnCalcular, #btnPagar {
-  padding: 10px 15px !important;
-  background-color: #007BFF !important;
-  color: white !important;
-  font-weight: bold !important;
-  border: none !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  transition: background 0.2s !important;
-}
-#btnCalcular:hover, #btnPagar:hover { background-color: #0056b3 !important; }
-
-.aviso-fechas { color: #f44336 !important; font-weight: bold !important; text-align: center !important; }
-.mensaje-urgencia { color: #ff9800 !important; font-weight: bold !important; text-align: center !important; }
-
-.resumen-reserva {
-  margin-top: 10px !important;
-  background-color: #f7f7f7 !important;
-  padding: 10px !important;
-  border-radius: 8px !important;
-  font-size: 14px !important;
-  border: 3px solid #4CAF50 !important;
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
-}
-
-/* ============================
-   CABAÑAS
-============================ */
-
-.cabanias-grid {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 16px !important;
-  justify-content: center !important;
-}
-
-.cabin-card {
-  background-color: #fff !important;
-  padding: 15px !important;
-  border-radius: 10px !important;
-  flex: 1 1 280px !important;
-  max-width: 300px !important;
-  border: 3px solid #4CAF50 !important;
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
-  transition: transform 0.2s, box-shadow 0.2s, border 0.2s !important;
-}
-
-.cabin-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 6px 16px rgba(76,175,80,0.5) !important;
-}
-
-/* ============================
-   CARRUSEL
-============================ */
-
-.carousel-container-general {
-  max-width: 600px !important;
-  width: 100% !important;
-  margin: 1rem auto !important;
-  overflow: hidden !important;
-  border-radius: 8px !important;
-  border: 3px solid #4CAF50 !important;
-  box-shadow: 0 4px 12px rgba(76,175,80,0.3) !important;
-  position: relative !important;
-}
-
-.carousel-general-slides { display: flex !important; transition: transform 0.6s ease-in-out !important; }
-.carousel-slide-general {
-  flex-shrink: 0 !important;
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  overflow: hidden !important;
-}
-.carousel-slide-general img { width: 100% !important; max-height: 320px !important; object-fit: cover !important; display: block !important; }
-
-.carousel-button-general {
-  position: absolute !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  background: rgba(76, 175, 80, 0.85) !important;
-  color: #fff !important;
-  border: none !important;
-  padding: 10px 14px !important;
-  cursor: pointer !important;
-  font-size: 1.6rem !important;
-  border-radius: 6px !important;
-  z-index: 10 !important;
-}
-.prev-general { left: 12px !important; }
-.next-general { right: 12px !important; }
-.carousel-button-general:hover { background: rgba(76,175,80,1) !important; }
-
-.carousel-indicators-general {
-  display: flex !important;
-  justify-content: center !important;
-  margin-top: 12px !important;
-  gap: 8px !important;
-}
-.indicator-general {
-  width: 12px !important;
-  height: 12px !important;
-  border-radius: 50% !important;
-  background-color: #ccc !important;
-  border: none !important;
-  cursor: pointer !important;
-}
-.indicator-general.active { background-color: #4CAF50 !important; }
-
-/* ============================
-   RESPONSIVE
-============================ */
-@media screen and (max-width: 420px) {
-  .calendario-1-mes { max-width: 95% !important; }
-  .cal-top { font-size: 14px !important; padding: 6px !important; }
-  .fila-dia { padding: 8px 0 !important; font-size: 12px !important; }
-  .dia-semana { font-size: 12px !important; padding: 4px 0 !important; }
-  #btnCalcular, #btnPagar { font-size: 14px !important; padding: 8px 10px !important; }
-  .carousel-slide-general img { max-height: 200px !important; }
-}
-
-
-/* ARREGLO URGENTE DEL CALENDARIO */
-.calendario-grid {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 1px !important;
-  width: 100% !important;
-  background: #fff !important;
-}
-
-/* Asegurar que los días no se estiren verticalmente */
-.fila-dia,
-.dia-semana {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  height: 38px !important;
-  min-height: 38px !important;
-}
-
-.cal-top {
-  display: flex !important;
-  flex-direction: row !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-}
-
-/* ===========================================
-   FIX FINAL CALENDARIO — PRIORIDAD MÁXIMA
-=========================================== */
-
-/* Contenedor */
-.calendario-1-mes {
-  max-width: 360px !important;
-  margin: 20px auto !important;
-  border: 3px solid #4CAF50 !important;
-  border-radius: 12px !important;
-  overflow: hidden !important;
-  box-shadow: 0 6px 16px rgba(76,175,80,0.35) !important;
-  background: #fff !important;
-}
-
-/* Cabecera */
-.cal-top {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 8px 10px !important;
-  background: #f7f7f7 !important;
-  font-weight: bold !important;
-  font-size: 15px !important;
-}
-
-#tituloMes {
-  flex: 1 !important;
-  text-align: center !important;
-}
-
-/* Flechas */
-.flecha-mes {
-  background: none !important;
-  border: none !important;
-  font-size: 20px !important;
-  color: #333 !important;
-  cursor: pointer !important;
-}
-
-/* Cuadrícula */
-.calendario-grid {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 1px !important;
-  background: #fff !important;
-  width: 100% !important;
-  padding: 4px !important;
-}
-
-/* Encabezado días de semana */
-.dia-semana {
-  background: #f0f0f0 !important;
-  font-weight: bold !important;
-  font-size: 12px !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  height: 34px !important;
-}
-
-/* Días */
-.fila-dia {
-  background: #fff !important;
-  height: 42px !important;
-  min-height: 42px !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  font-size: 13px !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  transition: background 0.2s !important;
-}
-
-/* Días vacíos */
+/* Día vacío del inicio */
 .empty-dia {
-  background: transparent !important;
-  cursor: default !important;
+  height: 45px;
 }
 
-/* Días seleccionados */
-.fila-dia.seleccionado {
-  background: #007BFF !important;
-  color: white !important;
+/* Día normal */
+.fila-dia {
+  text-align: center;
+  padding: 10px 0;
+  background: #fafafa;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
 }
 
-/* Hover */
-.fila-dia:not(.reservado):not(.empty-dia):hover {
-  background: #c9efce !important;
-}
-
-/* Reservado */
+/* Día reservado */
 .fila-dia.reservado {
-  background: #e53935 !important;
-  color: white !important;
-  cursor: not-allowed !important;
+  background: #ff8a8a;
+  color: white;
+  cursor: not-allowed;
+}
+
+/* Día seleccionado */
+.fila-dia.seleccionado {
+  background: #8ac6ff;
+  color: white;
+}
+
+/* Hover (solo en PC) */
+@media (hover: hover) {
+  .fila-dia:not(.reservado):hover {
+    background: #e5efff;
+  }
+}
+
+/* MOBILE FIX */
+@media (max-width: 480px) {
+  .calendario-1-mes {
+    padding: 12px;
+    max-width: 100%;
+  }
+
+  .cal-top h3 {
+    font-size: 18px;
+  }
+
+  .dia-semana, .fila-dia {
+    font-size: 13px;
+    padding: 8px 0;
+  }
+
+  .empty-dia {
+    height: 38px;
+  }
 }
