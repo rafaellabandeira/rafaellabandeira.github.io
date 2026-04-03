@@ -242,3 +242,63 @@ section {
 #reserva-online {
   padding: 40px 20px;
 }
+/* ======================
+   CALENDARIO - AJUSTE FINAL
+   ====================== */
+
+.calendario-1-mes {
+  max-width: 100%;
+  width: 100%;
+  max-width: 360px;
+  margin: 20px auto;
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  background: #fff;
+}
+
+.cal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f7f7;
+  padding: 12px 15px;
+  font-weight: bold;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.calendario-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 4px;
+  padding: 12px;
+  background: #fff;
+}
+
+.flecha-mes {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #333;
+}
+
+.flecha-mes:hover {
+  color: #007BFF;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .cal-top {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .calendario-grid {
+    gap: 3px;
+    padding: 10px;
+  }
+}
