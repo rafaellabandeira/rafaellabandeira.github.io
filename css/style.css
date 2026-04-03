@@ -237,3 +237,30 @@
   #btnCalcular, #btnPagar { font-size: 14px !important; padding: 8px 10px !important; }
   .carousel-slide-general img { max-height: 200px !important; }
 }
+
+
+/* ARREGLO URGENTE DEL CALENDARIO */
+.calendario-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
+  gap: 1px !important;
+  width: 100% !important;
+  background: #fff !important;
+}
+
+/* Asegurar que los días no se estiren verticalmente */
+.fila-dia,
+.dia-semana {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 38px !important;
+  min-height: 38px !important;
+}
+
+.cal-top {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
