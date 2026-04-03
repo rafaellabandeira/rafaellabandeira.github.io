@@ -1,4 +1,4 @@
-/* ================= INDEX.CSS - VERSIÓN ARREGLADA ================= */
+/* ================= INDEX.CSS - VERSIÓN FINAL ARREGLADA ================= */
 
 /* ===== NAVBAR ===== */
 .navbar {
@@ -10,29 +10,15 @@
   z-index: 1000;
 }
 
-.nav-logo {
-  font-weight: bold;
-  font-size: 20px;
-}
-
-.nav-menu {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-}
-
-.nav-link {
-  color: #212121;
-  font-weight: 500;
-  padding: 6px 8px;
-}
+.nav-logo { font-weight: bold; font-size: 20px; }
+.nav-menu { list-style: none; display: flex; gap: 15px; }
+.nav-link { color: #212121; font-weight: 500; padding: 6px 8px; }
 
 /* ===== HERO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg');
   background-size: cover;
   background-position: bottom center;
-  background-repeat: no-repeat;
   height: 70vh;
   min-height: 350px;
   display: flex;
@@ -57,29 +43,12 @@
   max-width: 900px;
 }
 
-.hero-title-top {
-  font-size: 32px;
-  color: #ffffff;
-  font-weight: 600;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
-  margin-bottom: 6px;
-}
+.hero-title-top { font-size: 32px; font-weight: 600; text-shadow: 0 3px 10px rgba(0,0,0,0.6); }
+.hero-title-bottom { font-size: 28px; color: #FFD54F; font-weight: 600; text-shadow: 0 3px 10px rgba(0,0,0,0.6); }
 
-.hero-title-bottom {
-  font-size: 28px;
-  color: #FFD54F;
-  font-weight: 600;
-  text-shadow: 0 3px 10px rgba(0,0,0,0.6);
-}
+/* ===== SECCIONES Y CABAÑAS ===== */
+section { padding: 40px 20px; max-width: 1200px; margin: auto; }
 
-/* ===== SECCIONES ===== */
-section {
-  padding: 40px 20px;
-  max-width: 1200px;
-  margin: auto;
-}
-
-/* ===== CABAÑAS GRID ===== */
 .cabanias-grid {
   display: flex;
   gap: 20px;
@@ -110,18 +79,9 @@ section {
   border-radius: 14px;
   box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18);
   padding: 28px 26px;
-  transition: 0.3s ease;
 }
 
-.reserva-box:hover {
-  box-shadow: 0 12px 34px rgba(76, 175, 80, 0.28);
-}
-
-.reserva-box label {
-  display: block;
-  margin-top: 12px;
-  font-weight: 500;
-}
+.reserva-box label { display: block; margin-top: 12px; font-weight: 500; }
 
 .reserva-box input,
 .reserva-box select {
@@ -132,13 +92,6 @@ section {
   width: 100%;
 }
 
-.reserva-box .resumen-reserva {
-  margin-top: 12px;
-  background: #f0f0f0;
-  padding: 10px;
-  border-radius: 6px;
-}
-
 /* ===== CARRUSEL ===== */
 .carousel-container-general,
 .carousel-container {
@@ -146,7 +99,6 @@ section {
   overflow: hidden;
 }
 
-/* Estilos específicos para tu carrusel actual (slide) */
 .carousel-general-slides {
   display: flex;
   transition: transform 0.6s ease-in-out;
@@ -159,7 +111,7 @@ section {
   flex-shrink: 0;
 }
 
-/* ===== CALENDARIO - CORREGIDO (Alta prioridad) ===== */
+/* ===== CALENDARIO - VERSIÓN FINAL ===== */
 .calendario-1-mes {
   max-width: 360px;
   width: 100%;
@@ -167,7 +119,18 @@ section {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.cal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f7f7;
+  padding: 12px 15px;
+  font-weight: bold;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
 }
 
 .calendario-grid {
@@ -199,15 +162,22 @@ section {
   cursor: not-allowed !important;
 }
 
-/* Responsive calendario */
+.flecha-mes {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #333;
+}
+
+.flecha-mes:hover { color: #007BFF; }
+
+/* Responsive */
 @media (max-width: 480px) {
-  .calendario-1-mes {
-    max-width: 100%;
-  }
-  .calendario-grid {
-    gap: 3px;
-    padding: 8px;
-  }
+  .calendario-1-mes { max-width: 100%; }
+  .cal-top { padding: 10px 12px; font-size: 14px; }
+  .calendario-grid { gap: 3px; padding: 10px; }
   .dia-semana, .fila-dia {
     min-height: 38px;
     font-size: 13.5px;
@@ -215,7 +185,7 @@ section {
   }
 }
 
-/* ===== SPINNER ===== */
+/* ===== SPINNER Y RESPONSIVE GENERAL ===== */
 .spinner {
   display: none;
   width: 40px;
@@ -227,11 +197,8 @@ section {
   margin: 10px auto;
 }
 
-@keyframes girar {
-  100% { transform: rotate(360deg); }
-}
+@keyframes girar { 100% { transform: rotate(360deg); } }
 
-/* ===== RESPONSIVE GENERAL ===== */
 @media (max-width: 768px) {
   .cabanias-grid { flex-direction: column; }
   .nav-menu { flex-direction: column; gap: 10px; }
@@ -241,64 +208,4 @@ section {
 /* ===== MARCO MOTOR DE RESERVAS ===== */
 #reserva-online {
   padding: 40px 20px;
-}
-/* ======================
-   CALENDARIO - AJUSTE FINAL
-   ====================== */
-
-.calendario-1-mes {
-  max-width: 100%;
-  width: 100%;
-  max-width: 360px;
-  margin: 20px auto;
-  padding: 0;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  background: #fff;
-}
-
-.cal-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f7f7f7;
-  padding: 12px 15px;
-  font-weight: bold;
-  font-size: 15px;
-  border-bottom: 1px solid #eee;
-}
-
-.calendario-grid {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 4px;
-  padding: 12px;
-  background: #fff;
-}
-
-.flecha-mes {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px 8px;
-  color: #333;
-}
-
-.flecha-mes:hover {
-  color: #007BFF;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .cal-top {
-    padding: 10px 12px;
-    font-size: 14px;
-  }
-  
-  .calendario-grid {
-    gap: 3px;
-    padding: 10px;
-  }
 }
