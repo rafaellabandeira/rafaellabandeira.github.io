@@ -1,6 +1,11 @@
-/* ================= INDEX.CSS - VERSIÓN FINAL ARREGLADA ================= */
+/* ================= INDEX.CSS - VERSIÓN LIMPIA Y SIN CONFLICTOS ================= */
 
-/* ===== NAVBAR ===== */
+/* Básicos */
+* { box-sizing: border-box; }
+
+body { font-family: Arial, sans-serif; }
+
+/* Navbar y Hero */
 .navbar {
   background: #fff;
   padding: 6px 20px;
@@ -10,11 +15,6 @@
   z-index: 1000;
 }
 
-.nav-logo { font-weight: bold; font-size: 20px; }
-.nav-menu { list-style: none; display: flex; gap: 15px; }
-.nav-link { color: #212121; font-weight: 500; padding: 6px 8px; }
-
-/* ===== HERO ===== */
 .hero {
   background-image: url('/images/1000173073.jpg');
   background-size: cover;
@@ -36,90 +36,27 @@
   background: rgba(0,0,0,0.35);
 }
 
-.header-inner {
-  position: relative;
-  z-index: 2;
-  padding: 20px;
-  max-width: 900px;
-}
-
-.hero-title-top { font-size: 32px; font-weight: 600; text-shadow: 0 3px 10px rgba(0,0,0,0.6); }
-.hero-title-bottom { font-size: 28px; color: #FFD54F; font-weight: 600; text-shadow: 0 3px 10px rgba(0,0,0,0.6); }
-
-/* ===== SECCIONES Y CABAÑAS ===== */
-section { padding: 40px 20px; max-width: 1200px; margin: auto; }
-
-.cabanias-grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.cabin-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  flex: 1 1 300px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border: 1px solid #eee;
-  transition: 0.25s;
-}
-
-.cabin-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-}
-
-/* ===== MOTOR DE RESERVAS ===== */
+/* Motor de reservas */
 .reserva-box {
   max-width: 720px;
   margin: 0 auto;
   background: #ffffff;
   border: 3px solid #4caf50;
   border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18);
   padding: 28px 26px;
+  box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18);
 }
 
-.reserva-box label { display: block; margin-top: 12px; font-weight: 500; }
-
-.reserva-box input,
-.reserva-box select {
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-bottom: 14px;
-  width: 100%;
-}
-
-/* ===== CARRUSEL ===== */
-.carousel-container-general,
-.carousel-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.carousel-general-slides {
-  display: flex;
-  transition: transform 0.6s ease-in-out;
-  width: 100%;
-}
-
-.carousel-slide-general {
-  min-width: 100%;
-  width: 100%;
-  flex-shrink: 0;
-}
-
-/* ===== CALENDARIO - VERSIÓN FINAL ===== */
+/* ==================== CALENDARIO ==================== */
 .calendario-1-mes {
-  max-width: 360px;
   width: 100%;
+  max-width: 380px;
   margin: 20px auto;
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  border: 1px solid #ddd;
 }
 
 .cal-top {
@@ -127,85 +64,57 @@ section { padding: 40px 20px; max-width: 1200px; margin: auto; }
   justify-content: space-between;
   align-items: center;
   background: #f7f7f7;
-  padding: 12px 15px;
+  padding: 14px 16px;
   font-weight: bold;
   font-size: 15px;
   border-bottom: 1px solid #eee;
 }
 
 .calendario-grid {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
   padding: 12px;
-  background: #fff;
 }
 
-.dia-semana,
-.fila-dia {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 10px 4px !important;
-  min-height: 44px !important;
-  font-size: 14.5px;
+.dia-semana, .fila-dia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 4px;
+  font-size: 14px;
 }
 
 .fila-dia.seleccionado {
-  background-color: #007BFF !important;
-  color: white !important;
+  background-color: #007BFF;
+  color: white;
 }
 
 .fila-dia.reservado {
-  background-color: #f44336 !important;
-  color: white !important;
-  cursor: not-allowed !important;
+  background-color: #f44336;
+  color: white;
+  cursor: not-allowed;
 }
 
 .flecha-mes {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   cursor: pointer;
-  padding: 4px 8px;
-  color: #333;
+  padding: 4px 10px;
 }
-
-.flecha-mes:hover { color: #007BFF; }
 
 /* Responsive */
 @media (max-width: 480px) {
   .calendario-1-mes { max-width: 100%; }
-  .cal-top { padding: 10px 12px; font-size: 14px; }
-  .calendario-grid { gap: 3px; padding: 10px; }
-  .dia-semana, .fila-dia {
-    min-height: 38px;
-    font-size: 13.5px;
-    padding: 8px 2px;
-  }
+  .cal-top { padding: 12px; font-size: 14px; }
+  .calendario-grid { gap: 4px; padding: 10px; }
+  .dia-semana, .fila-dia { min-height: 38px; font-size: 13px; }
 }
 
-/* ===== SPINNER Y RESPONSIVE GENERAL ===== */
-.spinner {
-  display: none;
-  width: 40px;
-  height: 40px;
-  border: 4px solid #ccc;
-  border-top: 4px solid #4caf50;
-  border-radius: 50%;
-  animation: girar 1s linear infinite;
-  margin: 10px auto;
-}
+/* Resto de estilos básicos */
+section { padding: 40px 20px; max-width: 1200px; margin: auto; }
 
-@keyframes girar { 100% { transform: rotate(360deg); } }
-
-@media (max-width: 768px) {
-  .cabanias-grid { flex-direction: column; }
-  .nav-menu { flex-direction: column; gap: 10px; }
-  .hero { height: 50vh; }
-}
-
-/* ===== MARCO MOTOR DE RESERVAS ===== */
-#reserva-online {
-  padding: 40px 20px;
-}
+.cabanias-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+.cabin-card { flex: 1 1 300px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
