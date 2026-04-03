@@ -3,7 +3,7 @@ function formatearLocal(fecha) {
   const y = fecha.getFullYear();
   const m = String(fecha.getMonth() + 1).padStart(2, "0");
   const d = String(fecha.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return `\( {y}- \){m}-${d}`;
 }
 
 // ===== VARIABLES GLOBALES =====
@@ -39,8 +39,7 @@ function seleccionarFecha(fecha) {
 
   const todosDias = document.querySelectorAll(".fila-dia");
   const diaBloqueado = Array.from(todosDias).find(d =>
-    new Date(d.dataset.fecha).getTime() === fecha.getTime() &&
-    d.classList.contains("reservado")
+    new Date(d.dataset.fecha).getTime() === fecha.getTime() && d.classList.contains("reservado")
   );
   if (diaBloqueado) return;
 
@@ -71,20 +70,15 @@ function generarMes(baseDate) {
   const primerDia = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
   const ultimoDia = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
 
-  const mesContainer = document.createElement("div");
-  mesContainer.classList.add("mes-calendario");
+  const fragment = document.createDocumentFragment();
 
-  // Barra superior del mes
+  // Barra superior
   const calTop = document.createElement("div");
   calTop.classList.add("cal-top");
 
   const btnPrev = document.createElement("button");
   btnPrev.classList.add("flecha-mes");
   btnPrev.innerText = "◀";
-  btnPrev.addEventListener("click", () => {
-    mesBase.setMonth(mesBase.getMonth() - 1);
-    iniciarCalendario();
-  });
 
   const titulo = document.createElement("span");
   titulo.id = "tituloMes";
@@ -93,22 +87,20 @@ function generarMes(baseDate) {
   const btnNext = document.createElement("button");
   btnNext.classList.add("flecha-mes");
   btnNext.innerText = "▶";
-  btnNext.addEventListener("click", () => {
-    mesBase.setMonth(mesBase.getMonth() + 1);
-    iniciarCalendario();
-  });
 
-  calTop.appendChild(btnPrev);
-  calTop.appendChild(titulo);
-  calTop.appendChild(btnNext);
-  mesContainer.appendChild(calTop);
+  calTop.append(btnPrev, titulo, btnNext);
+  fragment.appendChild(calTop);
+
+  // Grid de días
+  const grid = document.createElement("div");
+  grid.classList.add("calendario-grid");
 
   // Días de la semana
   ["L", "M", "X", "J", "V", "S", "D"].forEach(dia => {
     const dElem = document.createElement("div");
     dElem.classList.add("dia-semana");
     dElem.innerText = dia;
-    mesContainer.appendChild(dElem);
+    grid.appendChild(dElem);
   });
 
   const hoy = new Date();
@@ -117,14 +109,16 @@ function generarMes(baseDate) {
   let primerDiaSemana = primerDia.getDay();
   primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
 
+  // Días vacíos
   for (let i = 0; i < primerDiaSemana; i++) {
     const empty = document.createElement("div");
     empty.classList.add("fila-dia", "empty-dia");
-    mesContainer.appendChild(empty);
+    grid.appendChild(empty);
   }
 
   const cabaña = document.getElementById("cabaña").value;
 
+  // Días del mes
   for (let d = 1; d <= ultimoDia.getDate(); d++) {
     const fecha = new Date(baseDate.getFullYear(), baseDate.getMonth(), d);
     const diaElem = document.createElement("div");
@@ -138,8 +132,9 @@ function generarMes(baseDate) {
     }
 
     diaElem.addEventListener("click", () => {
-      if (!diaElem.classList.contains("reservado")) seleccionarFecha(fecha);
-      else if (modoAdmin) {
+      if (!diaElem.classList.contains("reservado")) {
+        seleccionarFecha(fecha);
+      } else if (modoAdmin) {
         if (reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
           reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f !== diaElem.dataset.fecha);
         } else {
@@ -150,18 +145,35 @@ function generarMes(baseDate) {
       }
     });
 
-    mesContainer.appendChild(diaElem);
+    grid.appendChild(diaElem);
   }
 
-  return mesContainer;
+  fragment.appendChild(grid);
+  return fragment;
 }
 
 // ===== CALENDARIO PRINCIPAL =====
 function iniciarCalendario() {
   const container = document.getElementById("fechas");
+  if (!container) return;
+
   container.innerHTML = "";
-  const mesDiv = generarMes(mesBase);
-  container.appendChild(mesDiv);
+  const mesCompleto = generarMes(mesBase);
+  container.appendChild(mesCompleto);
+
+  // Eventos de flechas (se crean cada vez)
+  const prev = container.querySelector(".flecha-mes:first-child");
+  const next = container.querySelector(".flecha-mes:last-child");
+
+  if (prev) prev.addEventListener("click", () => {
+    mesBase.setMonth(mesBase.getMonth() - 1);
+    iniciarCalendario();
+  });
+
+  if (next) next.addEventListener("click", () => {
+    mesBase.setMonth(mesBase.getMonth() + 1);
+    iniciarCalendario();
+  });
 }
 
 // ===== CALCULAR RESERVA =====
@@ -202,11 +214,10 @@ function calcularReserva() {
     const dia = new Date(fechaEntrada);
     dia.setDate(dia.getDate() + i);
     const dow = dia.getDay();
-    let precio;
-
-    if (esTemporadaAlta(dia)) precio = 150;
-    else precio = (dow === 5 || dow === 6) ? (cabaña === "campanilla" ? 150 : 140) : (cabaña === "campanilla" ? 115 : 110);
-
+    let precio = esTemporadaAlta(dia) ? 150 : 
+                 (dow === 5 || dow === 6) ? 
+                 (cabaña === "campanilla" ? 150 : 140) : 
+                 (cabaña === "campanilla" ? 115 : 110);
     total += precio;
   }
 
@@ -219,8 +230,10 @@ function calcularReserva() {
   const opciones = { day: "numeric", month: "short" };
   document.getElementById("fechasSeleccionadas").innerHTML =
     `📅 ${fechaEntrada.toLocaleDateString("es-ES", opciones)} - ${fechaSalida.toLocaleDateString("es-ES", opciones)}<br>🛏 ${noches} noches`;
-  document.getElementById("cabañaSeleccionada").innerText =
+
+  document.getElementById("cabañaSeleccionada").innerText = 
     cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+
   document.getElementById("total").innerText = total.toFixed(2);
   document.getElementById("descuento").innerText = descuento.toFixed(2);
   document.getElementById("resto").innerText = (total - 50).toFixed(2);
