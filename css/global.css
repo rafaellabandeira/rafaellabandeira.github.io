@@ -396,3 +396,50 @@ footer a { color: #4caf50; }
   font-size: 0.85rem; /* título ligeramente más pequeño */
   margin-bottom: 5px;
 }
+/* ====================== CARRUSEL - CORREGIDO (Tamaño normal) ====================== */
+.carousel-container-general,
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #fff;
+}
+
+.carousel-general-slides {
+  display: flex;
+  transition: transform 0.6s ease-in-out;
+  width: 100%;
+}
+
+.carousel-slide-general {
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.carousel-slide-general img {
+  width: 100% !important;
+  height: 250px !important;
+  object-fit: cover !important;
+  display: block;
+}
+
+.carousel-button-general {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(76, 175, 80, 0.9);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 50%;
+}
+
+.prev-general { left: 12px; }
+.next-general { right: 12px; }
