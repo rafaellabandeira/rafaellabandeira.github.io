@@ -1,4 +1,4 @@
-// ================= MAIN.JS COMPLETO CORREGIDO =================
+// ================= MAIN.JS COMPLETO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
 function formatearLocal(fecha) {
@@ -17,15 +17,14 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
-    const reservas = { campanilla: [], tejo: [], bloqueados: [] };
+    const reservas = { campanilla: [], tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
-    reservas.bloqueados = data.bloqueados || [];
     return reservas;
   } catch (err) {
     console.error(err);
-    return { campanilla: [], tejo: [], bloqueados: [] };
+    return { campanilla: [], tejo: [] };
   }
 }
 
@@ -34,12 +33,6 @@ let mesBase = new Date();
 let reservasGlobal = {};
 let inicioSeleccion = null;
 let finSeleccion = null;
-let modoAdmin = false; // si quieres habilitar admin para bloquear fechas
-
-// ===== FUNCIONES FLECHAS =====
-function refrescarCalendario() {
-  iniciarCalendario();
-}
 
 // ===== CALCULO RESERVA =====
 function calcularReserva() {
@@ -206,88 +199,130 @@ function initHamburger() {
   });
 }
 
-// ===== CALENDARIO =====
-function generarMes(baseDate) {
-  const primerDia = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
-  const ultimoDia = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
-  const fragment = document.createDocumentFragment();
+// ===== CALENDARIO BOOKING (1 MES) =====
+function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
+  const container = document.getElementById("fechas");
+  if (!container) return;
+  container.innerHTML = "";
 
-  const calTop = document.createElement("div");
-  calTop.className = "cal-top";
+  reservasGlobal = fechasOcupadas;
+
+  const primerDia = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), 1);
+  const ultimoDia = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + 1, 0);
+
+  const mesContainer = document.createElement("div");
+  mesContainer.classList.add("mes-calendario");
+
+  // Barra superior con título y flechas
+  const barraSuperior = document.createElement("div");
+  barraSuperior.classList.add("barra-superior");
+  barraSuperior.style.display = "flex";
+  barraSuperior.style.justifyContent = "space-between";
+  barraSuperior.style.alignItems = "center";
+  barraSuperior.style.marginBottom = "5px";
 
   const prev = document.createElement("button");
   prev.className = "flecha-mes";
   prev.innerHTML = "◀";
-
-  const titulo = document.createElement("span");
-  titulo.id = "tituloMes";
-  titulo.textContent = baseDate.toLocaleDateString("es-ES", { month: "long", year: "numeric" }).toUpperCase();
+  prev.addEventListener("click", ()=>{
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1);
+    iniciarCalendarioBooking(reservasGlobal, mesBase);
+  });
 
   const next = document.createElement("button");
   next.className = "flecha-mes";
   next.innerHTML = "▶";
-
-  calTop.append(prev, titulo, next);
-  fragment.appendChild(calTop);
-
-  const grid = document.createElement("div");
-  grid.className = "calendario-grid";
-
-  ["L", "M", "X", "J", "V", "S", "D"].forEach(dia => {
-    const el = document.createElement("div");
-    el.className = "dia-semana";
-    el.textContent = dia;
-    grid.appendChild(el);
+  next.addEventListener("click", ()=>{
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1);
+    iniciarCalendarioBooking(reservasGlobal, mesBase);
   });
 
-  let offset = primerDia.getDay();
-  offset = offset === 0 ? 6 : offset - 1;
-  for (let i = 0; i < offset; i++) {
+  const tituloMes = document.createElement("div");
+  tituloMes.classList.add("titulo-mes");
+  tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
+  tituloMes.style.textAlign = "center";
+  tituloMes.style.flexGrow = "1";
+
+  barraSuperior.append(prev, tituloMes, next);
+  mesContainer.appendChild(barraSuperior);
+
+  // Días de la semana
+  const diasSemana = ["L","M","X","J","V","S","D"];
+  diasSemana.forEach(dia => {
+    const dElem = document.createElement("div");
+    dElem.classList.add("dia-semana");
+    dElem.innerText = dia;
+    mesContainer.appendChild(dElem);
+  });
+
+  // Días vacíos
+  let primerDiaSemana = primerDia.getDay();
+  primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
+  for (let i = 0; i < primerDiaSemana; i++) {
     const empty = document.createElement("div");
-    empty.className = "fila-dia empty-dia";
-    grid.appendChild(empty);
+    empty.classList.add("fila-dia", "empty-dia");
+    mesContainer.appendChild(empty);
   }
 
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
-  const cabaña = document.getElementById("cabaña")?.value || "campanilla";
 
   for (let d = 1; d <= ultimoDia.getDate(); d++) {
-    const fecha = new Date(baseDate.getFullYear(), baseDate.getMonth(), d);
+    const fecha = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), d);
     const diaElem = document.createElement("div");
-    diaElem.className = "fila-dia";
+    diaElem.classList.add("fila-dia");
+    diaElem.innerText = d;
     diaElem.dataset.fecha = formatearLocal(fecha);
-    diaElem.textContent = d;
 
-    if (fecha < hoy) diaElem.classList.add("reservado");
-    if (reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) || reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
+    const cabañaElem = document.getElementById("cabaña");
+    const cabana = cabañaElem ? cabañaElem.value.toLowerCase() : null;
+
+    // Bloquear días pasados o reservados
+    if (fecha < hoy || (cabana && reservasGlobal[cabana]?.includes(formatearLocal(fecha)))) {
       diaElem.classList.add("reservado");
+      diaElem.style.cursor = "not-allowed";
     }
 
+    // Selección de rango
     diaElem.addEventListener("click", () => {
-      if (!diaElem.classList.contains("reservado")) seleccionarFecha(fecha);
-      else if (modoAdmin) {
-        if (reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
-          reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f !== diaElem.dataset.fecha);
+      if (diaElem.classList.contains("reservado")) return;
+
+      if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
+        inicioSeleccion = fecha;
+        finSeleccion = null;
+      } else if (!finSeleccion) {
+        if (fecha < inicioSeleccion) {
+          finSeleccion = inicioSeleccion;
+          inicioSeleccion = fecha;
         } else {
-          reservasGlobal.bloqueados.push(diaElem.dataset.fecha);
+          finSeleccion = fecha;
         }
-        iniciarCalendario();
       }
+
+      const todosDias = document.querySelectorAll(".fila-dia");
+      todosDias.forEach(d => d.classList.remove("seleccionado"));
+      todosDias.forEach(d => {
+        const f = new Date(d.dataset.fecha);
+        if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
+          d.classList.add("seleccionado");
+        }
+      });
     });
 
-    grid.appendChild(diaElem);
+    mesContainer.appendChild(diaElem);
   }
 
-  fragment.appendChild(grid);
-  return fragment;
+  container.appendChild(mesContainer);
 }
 
-function iniciarCalendario() {
-  const container = document.getElementById("fechas");
-  if (!container) return;
-  container.innerHTML = "";
-  container.appendChild(generarMes(mesBase));
+// ===== FUNCION ACTUALIZAR RESERVAS =====
+async function actualizarReservas() {
+  const reservas = await cargarReservasBackend();
+  reservasGlobal = reservas;
+  actualizarUrgencia(reservas);
+  if (document.getElementById("cabaña") && document.getElementById("fechas")) {
+    iniciarCalendarioBooking(reservasGlobal, mesBase);
+  }
 }
 
 // ===== MENSAJE URGENCIA INTELIGENTE =====
@@ -322,19 +357,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  reservasGlobal = await cargarReservasBackend();
-  iniciarCalendario();
-  actualizarUrgencia(reservasGlobal);
+  await actualizarReservas();
 
-  document.getElementById("mesAnterior")?.addEventListener("click", () => {
-    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1);
-    iniciarCalendario();
-    actualizarUrgencia(reservasGlobal);
-  });
+  // Actualizar cada 2 horas
+  setInterval(actualizarReservas, 2 * 60 * 60 * 1000);
 
-  document.getElementById("mesSiguiente")?.addEventListener("click", () => {
-    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1);
-    iniciarCalendario();
-    actualizarUrgencia(reservasGlobal);
+  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar")?.addEventListener("click", reservar);
+
+  // Actualizar calendario al cambiar de cabaña
+  document.getElementById("cabaña")?.addEventListener("change", () => {
+    iniciarCalendarioBooking(reservasGlobal, mesBase);
   });
 });
