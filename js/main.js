@@ -1,4 +1,4 @@
-// ================= MAIN.JS COMPLETO =================
+// ================= MAIN.JS COMPLETO CORREGIDO =================
 
 // ===== FORMATEO FECHA LOCAL (d/m/Y) =====
 function formatearLocal(fecha) {
@@ -17,14 +17,15 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
-    const reservas = { campanilla: [], tejo: [] };
+    const reservas = { campanilla: [], tejo: [], bloqueados: [] };
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
+    reservas.bloqueados = data.bloqueados || [];
     return reservas;
   } catch (err) {
     console.error(err);
-    return { campanilla: [], tejo: [] };
+    return { campanilla: [], tejo: [], bloqueados: [] };
   }
 }
 
@@ -33,10 +34,11 @@ let mesBase = new Date();
 let reservasGlobal = {};
 let inicioSeleccion = null;
 let finSeleccion = null;
+let modoAdmin = false; // si quieres habilitar admin para bloquear fechas
 
 // ===== FUNCIONES FLECHAS =====
 function refrescarCalendario() {
-  iniciarCalendarioBooking(reservasGlobal, mesBase);
+  iniciarCalendario();
 }
 
 // ===== CALCULO RESERVA =====
@@ -204,19 +206,12 @@ function initHamburger() {
   });
 }
 
-// ===== INICIALIZACIÓN GENERAL =====
-document.addEventListener("DOMContentLoaded", async () => {
-  initHamburger();
-  initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
-  initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
-
-  // ===== CALENDARIO SIMPLE - 1 MES CON FLECHAS =====
+// ===== CALENDARIO =====
 function generarMes(baseDate) {
   const primerDia = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
   const ultimoDia = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
   const fragment = document.createDocumentFragment();
 
-  // Barra superior con flechas y título
   const calTop = document.createElement("div");
   calTop.className = "cal-top";
 
@@ -226,10 +221,7 @@ function generarMes(baseDate) {
 
   const titulo = document.createElement("span");
   titulo.id = "tituloMes";
-  titulo.textContent = baseDate.toLocaleDateString("es-ES", { 
-    month: "long", 
-    year: "numeric" 
-  }).toUpperCase();
+  titulo.textContent = baseDate.toLocaleDateString("es-ES", { month: "long", year: "numeric" }).toUpperCase();
 
   const next = document.createElement("button");
   next.className = "flecha-mes";
@@ -238,11 +230,9 @@ function generarMes(baseDate) {
   calTop.append(prev, titulo, next);
   fragment.appendChild(calTop);
 
-  // Grid del calendario
   const grid = document.createElement("div");
   grid.className = "calendario-grid";
 
-  // Días de la semana
   ["L", "M", "X", "J", "V", "S", "D"].forEach(dia => {
     const el = document.createElement("div");
     el.className = "dia-semana";
@@ -250,7 +240,6 @@ function generarMes(baseDate) {
     grid.appendChild(el);
   });
 
-  // Días vacíos
   let offset = primerDia.getDay();
   offset = offset === 0 ? 6 : offset - 1;
   for (let i = 0; i < offset; i++) {
@@ -261,7 +250,7 @@ function generarMes(baseDate) {
 
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
-  const cabaña = document.getElementById("cabaña").value;
+  const cabaña = document.getElementById("cabaña")?.value || "campanilla";
 
   for (let d = 1; d <= ultimoDia.getDate(); d++) {
     const fecha = new Date(baseDate.getFullYear(), baseDate.getMonth(), d);
@@ -271,22 +260,18 @@ function generarMes(baseDate) {
     diaElem.textContent = d;
 
     if (fecha < hoy) diaElem.classList.add("reservado");
-
-    if (reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) || 
-        reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
+    if (reservasGlobal[cabaña]?.includes(diaElem.dataset.fecha) || reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
       diaElem.classList.add("reservado");
     }
 
     diaElem.addEventListener("click", () => {
-      if (!diaElem.classList.contains("reservado")) {
-        seleccionarFecha(fecha);
-      } else if (modoAdmin) {
+      if (!diaElem.classList.contains("reservado")) seleccionarFecha(fecha);
+      else if (modoAdmin) {
         if (reservasGlobal.bloqueados.includes(diaElem.dataset.fecha)) {
           reservasGlobal.bloqueados = reservasGlobal.bloqueados.filter(f => f !== diaElem.dataset.fecha);
         } else {
           reservasGlobal.bloqueados.push(diaElem.dataset.fecha);
         }
-        guardarReservasLocal();
         iniciarCalendario();
       }
     });
@@ -298,25 +283,12 @@ function generarMes(baseDate) {
   return fragment;
 }
 
-// ===== INICIAR CALENDARIO (1 MES) =====
 function iniciarCalendario() {
   const container = document.getElementById("fechas");
   if (!container) return;
-
   container.innerHTML = "";
   container.appendChild(generarMes(mesBase));
 }
-
-  // ===== FUNCIONES FLECHAS =====
-  document.getElementById("mesAnterior")?.addEventListener("click", () => {
-    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1); // ← arreglado
-    refrescarCalendario();
-  });
-  document.getElementById("mesSiguiente")?.addEventListener("click", () => {
-    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1); // ← arreglado
-    refrescarCalendario();
-  });
-});
 
 // ===== MENSAJE URGENCIA INTELIGENTE =====
 function actualizarUrgencia(fechasOcupadas){
@@ -343,3 +315,26 @@ function actualizarUrgencia(fechasOcupadas){
 
   mensaje.innerText = texto;
 }
+
+// ===== INICIALIZACIÓN GENERAL =====
+document.addEventListener("DOMContentLoaded", async () => {
+  initHamburger();
+  initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
+  initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
+
+  reservasGlobal = await cargarReservasBackend();
+  iniciarCalendario();
+  actualizarUrgencia(reservasGlobal);
+
+  document.getElementById("mesAnterior")?.addEventListener("click", () => {
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1);
+    iniciarCalendario();
+    actualizarUrgencia(reservasGlobal);
+  });
+
+  document.getElementById("mesSiguiente")?.addEventListener("click", () => {
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1);
+    iniciarCalendario();
+    actualizarUrgencia(reservasGlobal);
+  });
+});
