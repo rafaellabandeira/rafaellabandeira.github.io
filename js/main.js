@@ -199,10 +199,7 @@ function initHamburger() {
   });
 }
 
- // ===== CALENDARIO BOOKING (1 MES) =====
-let inicioSeleccion = null;
-let finSeleccion = null;
-
+// ===== CALENDARIO BOOKING (1 MES) =====
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   const container = document.getElementById("fechas");
   if (!container) return;
@@ -210,40 +207,41 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
 
   reservasGlobal = fechasOcupadas;
 
-  // Mes base para navegación
-  let mesBase = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), 1);
-
-  const primerDia = new Date(mesBase.getFullYear(), mesBase.getMonth(), 1);
-  const ultimoDia = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 0);
+  const primerDia = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), 1);
+  const ultimoDia = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + 1, 0);
 
   const mesContainer = document.createElement("div");
   mesContainer.classList.add("mes-calendario");
 
   // Barra superior con título y flechas
   const barraSuperior = document.createElement("div");
-  barraSuperior.classList.add("cal-top"); // CSS corregido controla estilos
+  barraSuperior.classList.add("barra-superior");
+  barraSuperior.style.display = "flex";
+  barraSuperior.style.justifyContent = "space-between";
+  barraSuperior.style.alignItems = "center";
+  barraSuperior.style.marginBottom = "5px";
 
   const prev = document.createElement("button");
   prev.className = "flecha-mes";
   prev.innerHTML = "◀";
-  prev.addEventListener("click", () => {
-    mesBase.setMonth(mesBase.getMonth() - 1);
+  prev.addEventListener("click", ()=>{
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1);
     iniciarCalendarioBooking(reservasGlobal, mesBase);
   });
 
   const next = document.createElement("button");
   next.className = "flecha-mes";
   next.innerHTML = "▶";
-  next.addEventListener("click", () => {
-    mesBase.setMonth(mesBase.getMonth() + 1);
+  next.addEventListener("click", ()=>{
+    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1);
     iniciarCalendarioBooking(reservasGlobal, mesBase);
   });
 
   const tituloMes = document.createElement("div");
   tituloMes.classList.add("titulo-mes");
   tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
-  tituloMes.style.flexGrow = "1";
   tituloMes.style.textAlign = "center";
+  tituloMes.style.flexGrow = "1";
 
   barraSuperior.append(prev, tituloMes, next);
   mesContainer.appendChild(barraSuperior);
@@ -257,7 +255,7 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
     mesContainer.appendChild(dElem);
   });
 
-  // Días vacíos al inicio
+  // Días vacíos
   let primerDiaSemana = primerDia.getDay();
   primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
   for (let i = 0; i < primerDiaSemana; i++) {
@@ -269,9 +267,8 @@ function iniciarCalendarioBooking(fechasOcupadas, fechaBase = new Date()) {
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
 
-  // Crear días
   for (let d = 1; d <= ultimoDia.getDate(); d++) {
-    const fecha = new Date(mesBase.getFullYear(), mesBase.getMonth(), d);
+    const fecha = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), d);
     const diaElem = document.createElement("div");
     diaElem.classList.add("fila-dia");
     diaElem.innerText = d;
