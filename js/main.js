@@ -200,7 +200,7 @@ function initHamburger() {
 }
 
 // ===== CALENDARIO BOOKING (1 MES) =====
-let mesBase = new Date(); // ← IMPORTANTE: variable global
+// ← IMPORTANTE: variable global
 
 function iniciarCalendarioBooking(fechasOcupadas, fechaBase = mesBase) {
   const container = document.getElementById("fechas");
