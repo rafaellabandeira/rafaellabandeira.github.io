@@ -1,106 +1,281 @@
-/* ======= CALENDARIO — ESTILO PRINCIPAL ======= */
-
-.calendario-1-mes {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
-
-/* Mes y botones */
-.cal-top {
+/* ==============================
+   1️⃣ HERO PORTADA
+   ============================== */
+.hero {
+  background-image: url('../images/hero.jpg'); /* Cambia a tu imagen real */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 80vh;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
-.cal-top h3 {
-  font-size: 20px;
-  margin: 0;
+.header-inner {
+  text-align: center;
+  color: white;
+  padding: 0 20px;
 }
 
-.cal-btn {
-  background: #f3f3f3;
-  border: none;
-  padding: 6px 10px;
+.hero-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+.hero-title span {
+  color: #FFD700;
+}
+
+.hero-sub {
+  font-size: 1.25rem;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ==============================
+   2️⃣ TARJETAS DE CABAÑAS
+   ============================== */
+.cabanias-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.cabin-card {
+  flex: 1 1 300px;
+  border: 2px solid #FFD700;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  background-color: #fff;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cabin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.cabin-card h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.cabin-card p {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.cabin-card .boton {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: #fff;
   border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-/* Grid principal */
-.calendario-grid {
+.cabin-card .boton:hover {
+  background-color: #45a049;
+}
+
+/* ==============================
+   3️⃣ MOTOR DE RESERVAS
+   ============================== */
+.reserva-box {
+  border: 2px solid #4caf50;
+  border-radius: 12px;
+  padding: 25px;
+  background-color: #f9f9f9;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  max-width: 520px;
+  margin: 20px auto;
+}
+
+.reserva-box h2 {
+  color: #4caf50;
+  margin-top: 0;
+}
+
+.reserva-box label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+.reserva-box input,
+.reserva-box select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.reserva-box button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reserva-box button:hover {
+  background-color: #45a049;
+}
+
+/* Resultado de reserva */
+.resumen-reserva {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  border-left: 5px solid #4caf50;
+}
+
+.spinner {
+  display: none;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 15px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ==============================
+   4️⃣ CALENDARIO FLATPICKR
+   ============================== */
+.flatpickr-calendar {
+  z-index: 1000;
+}
+
+.flatpickr-day {
+  border-radius: 6px;
+}
+
+/* Días disponibles */
+.flatpickr-day.disponible {
+  background: #e8f5e9 !important;
+  color: #000 !important;
+}
+
+/* Días ocupados */
+.flatpickr-day.ocupado {
+  background: #e53935 !important;
+  color: #fff !important;
+  cursor: not-allowed;
+}
+
+/* Días pasados */
+.flatpickr-day.pasado,
+.flatpickr-day.prevMonthDay {
+  background: #212121 !important;
+  color: #aaa !important;
+}
+
+/* Hover solo en días disponibles */
+.flatpickr-day.disponible:hover {
+  background: #66bb6a !important;
+  color: #fff !important;
+}
+
+/* Cabecera calendario */
+.flatpickr-months {
+  background: #2e7d32;
+  color: white;
+}
+
+/* ==============================
+   5️⃣ CALENDARIO PERSONALIZADO (COMPATIBLE CON TU MAIN.JS)
+   ============================== */
+
+.mes-calendario {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 6px;
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  margin-bottom: 25px;
+}
+
+/* Título del mes */
+.titulo-mes {
+  grid-column: span 7;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2e7d32;
 }
 
 /* Días de la semana */
 .dia-semana {
-  font-weight: bold;
   text-align: center;
-  padding: 8px 0;
-  font-size: 13px;
-  color: #444;
-}
-
-/* Día vacío del inicio */
-.empty-dia {
-  height: 45px;
+  font-weight: bold;
+  padding: 5px 0;
+  color: #555;
 }
 
 /* Día normal */
 .fila-dia {
   text-align: center;
   padding: 10px 0;
-  background: #fafafa;
   border-radius: 8px;
-  font-size: 15px;
+  background: #f5f5f5;
   cursor: pointer;
+  transition: 0.2s;
 }
 
-/* Día reservado */
-.fila-dia.reservado {
-  background: #ff8a8a;
-  color: white;
-  cursor: not-allowed;
+/* Día vacío */
+.empty-dia {
+  background: transparent;
+  cursor: default !important;
 }
 
-/* Día seleccionado */
+/* Día seleccionado (verde) */
 .fila-dia.seleccionado {
-  background: #8ac6ff;
-  color: white;
+  background: #4caf50 !important;
+  color: #fff !important;
+  font-weight: bold;
 }
 
-/* Hover (solo en PC) */
-@media (hover: hover) {
-  .fila-dia:not(.reservado):hover {
-    background: #e5efff;
-  }
+/* Día reservado (rojo) */
+.fila-dia.reservado {
+  background: #e53935 !important;
+  color: white !important;
+  cursor: not-allowed !important;
+  opacity: 0.85;
 }
 
-/* MOBILE FIX */
-@media (max-width: 480px) {
-  .calendario-1-mes {
-    padding: 12px;
-    max-width: 100%;
-  }
-
-  .cal-top h3 {
-    font-size: 18px;
-  }
-
-  .dia-semana, .fila-dia {
-    font-size: 13px;
-    padding: 8px 0;
-  }
-
-  .empty-dia {
-    height: 38px;
-  }
+/* Hover solo si está disponible */
+.fila-dia:not(.reservado):hover {
+  background: #c8e6c9;
+  color: #000;
 }
