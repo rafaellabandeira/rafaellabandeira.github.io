@@ -165,7 +165,7 @@
     <label for="fechas">Selecciona tus fechas</label>
 
     <!-- ⚡ NUEVO CALENDARIO FLATPICKR -->
-    <input type="text" id="calendario" placeholder="Selecciona fechas" readonly>
+    <div id="calendarioVisible"></div>
 
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
       ⚠️ Algunas fechas seleccionadas no están disponibles. Por favor elige otras.
@@ -227,9 +227,11 @@
 
 <!-- ACTIVACIÓN DEL CALENDARIO -->
 <script>
-flatpickr("#calendario", {
+flatpickr("#calendarioVisible", {
   mode: "range",
-  dateFormat: "Y-m-d"
+  inline: true,
+  dateFormat: "Y-m-d",
+  locale: "es"
 });
 </script>
 
