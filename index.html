@@ -227,11 +227,26 @@
 
 <!-- ACTIVACIÓN DEL CALENDARIO -->
 <script>
-flatpickr("#calendarioVisible", {
+const picker = flatpickr("#calendarioVisible", {
   mode: "range",
   inline: true,
   dateFormat: "Y-m-d",
-  locale: "es"
+  locale: "es",
+
+  onChange: function(selectedDates, dateStr, instance) {
+    if (selectedDates.length === 2) {
+      const inicio = selectedDates[0];
+      const fin = selectedDates[1];
+
+      // Convertir a texto legible
+      const opciones = { year: "numeric", month: "long", day: "numeric" };
+      const inicioTxt = inicio.toLocaleDateString("es-ES", opciones);
+      const finTxt = fin.toLocaleDateString("es-ES", opciones);
+
+      // Mostrar en HTML
+      document.getElementById("fechasSeleccionadas").textContent = `${inicioTxt} → ${finTxt}`;
+    }
+  }
 });
 </script>
 
