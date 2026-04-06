@@ -230,6 +230,13 @@
     grid-template-columns: repeat(7, 1fr) !important;
 }
 
+/* Días pasados (antes de hoy) */
+.flatpickr-day.pasado {
+  background: #212121 !important;
+  color: #aaa !important;
+  cursor: not-allowed !important;
+}
+
 /* Forzar tamaño uniforme en móvil */
 .flatpickr-day {
     width: 100% !important;
