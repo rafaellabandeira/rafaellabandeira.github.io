@@ -191,13 +191,6 @@
   cursor: not-allowed;
 }
 
-/* Días pasados */
-.flatpickr-day.pasado,
-.flatpickr-day.prevMonthDay {
-  background: #212121 !important;
-  color: #aaa !important;
-}
-
 /* Hover solo en días disponibles */
 .flatpickr-day.disponible:hover {
   background: #66bb6a !important;
