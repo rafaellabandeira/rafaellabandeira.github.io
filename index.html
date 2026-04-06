@@ -57,7 +57,11 @@
   align-items: center;
   cursor: pointer;
 }
-
+  
+@media (max-width: 600px) {
+  .flatpickr-calendar.inline {
+    width: 100% !important;
+}
 /* Días bloqueados (para más adelante) */
 .flatpickr-day.bloqueado {
   background: #e53935 !important;
