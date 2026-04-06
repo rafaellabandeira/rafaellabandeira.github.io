@@ -280,3 +280,17 @@ footer a { color: #4caf50; }
 
 .prev-general { left: 12px; }
 .next-general { right: 12px; }
+
+/* Reparar días del mes anterior y siguiente que aparecen en negro */
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  background: #f5f5f5 !important;
+  color: #999 !important;
+  opacity: 1 !important;
+}
+
+/* Opcional: que no se puedan seleccionar */
+.flatpickr-day.prevMonthDay:hover,
+.flatpickr-day.nextMonthDay:hover {
+  background: #eaeaea !important;
+}
