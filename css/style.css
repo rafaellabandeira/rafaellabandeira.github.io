@@ -187,6 +187,12 @@
   cursor: not-allowed;
 }
 
+/* Días pasados (antes de hoy) → ROJO */
+.flatpickr-day.flatpickr-disabled[aria-disabled="true"]:not(.ocupado) {
+    background: #ffcccc !important;
+    color: #ff0000 !important;
+    border-color: #ff9999 !important;
+}
 /* Hover solo en días disponibles */
 .flatpickr-day.disponible:hover {
   background: #66bb6a !important;
@@ -243,3 +249,15 @@
   font-size: 14px !important;
 }
 
+/* Detectar móviles */
+@media (max-width: 480px) {
+    .flatpickr-days {
+        display: block !important;   /* Volver al sistema original de Flatpickr */
+    }
+
+@media (max-width: 480px) {
+    .flatpickr-calendar {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
