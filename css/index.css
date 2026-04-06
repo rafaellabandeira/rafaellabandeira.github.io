@@ -52,3 +52,30 @@ body { font-family: Arial, sans-serif; }
 section { padding: 40px 20px; max-width: 1200px; margin: auto; }
 .cabanias-grid { display: flex; gap: 20px; flex-wrap: wrap; }
 .cabin-card { flex: 1 1 300px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+/* Días pasados */
+.flatpickr-day.pasado,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+  background: #212121 !important;
+  color: #aaa !important;
+}
+
+/* Cabecera completa */
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: white !important;
+  fill: white !important;
+}
+
+/* Selección de rango */
+.flatpickr-day.inRange {
+  background: #a5d6a7 !important;
+  color: #000 !important;
+}
+
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background: #4caf50 !important;
+  color: #fff !important;
+}
