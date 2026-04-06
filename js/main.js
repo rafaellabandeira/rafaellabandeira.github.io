@@ -198,118 +198,83 @@ function initHamburger() {
     hamburger.classList.toggle("active");
   });
 }
+// =======================
+// 🎯 CALENDARIO FLATPICKR
+// =======================
 
-// ===== CALENDARIO BOOKING (1 MES) =====
-// ← IMPORTANTE: variable global
+// Contendrá las fechas ocupadas reales
+let fechasOcupadasFlatpickr = [];
 
-function iniciarCalendarioBooking(fechasOcupadas, fechaBase = mesBase) {
-  const container = document.getElementById("fechas");
-  if (!container) return;
-  container.innerHTML = "";
+// Cargar reservas al iniciar
+async function prepararFlatpickr() {
+  const reservas = await cargarReservasBackend();
+  
+  const cabaña = document.getElementById("cabaña").value;
+  fechasOcupadasFlatpickr = reservas[cabaña] || [];
 
-  reservasGlobal = fechasOcupadas;
+  inicializarFlatpickr();
+}
 
-  const primerDia = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), 1);
-  const ultimoDia = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + 1, 0);
+// Cuando se cambia la cabaña, recargar fechas ocupadas
+document.getElementById("cabaña").addEventListener("change", prepararFlatpickr);
 
-  const mesContainer = document.createElement("div");
-  mesContainer.classList.add("mes-calendario");
 
-  // Barra superior con flechas y título
-  const barraSuperior = document.createElement("div");
-  barraSuperior.className = "cal-top";
-
-  const btnPrev = document.createElement("button");
-  btnPrev.className = "flecha-mes";
-  btnPrev.innerHTML = "◀";
-  btnPrev.addEventListener("click", () => {
-    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() - 1, 1);
-    iniciarCalendarioBooking(reservasGlobal, mesBase);
-  });
-
-  const tituloMes = document.createElement("div");
-  tituloMes.className = "titulo-mes";
-  tituloMes.innerText = primerDia.toLocaleString("es-ES", { month: "long", year: "numeric" });
-
-  const btnNext = document.createElement("button");
-  btnNext.className = "flecha-mes";
-  btnNext.innerHTML = "▶";
-  btnNext.addEventListener("click", () => {
-    mesBase = new Date(mesBase.getFullYear(), mesBase.getMonth() + 1, 1);
-    iniciarCalendarioBooking(reservasGlobal, mesBase);
-  });
-
-  barraSuperior.append(btnPrev, tituloMes, btnNext);
-  mesContainer.appendChild(barraSuperior);
-
-  // Días de la semana
-  const diasSemana = ["L","M","X","J","V","S","D"];
-  diasSemana.forEach(dia => {
-    const d = document.createElement("div");
-    d.classList.add("dia-semana");
-    d.innerText = dia;
-    mesContainer.appendChild(d);
-  });
-
-  // Relleno inicial
-  let primerDiaSemana = primerDia.getDay();
-  primerDiaSemana = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
-  for (let i = 0; i < primerDiaSemana; i++) {
-    const empty = document.createElement("div");
-    empty.classList.add("fila-dia");
-    mesContainer.appendChild(empty);
-  }
-
+// 🎨 COLORES PERSONALIZADOS
+function colorearDias(date, className) {
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
 
-  // Días del mes
-  for (let d = 1; d <= ultimoDia.getDate(); d++) {
-    const fecha = new Date(fechaBase.getFullYear(), fechaBase.getMonth(), d);
-    const diaElem = document.createElement("div");
-    diaElem.classList.add("fila-dia");
-    diaElem.innerText = d;
-    diaElem.dataset.fecha = formatearLocal(fecha);
+  const fechaISO = date.toISOString().slice(0, 10);
 
-    const cabañaElem = document.getElementById("cabaña");
-    const cabana = cabañaElem ? cabañaElem.value.toLowerCase() : null;
+  if (date < hoy) return "dia-pasado";         // gris oscuro
+  if (fechasOcupadasFlatpickr.includes(fechaISO)) return "dia-reservado"; // rojo
 
-    const reservado =
-      fecha < hoy ||
-      (cabana && reservasGlobal[cabana]?.includes(formatearLocal(fecha)));
-
-    if (reservado) {
-      diaElem.classList.add("reservado");
-    }
-
-    diaElem.addEventListener("click", () => {
-      if (reservado) return;
-
-      // Selección de rango
-      if (!inicioSeleccion || (inicioSeleccion && finSeleccion)) {
-        inicioSeleccion = fecha;
-        finSeleccion = null;
-      } else if (!finSeleccion) {
-        finSeleccion = fecha < inicioSeleccion ? inicioSeleccion : fecha;
-        if (fecha < inicioSeleccion) inicioSeleccion = fecha;
-      }
-
-      const todosDias = document.querySelectorAll(".fila-dia");
-      todosDias.forEach(d => d.classList.remove("seleccionado"));
-
-      todosDias.forEach(d => {
-        const f = new Date(d.dataset.fecha);
-        if (inicioSeleccion && finSeleccion && f >= inicioSeleccion && f <= finSeleccion) {
-          d.classList.add("seleccionado");
-        }
-      });
-    });
-
-    mesContainer.appendChild(diaElem);
-  }
-
-  container.appendChild(mesContainer);
+  return "dia-libre"; // verde
 }
+
+
+// FLATPICKR CONFIG
+let flatpickrInstance;
+
+function inicializarFlatpickr() {
+
+  if (flatpickrInstance) flatpickrInstance.destroy();
+
+  flatpickrInstance = flatpickr("#calendarioVisible", {
+    inline: true,
+    mode: "range",
+    locale: "es",
+    dateFormat: "d-m-Y",
+
+    // Desactivar fechas ocupadas
+    disable: [
+      function(date) {
+        return fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10));
+      }
+    ],
+
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      const fecha = new Date(dayElem.dateObj);
+      dayElem.classList.add(colorearDias(fecha));
+    },
+
+    onChange: function(selectedDates) {
+      if (selectedDates.length === 2) {
+        const inicio = selectedDates[0];
+        const fin = selectedDates[1];
+
+        const opciones = { year: "numeric", month: "long", day: "numeric" };
+        const inicioTxt = inicio.toLocaleDateString("es-ES", opciones);
+        const finTxt = fin.toLocaleDateString("es-ES", opciones);
+
+        document.getElementById("fechasSeleccionadas").textContent = `${inicioTxt} → ${finTxt}`;
+      }
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", prepararFlatpickr);
+
 // ===== FUNCION ACTUALIZAR RESERVAS =====
 async function actualizarReservas() {
   const reservas = await cargarReservasBackend();
