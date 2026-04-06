@@ -170,8 +170,15 @@
 /* ==============================
    4️⃣ CALENDARIO FLATPICKR
    ============================== */
+/* ==============================
+   4️⃣ CALENDARIO FLATPICKR
+   ============================== */
+
 .flatpickr-calendar {
   z-index: 1000;
+  width: 100% !important;
+  max-width: 350px !important;
+  margin: auto !important;
 }
 
 /* Días disponibles */
@@ -187,59 +194,42 @@
   cursor: not-allowed;
 }
 
-/* Días pasados (antes de hoy) → ROJO */
+/* Días pasados → ROJO */
 .flatpickr-day.flatpickr-disabled[aria-disabled="true"]:not(.ocupado) {
-    background: #ffcccc !important;
-    color: #ff0000 !important;
-    border-color: #ff9999 !important;
+  background: #ffe5e5 !important;
+  color: #ff0000 !important;
+  border-color: #ff9999 !important;
 }
+
 /* Hover solo en días disponibles */
 .flatpickr-day.disponible:hover {
   background: #66bb6a !important;
   color: #fff !important;
 }
 
-/* Cabecera calendario */
-.flatpickr-months {
-  background: #2e7d32;
-  color: white;
-}
-
-
+/* Ocultar días del mes anterior/siguiente */
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
-    visibility: hidden !important;
-    pointer-events: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
+/* Estilo para días deshabilitados genéricos */
 .flatpickr-day.flatpickr-disabled,
 .flatpickr-day.disabled {
-    color: #ff4d4d !important;            /* rojo para texto */
-    background: #ffe5e5 !important;       /* rojo suave de fondo */
-    border-color: #ffb3b3 !important;
-    cursor: not-allowed !important;
-}
-.flatpickr-calendar {
-    width: 100% !important;
-    max-width: 350px !important;
-    margin: auto !important;
+  background: #ffe5e5 !important;
+  color: #ff4d4d !important;
+  border-color: #ffb3b3 !important;
 }
 
-/* Asegura que las celdas se alinean bien */
+/* Grilla correcta de 7 columnas */
 .flatpickr-days {
-    width: 100% !important;
-    display: grid !important;
-    grid-template-columns: repeat(7, 1fr) !important;
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr) !important;
 }
 
-/* Días pasados (antes de hoy) */
-.flatpickr-day.pasado {
-  background: #212121 !important;
-  color: #aaa !important;
-  cursor: not-allowed !important;
-}
-
-/* Forzar tamaño uniforme en móvil */
+/* Tamaño uniforme */
 .flatpickr-day {
   border-radius: 6px;
   width: 100% !important;
@@ -249,15 +239,9 @@
   font-size: 14px !important;
 }
 
-/* Detectar móviles */
+/* MÓVIL — ampliar calendario al ancho total */
 @media (max-width: 480px) {
-    .flatpickr-days {
-        display: block !important;   /* Volver al sistema original de Flatpickr */
-    }
-
-@media (max-width: 480px) {
-    .flatpickr-calendar {
-        width: 100% !important;
-        max-width: 100% !important;
-    }
+  .flatpickr-calendar {
+    max-width: 100% !important;
+  }
 }
