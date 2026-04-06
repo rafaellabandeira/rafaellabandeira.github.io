@@ -209,3 +209,40 @@
   background: #2e7d32;
   color: white;
 }
+
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.disabled {
+    color: #ff4d4d !important;            /* rojo para texto */
+    background: #ffe5e5 !important;       /* rojo suave de fondo */
+    border-color: #ffb3b3 !important;
+    cursor: not-allowed !important;
+}
+.flatpickr-calendar {
+    width: 100% !important;
+    max-width: 350px !important;
+    margin: auto !important;
+}
+
+/* Asegura que las celdas se alinean bien */
+.flatpickr-days {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(7, 1fr) !important;
+}
+
+/* Forzar tamaño uniforme en móvil */
+.flatpickr-day {
+    width: 100% !important;
+    height: 42px !important;
+    margin: 0 !important;
+    line-height: 42px !important;
+    font-size: 14px !important;
+}
+
