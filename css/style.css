@@ -174,10 +174,6 @@
   z-index: 1000;
 }
 
-.flatpickr-day {
-  border-radius: 6px;
-}
-
 /* Días disponibles */
 .flatpickr-day.disponible {
   background: #e8f5e9 !important;
@@ -239,10 +235,11 @@
 
 /* Forzar tamaño uniforme en móvil */
 .flatpickr-day {
-    width: 100% !important;
-    height: 42px !important;
-    margin: 0 !important;
-    line-height: 42px !important;
-    font-size: 14px !important;
+  border-radius: 6px;
+  width: 100% !important;
+  height: 42px !important;
+  margin: 0 !important;
+  line-height: 42px !important;
+  font-size: 14px !important;
 }
 
