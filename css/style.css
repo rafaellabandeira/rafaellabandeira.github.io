@@ -2,7 +2,7 @@
    1️⃣ HERO PORTADA
    ============================== */
 .hero {
-  background-image: url('../images/hero.jpg'); /* Cambia a tu imagen real */
+  background-image: url('../images/hero.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -170,25 +170,35 @@
 /* ==============================
    4️⃣ CALENDARIO FLATPICKR
    ============================== */
-/* ==============================
-   4️⃣ CALENDARIO FLATPICKR
-   ============================== */
 
+/* CALENDARIO BASE */
 .flatpickr-calendar {
   z-index: 1000;
   width: 100% !important;
-  max-width: 350px !important;
+  max-width: 360px !important;     /* ✔️ para que no se corte en móvil */
   margin: auto !important;
 }
-/* Título del mes */
-.titulo-mes {
-  grid-column: span 7;
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #2e7d32;
+
+/* CABECERA DEL MES (flechas + título) */
+.flatpickr-months {
+  background: #2e7d32 !important;
+  color: #fff !important;
+  border-radius: 8px 8px 0 0;
 }
+
+.flatpickr-current-month {
+  font-size: 18px;
+  color: #fff !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  display: block !important;
+  color: #fff !important;
+  fill: white !important;
+  opacity: 1 !important;     /* ✔️ flechas aparecen */
+}
+
 /* Días disponibles */
 .flatpickr-day.disponible {
   background: #e8f5e9 !important;
@@ -202,52 +212,44 @@
   cursor: not-allowed;
 }
 
-/* Días pasados → ROJO */
+/* Días PASADOS */
 .flatpickr-day.flatpickr-disabled[aria-disabled="true"]:not(.ocupado) {
-  background: #ffe5e5 !important;
+  background: #ffcccc !important;
   color: #ff0000 !important;
-  border-color: #ff9999 !important;
+  border-color: #ff7777 !important;
 }
 
-/* Hover solo en días disponibles */
+/* Hover días disponibles */
 .flatpickr-day.disponible:hover {
   background: #66bb6a !important;
   color: #fff !important;
 }
 
-/* Ocultar días del mes anterior/siguiente */
+/* Ocultar días de otros meses sin romper DOMINGO */
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
-  visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
 }
 
-/* Estilo para días deshabilitados genéricos */
-.flatpickr-day.flatpickr-disabled,
-.flatpickr-day.disabled {
-  background: #ffe5e5 !important;
-  color: #ff4d4d !important;
-  border-color: #ffb3b3 !important;
-}
-
-/* Grilla correcta de 7 columnas */
+/* Grid correcta */
 .flatpickr-days {
-  width: 100% !important;
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
+  width: 100% !important;
 }
 
-/* Tamaño uniforme */
+/* Tamaño uniforme de celdas */
 .flatpickr-day {
-  border-radius: 6px;
   width: 100% !important;
   height: 42px !important;
-  margin: 0 !important;
   line-height: 42px !important;
+  margin: 0 !important;
   font-size: 14px !important;
+  border-radius: 6px;
 }
 
-/* MÓVIL — ampliar calendario al ancho total */
+/* RESPONSIVE */
 @media (max-width: 480px) {
   .flatpickr-calendar {
     max-width: 100% !important;
