@@ -12,6 +12,7 @@
 }
 
 /* ====================== GENERAL ====================== */
+
 * {
   margin: 0;
   padding: 0;
@@ -25,7 +26,8 @@ body {
   background-color: #f8f5f0;
 }
 
-/* ====================== TARJETAS CABAÑAS (Más bajas + Botones centrados) ====================== */
+/* ====================== TARJETAS CABAÑAS ====================== */
+
 .cabanias-grid {
   display: flex;
   gap: 20px;
@@ -52,7 +54,7 @@ body {
 
 .cabin-card img {
   width: 100%;
-  height: 165px;           /* Reducido aún más */
+  height: 165px;
   object-fit: cover;
 }
 
@@ -73,14 +75,14 @@ body {
 .cabin-card .boton {
   display: block;
   width: 90%;
-  margin: 8px auto 16px;     /* Centrado */
+  margin: 8px auto 16px;
   padding: 11px 20px;
   background: var(--primary);
   color: white;
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
-  text-align: center;        /* Texto centrado */
+  text-align: center;
   transition: 0.3s;
 }
 
@@ -90,6 +92,7 @@ body {
 }
 
 /* ====================== MOTOR DE RESERVAS ====================== */
+
 .reserva-box {
   background: white;
   border: 4px solid var(--primary);
@@ -100,7 +103,31 @@ body {
   box-shadow: 0 15px 35px rgba(0,0,0,0.1);
 }
 
+/* --- CAMPOS DEL FORMULARIO EN MÓVIL --- */
+.reserva-box select,
+.reserva-box input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+#btnCalcular {
+  width: 100%;
+  display: block;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1rem;
+  margin-top: 10px;
+}
+
 /* ====================== FLATPICKR - ULTRA COMPACTO PARA MÓVIL ====================== */
+
 .flatpickr-calendar {
   width: 100% !important;
   max-width: 340px !important;
@@ -165,13 +192,14 @@ body {
   color: white !important;
 }
 
-/* ====================== RESPONSIVE - MÁS AGRESIVO ====================== */
+/* ====================== RESPONSIVE ====================== */
+
 @media (max-width: 480px) {
   .flatpickr-calendar {
     max-width: 100% !important;
     padding: 4px !important;
   }
-  
+
   .flatpickr-day {
     height: 32px !important;
     line-height: 32px !important;
@@ -185,6 +213,12 @@ body {
 
   .cabin-card {
     max-width: 340px;
+  }
+
+  /* Formularios totalmente verticales */
+  .reserva-box select,
+  .reserva-box input {
+    font-size: 1rem;
   }
 }
 
