@@ -1,281 +1,306 @@
-/* =============================================
-   STYLE.CSS COMPLETO - Versión Optimizada Móvil
-   Cabañas Río Mundo
-   ============================================= */
+// ================= MAIN.JS COMPLETO =================
 
-:root {
-  --primary: #4caf50;
-  --primary-dark: #2e7d32;
-  --accent: #FFD700;
-  --text: #333;
-  --gray: #555;
-  --danger: #d32f2f;
+// ===== FORMATEO FECHA LOCAL (Y-m-d) =====
+function formatearLocal(fecha) {
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
-/* ====================== GENERAL ====================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+// ===== CARGAR RESERVAS DESDE BACKEND =====
+const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
 
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  line-height: 1.6;
-  color: var(--text);
-  background-color: #f8f5f0;
-}
+async function cargarReservasBackend() {
+  try {
+    const res = await fetch(BACKEND_URL);
+    if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
+    const data = await res.json();
 
-/* ====================== HERO ====================== */
-.hero {
-  background-image: url('../images/hero.jpg');
-  background-size: cover;
-  background-position: center;
-  height: 85vh;
-  min-height: 600px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+    const reservas = { campanilla: [], tejo: [] };
+    for (let cabana of ["campanilla", "tejo"]) {
+      reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
+    }
+    return reservas;
 
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 2;
-}
-
-.header-inner {
-  text-align: center;
-  color: white;
-  position: relative;
-  z-index: 3;
-  padding: 0 20px;
-}
-
-.hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  text-shadow: 3px 3px 10px rgba(0,0,0,0.6);
-}
-
-.hero-title span {
-  color: var(--accent);
-}
-
-/* ====================== TARJETAS CABAÑAS ====================== */
-.cabanias-grid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 40px 0;
-}
-
-.cabin-card {
-  flex: 1 1 300px;
-  max-width: 360px;
-  background: white;
-  border: 4px solid var(--primary);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transition: all 0.3s ease;
-}
-
-.cabin-card:hover {
-  transform: translateY(-8px);
-  border-color: var(--primary-dark);
-}
-
-.cabin-card img {
-  width: 100%;
-  height: 165px;
-  object-fit: cover;
-}
-
-.cabin-card h3 {
-  color: var(--primary-dark);
-  margin: 12px 0 6px;
-  font-size: 1.45rem;
-  text-align: center;
-}
-
-.cabin-card p {
-  padding: 0 16px 12px;
-  color: var(--gray);
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-.cabin-card .boton {
-  display: block;
-  width: 90%;
-  margin: 8px auto 16px;
-  padding: 11px 20px;
-  background: var(--primary);
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  text-align: center;
-}
-
-.cabin-card .boton:hover {
-  background: #3d8b40;
-  transform: scale(1.03);
-}
-
-/* ====================== MOTOR DE RESERVAS ====================== */
-.reserva-box {
-  background: white;
-  border: 4px solid var(--primary);
-  border-radius: 16px;
-  padding: 25px 15px;
-  max-width: 560px;
-  margin: 25px auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.reserva-box label {
-  display: block;
-  margin: 18px 0 8px 0;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.reserva-box input,
-.reserva-box select {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #ddd;
-  border-radius: 10px;
-  font-size: 16px;
-  margin-bottom: 14px;
-}
-
-/* ====================== FLATPICKR - OPTIMIZADO PARA MÓVIL ====================== */
-.flatpickr-calendar {
-  width: 100% !important;
-  max-width: 290px !important;
-  margin: 10px auto 18px !important;
-  border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12) !important;
-  overflow: hidden;
-}
-
-.flatpickr-months {
-  background: var(--primary-dark) !important;
-  color: white !important;
-  padding: 6px 0 !important;
-}
-
-.flatpickr-weekdays {
-  padding: 4px 0 4px 0 !important;
-  background: #f8f9fa;
-}
-
-.flatpickr-weekday {
-  font-size: 10.8px !important;
-  font-weight: 700;
-  color: #2e7d32;
-}
-
-.flatpickr-days {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 1.5px !important;
-  padding: 4px !important;
-}
-
-.flatpickr-day {
-  height: 28px !important;
-  line-height: 28px !important;
-  font-size: 11.8px !important;
-  border-radius: 4px !important;
-}
-
-/* Ocultar días de otros meses */
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  height: 0 !important;
-}
-
-/* Colores días */
-.dia-pasado {
-  background: #ffc1c1 !important;
-  color: #b71c1c !important;
-  text-decoration: line-through;
-}
-
-.dia-reservado {
-  background: #ffcdd2 !important;
-  color: #c62828 !important;
-  cursor: not-allowed;
-}
-
-.dia-libre {
-  background: #e8f5e9 !important;
-  color: #1b5e20 !important;
-}
-
-.dia-libre:hover {
-  background: #66bb6a !important;
-  color: white !important;
-}
-
-/* ====================== RESULTADO Y SPINNER ====================== */
-#resultado {
-  display: none;
-  margin-top: 20px;
-  padding: 20px;
-  background: #f0f8f0;
-  border: 2px solid var(--primary);
-  border-radius: 12px;
-  text-align: center;
-}
-
-.spinner {
-  display: none;
-  width: 36px;
-  height: 36px;
-  border: 5px solid #e0e0e0;
-  border-top: 5px solid var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ====================== RESPONSIVE ====================== */
-@media (max-width: 480px) {
-  .flatpickr-calendar {
-    max-width: 100% !important;
-  }
-
-  .flatpickr-day {
-    height: 27px !important;
-    line-height: 27px !important;
-    font-size: 11.5px !important;
-  }
-
-  .reserva-box {
-    margin: 15px 10px;
-    padding: 20px 12px;
+  } catch (err) {
+    console.error(err);
+    return { campanilla: [], tejo: [] };
   }
 }
 
-@media (max-width: 360px) {
-  .flatpickr-day {
-    height: 26px !important;
-    line-height: 26px !important;
-    font-size: 11.2px !important;
-  }
+// ===== VARIABLES GLOBALES =====
+let reservasGlobal = {};
+let fechasOcupadasFlatpickr = [];
+let flatpickrInstance;
+
+// ================================
+// 🎯 CALENDARIO FLATPICKR
+// ================================
+
+// Asignación de colores
+function colorearDias(date) {
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  const fechaISO = date.toISOString().slice(0, 10);
+
+  if (date < hoy) return "dia-pasado";
+  if (fechasOcupadasFlatpickr.includes(fechaISO)) return "dia-reservado";
+  return "dia-libre";
 }
+
+function inicializarFlatpickr() {
+
+  if (flatpickrInstance) flatpickrInstance.destroy();
+
+  flatpickrInstance = flatpickr("#calendarioVisible", {
+    inline: true,
+    mode: "range",
+    locale: "es",
+    dateFormat: "d-m-Y",
+
+    disable: [
+      date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10))
+    ],
+
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+      const fecha = new Date(dayElem.dateObj);
+      dayElem.classList.add(colorearDias(fecha));
+    },
+
+    onChange: function(selectedDates) {
+      if (selectedDates.length === 2) {
+        const inicio = selectedDates[0];
+        const fin = selectedDates[1];
+
+        const opciones = { year: "numeric", month: "long", day: "numeric" };
+        const inicioTxt = inicio.toLocaleDateString("es-ES", opciones);
+        const finTxt = fin.toLocaleDateString("es-ES", opciones);
+
+        document.getElementById("fechasSeleccionadas").textContent =
+          `${inicioTxt} → ${finTxt}`;
+      }
+    }
+  });
+}
+
+async function prepararFlatpickr() {
+  const reservas = await cargarReservasBackend();
+  reservasGlobal = reservas;
+
+  const cabaña = document.getElementById("cabaña").value;
+  fechasOcupadasFlatpickr = reservas[cabaña] || [];
+
+  inicializarFlatpickr();
+}
+
+// ================================
+// 🎯 CÁLCULO DE RESERVA
+// (NO SE TOCA NADA AQUÍ)
+// ================================
+
+function calcularReserva() {
+  const cabaña = document.getElementById("cabaña").value;
+
+  if (!flatpickrInstance.selectedDates || flatpickrInstance.selectedDates.length < 2) {
+    alert("Selecciona un rango de fechas");
+    return;
+  }
+
+  const inicio = flatpickrInstance.selectedDates[0];
+  const fin = flatpickrInstance.selectedDates[1];
+  const noches = Math.round((fin - inicio) / (1000*60*60*24));
+
+  const nombre = document.getElementById("nombre").value.trim();
+  const telefono = document.getElementById("telefono").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if (!nombre || !telefono || !email) {
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      alert("Introduce un email válido.");
+    } else {
+      alert("Completa todos los datos personales");
+    }
+    return;
+  }
+
+  const spinner = document.getElementById("spinner");
+  const resultado = document.getElementById("resultado");
+
+  spinner.style.display = "block";
+  resultado.style.display = "none";
+
+  setTimeout(() => {
+
+    const opciones = { day: "numeric", month: "short" };
+    const inicioTexto = inicio.toLocaleDateString("es-ES", opciones);
+    const finTexto = fin.toLocaleDateString("es-ES", opciones);
+
+    document.getElementById("fechasSeleccionadas").innerHTML =
+      `📅 ${inicioTexto} - ${finTexto}<br>🛏 ${noches} ${noches === 1 ? "noche" : "noches"}`;
+
+    let total = 0;
+    let descuento = 0;
+    let minNoches = esTemporadaAlta(inicio) ? 4 : 2;
+
+    if (noches < minNoches) {
+      alert(`Mínimo ${minNoches} noches en estas fechas`);
+      spinner.style.display = "none";
+      return;
+    }
+
+    for (let i = 0; i < noches; i++) {
+      const dia = new Date(inicio);
+      dia.setDate(dia.getDate() + i);
+
+      const dow = dia.getDay();
+      let precio;
+
+      if (esTemporadaAlta(dia)) {
+        precio = 150;
+      } else {
+        precio = (dow === 5 || dow === 6)
+          ? (cabaña === "campanilla" ? 150 : 140)
+          : (cabaña === "campanilla" ? 115 : 110);
+      }
+
+      total += precio;
+    }
+
+    if (noches >= 6 && esTemporadaAlta(inicio)) descuento = total * 0.10;
+    else if (noches >= 3 && !esTemporadaAlta(inicio)) descuento = total * 0.10;
+
+    total -= descuento;
+
+    document.getElementById("cabañaSeleccionada").innerText =
+      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
+
+    const pagoInicial = 50;
+    document.getElementById("resto").innerText =
+      (total - pagoInicial).toFixed(2);
+
+    spinner.style.display = "none";
+    resultado.style.display = "block";
+
+  }, 300);
+}
+
+function esTemporadaAlta(fecha) {
+  const mes = fecha.getMonth() + 1;
+  const dia = fecha.getDate();
+  return (
+    mes === 7 ||
+    mes === 8 ||
+    (mes === 12 && dia >= 22) ||
+    (mes === 1 && dia <= 7)
+  );
+}
+
+function reservar() {
+  alert("Aquí se conectará el pago de 50 €.");
+}
+
+// ================================
+// URGENCIA
+// ================================
+
+function actualizarUrgencia(fechasOcupadas){
+  const mensaje = document.getElementById("mensajeUrgencia");
+  if(!mensaje) return;
+
+  const hoy = new Date();
+  const mesActual = hoy.getMonth()+1;
+
+  const ocupadas = fechasOcupadas.campanilla.length;
+  let texto = "";
+
+  if(mesActual === 7 || mesActual === 8){
+    texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
+  }
+  else if(ocupadas > 20){
+    texto = "⚡ Quedan pocas fechas disponibles este mes.";
+  }
+  else if(ocupadas > 10){
+    texto = "📅 Este alojamiento suele reservarse rápido.";
+  }
+  else{
+    texto = "✨ Reserva ahora para asegurar tus fechas.";
+  }
+
+  mensaje.innerText = texto;
+}
+
+// ================================
+// CARRUSEL + MENÚ
+// ================================
+function initCarousel(containerSelector, slideSelector, prevSelector, nextSelector, indicatorSelector) {
+  const containers = document.querySelectorAll(containerSelector);
+  containers.forEach(container => {
+    const slides = container.querySelectorAll(slideSelector);
+    const prevBtn = container.querySelector(prevSelector);
+    const nextBtn = container.querySelector(nextSelector);
+    const indicators = container.querySelectorAll(indicatorSelector);
+    let currentIndex = 0;
+    if (!slides.length) return;
+
+    function showSlide(index) {
+      slides.forEach((slide,i)=>{
+        slide.style.display = i === index ? "block" : "none";
+      });
+      indicators.forEach((ind,i)=>{
+        ind.classList.toggle("active", i===index);
+      });
+    }
+
+    nextBtn?.addEventListener("click", ()=>{
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    prevBtn?.addEventListener("click", ()=>{
+      currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+      showSlide(currentIndex);
+    });
+
+    indicators.forEach((ind,i)=>{
+      ind.addEventListener("click", ()=>{
+        currentIndex = i;
+        showSlide(currentIndex);
+      });
+    });
+
+    showSlide(currentIndex);
+  });
+}
+
+function initHamburger() {
+  const hamburger = document.getElementById("hamburger");
+  const navMenu = document.getElementById("navMenu");
+  hamburger?.addEventListener("click", ()=>{
+    navMenu?.classList.toggle("active");
+    hamburger.classList.toggle("active");
+  });
+}
+
+// ================================
+// 🚀 INICIALIZACIÓN GENERAL
+// ================================
+document.addEventListener("DOMContentLoaded", async () => {
+  initHamburger();
+  initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
+  initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
+
+  await prepararFlatpickr();   // ← CALENDARIO ACTIVADO
+
+  document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
+  document.getElementById("btnPagar")?.addEventListener("click", reservar);
+
+  setInterval(async () => {
+    const reservas = await cargarReservasBackend();
+    actualizarUrgencia(reservas);
+  }, 2 * 60 * 60 * 1000);
+});
