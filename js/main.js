@@ -294,7 +294,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  await prepararFlatpickr();   // ← CALENDARIO ACTIVADO
+  await prepararFlatpickr();  
+  // ← CALENDARIO ACTIVADO
+   // 🔥 AGREGADO: actualizar mensaje de urgencia inmediatamente
+  const reservas = await cargarReservasBackend();
+  actualizarUrgencia(reservas);
+
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
