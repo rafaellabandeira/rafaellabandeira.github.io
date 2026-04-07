@@ -129,8 +129,8 @@ body {
 /* ====================== FLATPICKR - ULTRA COMPACTO PARA MÓVIL ====================== */
 
 .flatpickr-calendar {
-  width: 100% !important;
-  max-width: 300px !important;
+  width: 80% !important;
+  max-width: 340px !important;
   margin: 12px auto !important;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
