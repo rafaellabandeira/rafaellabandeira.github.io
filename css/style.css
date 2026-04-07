@@ -273,21 +273,21 @@ body {
     object-fit: cover;
   }
 
-/* ====================== LOGO HERO IMPACTANTE ====================== */
+/* ====================== LOGO HERO IMPACTANTE VERDE ====================== */
 .nav-logo {
-  font-size: 2rem;           /* Texto más grande */
-  font-weight: 800;           /* Más grueso */
+  font-size: 2rem;              /* Texto más grande */
+  font-weight: 800;              /* Más grueso */
   line-height: 1;
   display: flex;
   align-items: center;
-  gap: 8px;                   /* Espacio entre emoji y texto */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* Sombra suave para resaltar */
-  color: #fff;                /* Color blanco si tu barra es oscura */
+  gap: 8px;                      /* Espacio entre emoji y texto */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* Sombra suave */
+  color: var(--primary);         /* Color verde como contenedores */
 }
 
 .nav-logo::before {
-  content: "🏡";               /* Emoji de cabaña */
-  font-size: 2.5rem;           /* Emoji más grande que el texto */
+  content: "🏡";                 /* Solo una cabaña al lado del texto */
+  font-size: 2.5rem;             /* Emoji más grande que el texto */
   line-height: 1;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
