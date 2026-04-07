@@ -164,9 +164,8 @@ body {
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
   opacity: 0 !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  padding: 0 !important;
+  pointer-events: none !important;
+  
 }
 
 /* Colores días */
