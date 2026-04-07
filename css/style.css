@@ -235,6 +235,20 @@ body {
 }
 
 .flatpickr-day.dia-libre {
-  background-color: #c3f0a6 !important; /* verde claro */
+  background-color: #d6f5c3 !important; /* verde más claro */
   color: #000 !important;
+}
+
+.flatpickr-day.dia-libre:hover {
+  background-color: #a8e6a3 !important; /* verde más intenso al hover */
+  color: white !important;
+}
+
+/* Día seleccionado por el usuario */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.inRange {
+  background-color: #64b5f6 !important; /* azul */
+  color: white !important;
 }
