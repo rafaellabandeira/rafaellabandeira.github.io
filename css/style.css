@@ -252,3 +252,24 @@ body {
   background-color: #64b5f6 !important; /* azul */
   color: white !important;
 }
+   
+/* ====================== HERO Y CARRUSELES 16:9 ====================== */
+
+.hero,
+.carousel-general-slides img,
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9; /* Mantiene proporción 16:9 */
+  object-fit: cover;    /* Corta lo que sobresalga sin deformar */
+}
+
+/* Ajuste responsive adicional para móviles */
+@media (max-width: 480px) {
+  .hero,
+  .carousel-general-slides img,
+  .carousel-slide img {
+    height: auto;       /* Ajusta a contenido en móviles */
+    object-fit: cover;
+  }
+}
