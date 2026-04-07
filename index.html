@@ -229,29 +229,11 @@
 <!-- =============================== -->
 <!--     FLATPICKR EN ESPAÑOL       -->
 <!-- =============================== -->
+  <!-- =============================== -->
+<!--     FLATPICKR EN ESPAÑOL       -->
+<!-- =============================== -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-
-<script>
-const picker = flatpickr("#calendarioVisible", {
-  mode: "range",
-  inline: true,
-  dateFormat: "d-m-Y",  // ← FORMATO ESPAÑOL
-  locale: "es",         // ← IDIOMA
-
-  onChange: function(selectedDates) {
-    if (selectedDates.length === 2) {
-
-      const opciones = { year: "numeric", month: "long", day: "numeric" };
-      const inicioTxt = selectedDates[0].toLocaleDateString("es-ES", opciones);
-      const finTxt = selectedDates[1].toLocaleDateString("es-ES", opciones);
-
-      document.getElementById("fechasSeleccionadas").textContent =
-        `${inicioTxt} → ${finTxt}`;
-    }
-  }
-});
-</script>
 
 <!-- Scripts existentes -->
 <script src="js/main.js"></script>
