@@ -17,10 +17,9 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
-    // Aseguramos que exista array de bloqueos
     data.bloqueos = data.bloqueos || [];
-
     const reservas = { campanilla: [], tejo: [], bloqueos: [] };
+
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
@@ -40,15 +39,14 @@ let bloqueosFlatpickr = [];
 let flatpickrInstance;
 let arrastreActivo = false;
 let rangoSeleccionado = [];
+let adminActivo = false; // 🔒 modo administrador
 
 // ================================
 // 🎯 CALENDARIO FLATPICKR
 // ================================
 
-// Asignación de colores
 function colorearDias(date) {
-  const hoy = new Date();
-  hoy.setHours(0,0,0,0);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
   const fechaISO = date.toISOString().slice(0, 10);
 
   if (date < hoy) return "dia-pasado";
@@ -71,18 +69,17 @@ function inicializarFlatpickr() {
       const fecha = new Date(dayElem.dateObj);
       dayElem.classList.add(colorearDias(fecha));
 
-      // ===== DOBLE CLICK: BLOQUEAR / DESBLOQUEAR =====
+      // ===== DOBLE CLICK: BLOQUEAR / DESBLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
+        if (!adminActivo) return;
         const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj < hoy) return;
 
         if (bloqueosFlatpickr.includes(fechaISO)) {
-          // Desbloquear
           bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
           guardarBloqueoEnBackend(fechaISO, false);
         } else {
-          // Bloquear
           bloqueosFlatpickr.push(fechaISO);
           guardarBloqueoEnBackend(fechaISO, true);
         }
@@ -90,18 +87,19 @@ function inicializarFlatpickr() {
         flatpickrInstance.redraw();
       });
 
-      // ===== ARRASTRAR PARA BLOQUEAR RANGO =====
+      // ===== ARRASTRAR PARA BLOQUEAR RANGO (solo admin) =====
       dayElem.addEventListener("mousedown", () => {
+        if (!adminActivo) return;
         arrastreActivo = true;
         rangoSeleccionado = [];
       });
       dayElem.addEventListener("mouseenter", () => {
-        if (!arrastreActivo) return;
+        if (!arrastreActivo || !adminActivo) return;
         const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj >= hoy) {
           rangoSeleccionado.push(fechaISO);
-          dayElem.style.background = "rgba(255,0,0,0.4)";
+          dayElem.style.background = "rgba(0,123,255,0.4)"; // azul claro mientras arrastras
         }
       });
       document.addEventListener("mouseup", () => {
@@ -258,11 +256,10 @@ function actualizarUrgencia(fechasOcupadas){
 }
 
 // ================================
-// GUARDAR BLOQUEOS EN BACKEND (JSON de reservas) 
+// GUARDAR BLOQUEOS EN BACKEND
 // ================================
 async function guardarBloqueoEnBackend(fecha, bloquear) {
   try {
-    // Traemos reservas completas
     const res = await fetch(BACKEND_URL);
     const data = await res.json();
     data.bloqueos = data.bloqueos || [];
@@ -281,6 +278,21 @@ async function guardarBloqueoEnBackend(fecha, bloquear) {
 
   } catch (err) { console.error(err); }
 }
+
+// ================================
+// 🔒 FUNCIONALIDAD DEL CANDADO
+// ================================
+const adminButton = document.getElementById("adminButton");
+adminButton?.addEventListener("click", () => {
+  const clave = prompt("Introduce la contraseña de administrador:");
+  if (clave === "8111") {
+    adminActivo = !adminActivo;
+    alert(`Modo administrador ${adminActivo ? "activado" : "desactivado"}`);
+    adminButton.style.backgroundColor = adminActivo ? "#4caf50" : "#444";
+  } else if (clave !== null) {
+    alert("Contraseña incorrecta");
+  }
+});
 
 // ================================
 // CARRUSEL + MENÚ
