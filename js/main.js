@@ -17,13 +17,16 @@ async function cargarReservasBackend() {
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
     const data = await res.json();
 
-    data.bloqueos = data.bloqueos || [];
-    const reservas = { campanilla: [], tejo: [], bloqueos: [] };
+    data.bloqueados = data.bloqueados || [];
+
+    const reservas = { campanilla: [], tejo: [], bloqueos: [] }; // ← OJO AQUÍ
 
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
     }
-    reservas.bloqueos = data.bloqueos || [];
+
+    reservas.bloqueos = data.bloqueados || []; // ← OJO AQUÍ TAMBIÉN
+
     return reservas;
 
   } catch (err) {
