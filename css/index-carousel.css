@@ -99,3 +99,19 @@
     gap: 5px;
   }
 }
+/* ====== CORRECCIÓN PARA QUE LAS FOTOS SE VEAN COMPLETAS EN PC ====== */
+.carousel-slide-general img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* Mostrar foto entera */
+  background-color: #000; /* Opcional: relleno negro elegante */
+}
+
+/* En móviles seguimos usando cover */
+@media (max-width: 768px) {
+  .carousel-slide-general img {
+    height: auto;
+    object-fit: cover;
+    background-color: transparent;
+  }
+}
