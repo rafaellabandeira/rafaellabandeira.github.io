@@ -55,6 +55,7 @@ let adminActivo = false; // 🔒 modo administrador
 
 // ================================
 // 🎯 CALENDARIO FLATPICKR
+// 🎯 CALENDARIO FLATPICKR
 // ================================
 
 function colorearDias(date) {
@@ -65,6 +66,7 @@ function colorearDias(date) {
   if (fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO)) return "dia-bloqueado";
   return "dia-libre";
 }
+
 function inicializarFlatpickr() {
   if (flatpickrInstance) flatpickrInstance.destroy();
 
@@ -81,15 +83,16 @@ function inicializarFlatpickr() {
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-  const fecha = new Date(dayElem.dateObj);
-  const clase = colorearDias(fecha);
-  dayElem.classList.add(clase);
+      const fecha = new Date(dayElem.dateObj);
+      const clase = colorearDias(fecha);
+      dayElem.classList.add(clase);
 
-  // 🔥 AÑADIDO: para que se pinte en rojo y quede realmente bloqueado
-  if (clase === "dia-bloqueado") {
-    dayElem.classList.add("flatpickr-disabled");
-  }
-      // ===== DOBLE CLICK Y ARRASTRE PARA BLOQUEAR (solo admin) =====
+      // 🔹 Bloqueado → rojo
+      if (clase === "dia-bloqueado") {
+        dayElem.classList.add("flatpickr-disabled");
+      }
+
+      // ===== DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
         const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
@@ -97,14 +100,21 @@ function inicializarFlatpickr() {
         if (dayElem.dateObj < hoy) return;
 
         if (bloqueosFlatpickr.includes(fechaISO)) {
+          // 🔓 Desbloquear
           bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
           guardarBloqueoEnBackend(fechaISO, false);
+
+          dayElem.classList.remove("dia-bloqueado", "flatpickr-disabled");
+          dayElem.classList.add("dia-libre");
         } else {
+          // 🔒 Bloquear
           bloqueosFlatpickr.push(fechaISO);
           guardarBloqueoEnBackend(fechaISO, true);
+
+          dayElem.classList.remove("dia-libre");
+          dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
 
-        // 🔒 Actualiza disable dinámicamente
         flatpickrInstance.set('disable', [
           date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
                   bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
@@ -118,15 +128,17 @@ function inicializarFlatpickr() {
         arrastreActivo = true;
         rangoSeleccionado = [];
       });
+
       dayElem.addEventListener("mouseenter", () => {
         if (!arrastreActivo || !adminActivo) return;
         const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
-        if (dayElem.dateObj >= hoy) {
+        if (dayElem.dateObj >= hoy && !bloqueosFlatpickr.includes(fechaISO)) {
           rangoSeleccionado.push(fechaISO);
           dayElem.style.background = "rgba(0,123,255,0.4)";
         }
       });
+
       document.addEventListener("mouseup", () => {
         if (!arrastreActivo) return;
         arrastreActivo = false;
@@ -135,10 +147,18 @@ function inicializarFlatpickr() {
             if (!bloqueosFlatpickr.includes(fecha)) {
               bloqueosFlatpickr.push(fecha);
               guardarBloqueoEnBackend(fecha, true);
+
+              // Actualiza visual de día
+              const dayElements = flatpickrInstance.days.childNodes;
+              dayElements.forEach(d => {
+                if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
+                  d.classList.remove("dia-libre");
+                  d.classList.add("dia-bloqueado", "flatpickr-disabled");
+                }
+              });
             }
           });
 
-          // 🔒 Actualiza disable dinámicamente para todo el rango
           flatpickrInstance.set('disable', [
             date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
                     bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
@@ -157,7 +177,6 @@ function inicializarFlatpickr() {
         const finTxt = fin.toLocaleDateString("es-ES", opciones);
         document.getElementById("fechasSeleccionadas").textContent =
           `${inicioTxt} → ${finTxt}`;
-        
       }
     }
   });
@@ -173,6 +192,7 @@ async function prepararFlatpickr() {
 
   inicializarFlatpickr();
 }
+          
 
 // ================================
 // 🎯 CÁLCULO DE RESERVA
