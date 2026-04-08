@@ -1,5 +1,4 @@
 // ================= MAIN.JS COMPLETO =================
-
 // ===== FORMATEO FECHA LOCAL (Y-m-d) =====
 function formatearLocal(fecha) {
   const y = fecha.getFullYear();
