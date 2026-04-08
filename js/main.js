@@ -15,17 +15,26 @@ async function cargarReservasBackend() {
   try {
     const res = await fetch(BACKEND_URL);
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
+
     const data = await res.json();
 
+    // Aseguramos que el backend siempre tenga el array
     data.bloqueados = data.bloqueados || [];
 
-    const reservas = { campanilla: [], tejo: [], bloqueos: [] }; // ← OJO AQUÍ
+    // El frontend SIEMPRE usa "reservas.bloqueos"
+    const reservas = {
+      campanilla: [],
+      tejo: [],
+      bloqueos: []
+    };
 
+    // Cargar las fechas ocupadas de cada cabaña
     for (let cabana of ["campanilla", "tejo"]) {
-      reservas[cabana] = data[cabana]?.map(f => f.slice(0,10)) || [];
+      reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
     }
 
-    reservas.bloqueos = data.bloqueados || []; // ← OJO AQUÍ TAMBIÉN
+    // Convertimos "bloqueados" del backend -> "bloqueos" que usa el frontend
+    reservas.bloqueos = data.bloqueados || [];
 
     return reservas;
 
