@@ -51,13 +51,21 @@ body {
   transform: translateY(-8px);
   border-color: var(--primary-dark);
 }
-
+/* === FOTOS CARRUSEL (OPCIÓN 1: que se vean completas) === */
 .cabin-card img {
   width: 100%;
-  height: 165px;
-  object-fit: cover;
+  height: 240px;        /* más alto para que no quede pequeña */
+  object-fit: cover;    /* se usa en móvil */
 }
 
+@media (min-width: 800px) {
+  .cabin-card img {
+    height: 260px;       /* más espacio en PC */
+    object-fit: contain; /* NO recorta → se ve completa */
+    background-color: #000; /* opcional para rellenar bandas */
+}
+   
+}
 .cabin-card h3 {
   color: var(--primary-dark);
   margin: 12px 0 6px;
