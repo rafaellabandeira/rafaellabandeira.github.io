@@ -53,7 +53,6 @@ function colorearDias(date) {
   if (fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO)) return "dia-bloqueado";
   return "dia-libre";
 }
-
 function inicializarFlatpickr() {
   if (flatpickrInstance) flatpickrInstance.destroy();
 
@@ -62,14 +61,18 @@ function inicializarFlatpickr() {
     mode: "range",
     locale: "es",
     dateFormat: "d-m-Y",
+
+    // 🔒 Bloquea días ocupados y bloqueos admin
     disable: [
-      date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10))
+      date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+              bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
     ],
+
     onDayCreate: function(dObj, dStr, fp, dayElem) {
       const fecha = new Date(dayElem.dateObj);
       dayElem.classList.add(colorearDias(fecha));
 
-      // ===== DOBLE CLICK: BLOQUEAR / DESBLOQUEAR (solo admin) =====
+      // ===== DOBLE CLICK Y ARRASTRE PARA BLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
         const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
@@ -84,6 +87,11 @@ function inicializarFlatpickr() {
           guardarBloqueoEnBackend(fechaISO, true);
         }
 
+        // 🔒 Actualiza disable dinámicamente
+        flatpickrInstance.set('disable', [
+          date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+                  bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
+        ]);
         flatpickrInstance.redraw();
       });
 
@@ -99,7 +107,7 @@ function inicializarFlatpickr() {
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj >= hoy) {
           rangoSeleccionado.push(fechaISO);
-          dayElem.style.background = "rgba(0,123,255,0.4)"; // azul claro mientras arrastras
+          dayElem.style.background = "rgba(0,123,255,0.4)";
         }
       });
       document.addEventListener("mouseup", () => {
@@ -112,10 +120,17 @@ function inicializarFlatpickr() {
               guardarBloqueoEnBackend(fecha, true);
             }
           });
+
+          // 🔒 Actualiza disable dinámicamente para todo el rango
+          flatpickrInstance.set('disable', [
+            date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+                    bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
+          ]);
           flatpickrInstance.redraw();
         }
       });
     },
+
     onChange: function(selectedDates) {
       if (selectedDates.length === 2) {
         const inicio = selectedDates[0];
@@ -125,6 +140,7 @@ function inicializarFlatpickr() {
         const finTxt = fin.toLocaleDateString("es-ES", opciones);
         document.getElementById("fechasSeleccionadas").textContent =
           `${inicioTxt} → ${finTxt}`;
+        
       }
     }
   });
