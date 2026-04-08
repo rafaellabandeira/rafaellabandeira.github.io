@@ -276,23 +276,22 @@ function actualizarUrgencia(fechasOcupadas){
 // ================================
 async function guardarBloqueoEnBackend(fecha, bloquear) {
   try {
-    const res = await fetch(BACKEND_URL);
-    const data = await res.json();
-    data.bloqueos = data.bloqueos || [];
-
     if (bloquear) {
-      if (!data.bloqueos.includes(fecha)) data.bloqueos.push(fecha);
+      await fetch(BACKEND_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fecha })
+      });
     } else {
-      data.bloqueos = data.bloqueos.filter(f => f !== fecha);
+      await fetch(BACKEND_URL, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fecha })
+      });
     }
-
-    await fetch(BACKEND_URL, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
-
-  } catch (err) { console.error(err); }
+  } catch(err) {
+    console.error(err);
+  }
 }
 
 // ================================
