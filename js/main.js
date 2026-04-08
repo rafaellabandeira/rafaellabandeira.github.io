@@ -81,9 +81,14 @@ function inicializarFlatpickr() {
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const fecha = new Date(dayElem.dateObj);
-      dayElem.classList.add(colorearDias(fecha));
+  const fecha = new Date(dayElem.dateObj);
+  const clase = colorearDias(fecha);
+  dayElem.classList.add(clase);
 
+  // 🔥 AÑADIDO: para que se pinte en rojo y quede realmente bloqueado
+  if (clase === "dia-bloqueado") {
+    dayElem.classList.add("flatpickr-disabled");
+  }
       // ===== DOBLE CLICK Y ARRASTRE PARA BLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
