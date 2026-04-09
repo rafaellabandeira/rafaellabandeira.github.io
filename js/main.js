@@ -54,7 +54,6 @@ let adminActivo = false; // 🔒 modo administrador
 
 // ================================
 // 🎯 CALENDARIO FLATPICKR
-// 🎯 CALENDARIO FLATPICKR
 // ================================
 
 function colorearDias(date) {
@@ -65,6 +64,35 @@ function colorearDias(date) {
   if (fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO)) return "dia-bloqueado";
   return "dia-libre";
 }
+
+// ✅ FIX: Un solo listener global para mouseup (antes se registraba 30 veces, una por día)
+document.addEventListener("mouseup", async () => {
+  if (!arrastreActivo) return;
+  arrastreActivo = false;
+  if (rangoSeleccionado.length === 0) return;
+
+  for (const fecha of rangoSeleccionado) {
+    if (!bloqueosFlatpickr.includes(fecha)) {
+      bloqueosFlatpickr.push(fecha);
+      await guardarBloqueoEnBackend(fecha, true);
+
+      // Actualiza visual de día
+      flatpickrInstance.days.childNodes.forEach(d => {
+        if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
+          d.classList.remove("dia-libre");
+          d.classList.add("dia-bloqueado", "flatpickr-disabled");
+        }
+      });
+    }
+  }
+
+  flatpickrInstance.set("disable", [
+    date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+            bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
+  ]);
+  flatpickrInstance.redraw();
+  rangoSeleccionado = [];
+});
 
 function inicializarFlatpickr() {
   if (flatpickrInstance) flatpickrInstance.destroy();
@@ -138,33 +166,7 @@ function inicializarFlatpickr() {
         }
       });
 
-      document.addEventListener("mouseup", () => {
-        if (!arrastreActivo) return;
-        arrastreActivo = false;
-        if (rangoSeleccionado.length > 0) {
-          rangoSeleccionado.forEach(fecha => {
-            if (!bloqueosFlatpickr.includes(fecha)) {
-              bloqueosFlatpickr.push(fecha);
-              guardarBloqueoEnBackend(fecha, true);
-
-              // Actualiza visual de día
-              const dayElements = flatpickrInstance.days.childNodes;
-              dayElements.forEach(d => {
-                if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
-                  d.classList.remove("dia-libre");
-                  d.classList.add("dia-bloqueado", "flatpickr-disabled");
-                }
-              });
-            }
-          });
-
-          flatpickrInstance.set('disable', [
-            date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
-                    bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
-          ]);
-          flatpickrInstance.redraw();
-        }
-      });
+      // ✅ FIX: mouseup eliminado de aquí — ahora está como listener global arriba
     },
 
     onChange: function(selectedDates) {
@@ -191,7 +193,7 @@ async function prepararFlatpickr() {
 
   inicializarFlatpickr();
 }
-          
+
 
 // ================================
 // 🎯 CÁLCULO DE RESERVA
@@ -334,14 +336,35 @@ async function guardarBloqueoEnBackend(fecha, bloquear) {
 // 🔒 FUNCIONALIDAD DEL CANDADO
 // ================================
 const adminButton = document.getElementById("adminButton");
-adminButton?.addEventListener("click", () => {
+adminButton?.addEventListener("click", async () => {
+  if (adminActivo) {
+    // Desactivar sesión directamente
+    adminActivo = false;
+    adminButton.style.backgroundColor = "#444";
+    alert("Modo administrador desactivado");
+    return;
+  }
+
   const clave = prompt("Introduce la contraseña de administrador:");
-  if (clave === "8111") {
-    adminActivo = !adminActivo;
-    alert(`Modo administrador ${adminActivo ? "activado" : "desactivado"}`);
-    adminButton.style.backgroundColor = adminActivo ? "#4caf50" : "#444";
-  } else if (clave !== null) {
-    alert("Contraseña incorrecta");
+  if (!clave) return;
+
+  try {
+    // ✅ FIX SEGURIDAD: la contraseña se verifica en el servidor, no en el frontend
+    const res = await fetch(BACKEND_URL.replace("/reservas", "/admin/verificar"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: clave })
+    });
+
+    if (res.ok) {
+      adminActivo = true;
+      adminButton.style.backgroundColor = "#4caf50";
+      alert("Modo administrador activado");
+    } else {
+      alert("Contraseña incorrecta");
+    }
+  } catch(err) {
+    alert("Error al conectar con el servidor");
   }
 });
 
@@ -393,9 +416,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  await prepararFlatpickr();  
-  const reservas = await cargarReservasBackend();
-  actualizarUrgencia(reservas);
+  // ✅ FIX: una sola llamada al backend — prepararFlatpickr ya carga y guarda en reservasGlobal
+  await prepararFlatpickr();
+  actualizarUrgencia(reservasGlobal);
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
