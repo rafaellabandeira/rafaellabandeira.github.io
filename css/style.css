@@ -263,12 +263,31 @@ body {
 /* ====================== HERO Y CARRUSELES 16:9 ====================== */
 
 .hero,
-.carousel-general-slides img,
 .carousel-slide img {
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
+}
+
+/* ====================== CARRUSEL GENERAL ====================== */
+
+.carousel-container-general {
+  max-width: 800px !important;
+  margin: 20px auto !important;
+}
+
+.carousel-slide-general img {
+  width: 100% !important;
+  height: 450px !important;
+  object-fit: cover !important;
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .carousel-slide-general img {
+    height: 250px !important;
+  }
 }
 
 /* ====================== LOGO HERO ====================== */
