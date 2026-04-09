@@ -51,21 +51,21 @@ body {
   transform: translateY(-8px);
   border-color: var(--primary-dark);
 }
-/* === FOTOS CARRUSEL (OPCIÓN 1: que se vean completas) === */
+
 .cabin-card img {
   width: 100%;
-  height: 240px;        /* más alto para que no quede pequeña */
-  object-fit: cover;    /* se usa en móvil */
+  height: 240px;
+  object-fit: cover;
 }
 
 @media (min-width: 800px) {
   .cabin-card img {
-    height: 260px;       /* más espacio en PC */
-    object-fit: contain; /* NO recorta → se ve completa */
-    background-color: #000; /* opcional para rellenar bandas */
+    height: 260px;
+    object-fit: contain;
+    background-color: #000;
+  }
 }
-   
-}
+
 .cabin-card h3 {
   color: var(--primary-dark);
   margin: 12px 0 6px;
@@ -111,7 +111,6 @@ body {
   box-shadow: 0 15px 35px rgba(0,0,0,0.1);
 }
 
-/* --- CAMPOS DEL FORMULARIO EN MÓVIL --- */
 .reserva-box select,
 .reserva-box input {
   width: 100%;
@@ -134,13 +133,13 @@ body {
   margin-top: 10px;
 }
 
-/* ====================== FLATPICKR - ULTRA COMPACTO PARA MÓVIL ====================== */
+/* ====================== FLATPICKR ====================== */
 
 .flatpickr-calendar {
   width: 100% !important;
-  max-width: 340px !important;
+  max-width: 100% !important;
   margin: 12px auto !important;
-  border-radius: 12px;
+  border-radius: 12px !important;
   box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
 }
 
@@ -154,11 +153,11 @@ body {
   font-size: 1.05rem !important;
 }
 
-.flatpickr-days {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 1px !important;
-  padding: 6px !important;
+.flatpickr-days,
+.dayContainer {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: unset !important;
 }
 
 .flatpickr-day {
@@ -166,17 +165,18 @@ body {
   line-height: 34px !important;
   font-size: 13px !important;
   border-radius: 6px !important;
+  max-width: 14.28% !important;
+  flex-basis: 14.28% !important;
 }
 
-/* Ocultar días de otros meses */
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
   opacity: 0 !important;
   pointer-events: none !important;
-  
 }
 
-/* Colores días */
+/* ===== COLORES CALENDARIO ===== */
+
 .dia-pasado {
   background: #ffc1c1 !important;
   color: #b71c1c !important;
@@ -199,11 +199,19 @@ body {
   color: white !important;
 }
 
+/* Día seleccionado por el usuario */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.inRange {
+  background-color: #64b5f6 !important;
+  color: white !important;
+}
+
 /* ====================== RESPONSIVE ====================== */
 
 @media (max-width: 480px) {
   .flatpickr-calendar {
-    max-width: 100% !important;
     padding: 4px !important;
   }
 
@@ -222,10 +230,16 @@ body {
     max-width: 340px;
   }
 
-  /* Formularios totalmente verticales */
   .reserva-box select,
   .reserva-box input {
     font-size: 1rem;
+  }
+
+  .hero,
+  .carousel-general-slides img,
+  .carousel-slide img {
+    height: auto;
+    object-fit: cover;
   }
 }
 
@@ -235,32 +249,8 @@ body {
     line-height: 31px !important;
     font-size: 12.5px !important;
   }
-/* ===== COLORES CALENDARIO ===== */
-.flatpickr-day.dia-pasado,
-.flatpickr-day.dia-reservado {
-  background-color: #ff4d4d !important; /* rojo */
-  color: #fff !important;
 }
 
-.flatpickr-day.dia-libre {
-  background-color: #d6f5c3 !important; /* verde más claro */
-  color: #000 !important;
-}
-
-.flatpickr-day.dia-libre:hover {
-  background-color: #a8e6a3 !important; /* verde más intenso al hover */
-  color: white !important;
-}
-
-/* Día seleccionado por el usuario */
-.flatpickr-day.selected,
-.flatpickr-day.startRange,
-.flatpickr-day.endRange,
-.flatpickr-day.inRange {
-  background-color: #64b5f6 !important; /* azul */
-  color: white !important;
-}
-   
 /* ====================== HERO Y CARRUSELES 16:9 ====================== */
 
 .hero,
@@ -268,39 +258,30 @@ body {
 .carousel-slide img {
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 9; /* Mantiene proporción 16:9 */
-  object-fit: cover;    /* Corta lo que sobresalga sin deformar */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
-/* Ajuste responsive adicional para móviles */
-@media (max-width: 480px) {
-  .hero,
-  .carousel-general-slides img,
-  .carousel-slide img {
-    height: auto;       /* Ajusta a contenido en móviles */
-    object-fit: cover;
-  }
+/* ====================== LOGO HERO ====================== */
 
-/* ====================== LOGO HERO IMPACTANTE VERDE ====================== */
 .nav-logo {
-  font-size: 2rem;              /* Texto más grande */
-  font-weight: 800;              /* Más grueso */
+  font-size: 2rem;
+  font-weight: 800;
   line-height: 1;
   display: flex;
   align-items: center;
-  gap: 8px;                      /* Espacio entre emoji y texto */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* Sombra suave */
-  color: var(--primary);         /* Color verde como contenedores */
+  gap: 8px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  color: var(--primary);
 }
 
 .nav-logo::before {
-  content: "🏡";                 /* Solo una cabaña al lado del texto */
-  font-size: 2.5rem;             /* Emoji más grande que el texto */
+  content: "🏡";
+  font-size: 2.5rem;
   line-height: 1;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Ajuste responsive para móviles */
 @media (max-width: 600px) {
   .nav-logo {
     font-size: 1.6rem;
