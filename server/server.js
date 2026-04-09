@@ -1,7 +1,6 @@
 // server/server.js
 import express from "express";
 import path from "path";
-import fs from "fs";
 import cors from "cors";
 
 const app = express();
@@ -11,65 +10,72 @@ app.use(express.json());
 // 🔹 Carpeta main con index.html, main.js y CSS
 app.use(express.static(path.join(process.cwd(), "main")));
 
-// 🔹 Archivo de reservas persistente
-const reservasFile = path.join(process.cwd(), "server", "reservas.json");
+// 🔹 Configuración JSONBin
+const JSONBIN_ID = process.env.JSONBIN_ID;
+const JSONBIN_KEY = process.env.JSONBIN_KEY;
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
 
-// 🔹 Leer reservas desde archivo o crear si no existe
-function leerReservas() {
+// 🔹 Leer reservas desde JSONBin
+async function leerReservas() {
   try {
-    if(!fs.existsSync(reservasFile)){
-      const init = { campanilla: [], tejo: [], bloqueados: [] };
-      fs.writeFileSync(reservasFile, JSON.stringify(init,null,2));
-      return init;
-    }
-    const data = fs.readFileSync(reservasFile,"utf-8");
-    return JSON.parse(data);
-  } catch(e){
+    const res = await fetch(JSONBIN_URL, {
+      headers: { "X-Master-Key": JSONBIN_KEY }
+    });
+    const data = await res.json();
+    return data.record;
+  } catch(e) {
     console.error("Error leyendo reservas:", e);
     return { campanilla: [], tejo: [], bloqueados: [] };
   }
 }
 
-// 🔹 Guardar reservas en archivo
-function guardarReservas(reservas) {
+// 🔹 Guardar reservas en JSONBin
+async function guardarReservas(reservas) {
   try {
-    fs.writeFileSync(reservasFile, JSON.stringify(reservas,null,2));
-  } catch(e){
+    await fetch(JSONBIN_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_KEY
+      },
+      body: JSON.stringify(reservas)
+    });
+  } catch(e) {
     console.error("Error guardando reservas:", e);
   }
 }
 
 // 🔹 GET reservas
-app.get("/reservas", (req,res)=>{
-  const reservas = leerReservas();
+app.get("/reservas", async (req, res) => {
+  const reservas = await leerReservas();
   res.json(reservas);
 });
 
 // 🔹 POST bloquear día
-app.post("/reservas", (req,res)=>{
+app.post("/reservas", async (req, res) => {
   const { fecha } = req.body;
-  if(!fecha) return res.status(400).json({ok:false, msg:"Falta fecha"});
+  if (!fecha) return res.status(400).json({ ok: false, msg: "Falta fecha" });
 
-  const reservas = leerReservas();
-  if(!reservas.bloqueados.includes(fecha)){
+  const reservas = await leerReservas();
+  if (!reservas.bloqueados.includes(fecha)) {
     reservas.bloqueados.push(fecha);
-    guardarReservas(reservas);
+    await guardarReservas(reservas);
   }
-  res.json({ok:true});
+  res.json({ ok: true });
 });
 
 // 🔹 DELETE desbloquear día
-app.delete("/reservas", (req,res)=>{
+app.delete("/reservas", async (req, res) => {
   const { fecha } = req.body;
-  if(!fecha) return res.status(400).json({ok:false, msg:"Falta fecha"});
+  if (!fecha) return res.status(400).json({ ok: false, msg: "Falta fecha" });
 
-  const reservas = leerReservas();
-  reservas.bloqueados = reservas.bloqueados.filter(f=>f!==fecha);
-  guardarReservas(reservas);
-  res.json({ok:true});
+  const reservas = await leerReservas();
+  reservas.bloqueados = reservas.bloqueados.filter(f => f !== fecha);
+  await guardarReservas(reservas);
+  res.json({ ok: true });
 });
 
-// ✅ NUEVO: Verificar contraseña de administrador
+// 🔹 Verificar contraseña de administrador
 app.post("/admin/verificar", (req, res) => {
   const { password } = req.body;
   if (password === process.env.ADMIN_PASSWORD) {
@@ -81,4 +87,4 @@ app.post("/admin/verificar", (req, res) => {
 
 // 🔹 Iniciar servidor
 const port = process.env.PORT || 3000;
-app.listen(port, ()=>console.log(`Servidor corriendo en puerto ${port}`));
+app.listen(port, () => console.log(`Servidor corriendo en puerto ${port}`));
