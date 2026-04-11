@@ -49,11 +49,12 @@ app.get("/reservas", async (req, res) => {
 
 // POST bloquear día (por cabaña)
 app.post("/reservas", async (req, res) => {
-  const { fecha, cabana } = req.body;
-  if (!fecha || !cabana) return res.status(400).json({ ok: false, msg: "Falta fecha o cabaña" });
+  const { fecha, cabana, cabaña } = req.body;
+  const cab = cabana || cabaña;
+  if (!fecha || !cab) return res.status(400).json({ ok: false, msg: "Falta fecha o cabaña" });
 
   const reservas = await leerReservas();
-  const campo = `bloqueados_${cabana}`;
+  const campo = `bloqueados_${cab}`;
 
   if (!reservas[campo]) reservas[campo] = [];
   if (!reservas[campo].includes(fecha)) {
@@ -65,11 +66,12 @@ app.post("/reservas", async (req, res) => {
 
 // DELETE desbloquear día (por cabaña)
 app.delete("/reservas", async (req, res) => {
-  const { fecha, cabana } = req.body;
-  if (!fecha || !cabana) return res.status(400).json({ ok: false, msg: "Falta fecha o cabaña" });
+  const { fecha, cabana, cabaña } = req.body;
+  const cab = cabana || cabaña;
+  if (!fecha || !cab) return res.status(400).json({ ok: false, msg: "Falta fecha o cabaña" });
 
   const reservas = await leerReservas();
-  const campo = `bloqueados_${cabana}`;
+  const campo = `bloqueados_${cab}`;
 
   if (reservas[campo]) {
     reservas[campo] = reservas[campo].filter(f => f !== fecha);
