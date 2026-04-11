@@ -17,14 +17,11 @@ async function cargarReservasBackend() {
 
     const data = await res.json();
 
-    // Aseguramos que el backend siempre tenga el array
-    data.bloqueados = data.bloqueados || [];
-
-    // El frontend SIEMPRE usa "reservas.bloqueos"
     const reservas = {
       campanilla: [],
       tejo: [],
-      bloqueos: []
+      bloqueos_campanilla: [],
+      bloqueos_tejo: []
     };
 
     // Cargar las fechas ocupadas de cada cabaña
@@ -32,14 +29,15 @@ async function cargarReservasBackend() {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
     }
 
-    // Convertimos "bloqueados" del backend -> "bloqueos" que usa el frontend
-    reservas.bloqueos = data.bloqueados || [];
+    // ✅ Bloqueos independientes por cabaña
+    reservas.bloqueos_campanilla = data.bloqueados_campanilla || [];
+    reservas.bloqueos_tejo = data.bloqueados_tejo || [];
 
     return reservas;
 
   } catch (err) {
     console.error(err);
-    return { campanilla: [], tejo: [], bloqueos: [] };
+    return { campanilla: [], tejo: [], bloqueos_campanilla: [], bloqueos_tejo: [] };
   }
 }
 
@@ -65,18 +63,19 @@ function colorearDias(date) {
   return "dia-libre";
 }
 
-// ✅ FIX: Un solo listener global para mouseup (antes se registraba 30 veces, una por día)
+// ✅ Un solo listener global para mouseup
 document.addEventListener("mouseup", async () => {
   if (!arrastreActivo) return;
   arrastreActivo = false;
   if (rangoSeleccionado.length === 0) return;
 
+  const cabaña = document.getElementById("cabaña").value;
+
   for (const fecha of rangoSeleccionado) {
     if (!bloqueosFlatpickr.includes(fecha)) {
       bloqueosFlatpickr.push(fecha);
-      await guardarBloqueoEnBackend(fecha, true);
+      await guardarBloqueoEnBackend(fecha, true, cabaña);
 
-      // Actualiza visual de día
       flatpickrInstance.days.childNodes.forEach(d => {
         if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
           d.classList.remove("dia-libre");
@@ -103,7 +102,6 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
-    // 🔒 Bloquea días ocupados y bloqueos admin
     disable: [
       date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
               bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
@@ -114,7 +112,6 @@ function inicializarFlatpickr() {
       const clase = colorearDias(fecha);
       dayElem.classList.add(clase);
 
-      // 🔹 Bloqueado → rojo
       if (clase === "dia-bloqueado") {
         dayElem.classList.add("flatpickr-disabled");
       }
@@ -126,17 +123,19 @@ function inicializarFlatpickr() {
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj < hoy) return;
 
+        const cabaña = document.getElementById("cabaña").value;
+
         if (bloqueosFlatpickr.includes(fechaISO)) {
           // 🔓 Desbloquear
           bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
-          guardarBloqueoEnBackend(fechaISO, false);
+          guardarBloqueoEnBackend(fechaISO, false, cabaña);
 
           dayElem.classList.remove("dia-bloqueado", "flatpickr-disabled");
           dayElem.classList.add("dia-libre");
         } else {
           // 🔒 Bloquear
           bloqueosFlatpickr.push(fechaISO);
-          guardarBloqueoEnBackend(fechaISO, true);
+          guardarBloqueoEnBackend(fechaISO, true, cabaña);
 
           dayElem.classList.remove("dia-libre");
           dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
@@ -165,8 +164,6 @@ function inicializarFlatpickr() {
           dayElem.style.background = "rgba(0,123,255,0.4)";
         }
       });
-
-      // ✅ FIX: mouseup eliminado de aquí — ahora está como listener global arriba
     },
 
     onChange: function(selectedDates) {
@@ -189,7 +186,11 @@ async function prepararFlatpickr() {
 
   const cabaña = document.getElementById("cabaña").value;
   fechasOcupadasFlatpickr = reservas[cabaña] || [];
-  bloqueosFlatpickr = reservas.bloqueos || [];
+
+  // ✅ Bloqueos por cabaña
+  bloqueosFlatpickr = cabaña === "campanilla"
+    ? reservas.bloqueos_campanilla
+    : reservas.bloqueos_tejo;
 
   inicializarFlatpickr();
 }
@@ -312,21 +313,14 @@ function actualizarUrgencia(fechasOcupadas){
 // ================================
 // GUARDAR BLOQUEOS EN BACKEND
 // ================================
-async function guardarBloqueoEnBackend(fecha, bloquear) {
+async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
   try {
-    if (bloquear) {
-      await fetch(BACKEND_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fecha })
-      });
-    } else {
-      await fetch(BACKEND_URL, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fecha })
-      });
-    }
+    await fetch(BACKEND_URL, {
+      method: bloquear ? "POST" : "DELETE",
+      headers: { "Content-Type": "application/json" },
+      // ✅ Enviamos también la cabaña para bloqueos independientes
+      body: JSON.stringify({ fecha, cabaña })
+    });
   } catch(err) {
     console.error(err);
   }
@@ -338,7 +332,6 @@ async function guardarBloqueoEnBackend(fecha, bloquear) {
 const adminButton = document.getElementById("adminButton");
 adminButton?.addEventListener("click", async () => {
   if (adminActivo) {
-    // Desactivar sesión directamente
     adminActivo = false;
     adminButton.style.backgroundColor = "#444";
     alert("Modo administrador desactivado");
@@ -349,7 +342,6 @@ adminButton?.addEventListener("click", async () => {
   if (!clave) return;
 
   try {
-    // ✅ FIX SEGURIDAD: la contraseña se verifica en el servidor, no en el frontend
     const res = await fetch(BACKEND_URL.replace("/reservas", "/admin/verificar"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -416,12 +408,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container", ".carousel-slide", ".prev", ".next", ".indicator");
   initCarousel(".carousel-container-general", ".carousel-slide-general", ".prev-general", ".next-general", ".indicator-general");
 
-  // ✅ FIX: una sola llamada al backend — prepararFlatpickr ya carga y guarda en reservasGlobal
   await prepararFlatpickr();
   actualizarUrgencia(reservasGlobal);
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
+
+  // ✅ Al cambiar de cabaña, recargar el calendario con sus bloqueos
+  document.getElementById("cabaña")?.addEventListener("change", prepararFlatpickr);
 
   setInterval(async () => {
     const reservas = await cargarReservasBackend();
