@@ -34,7 +34,7 @@ async function leerReservas() {
       headers: { "X-Master-Key": JSONBIN_KEY }
     });
     const data = await res.json();
-    return data.record;
+    return data.record || { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
   } catch(e) {
     console.error("Error leyendo reservas:", e);
     return { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
@@ -72,7 +72,6 @@ function parsearFechasIcal(icalText) {
       const inicio = dtstart[1];
       const fin = dtend[1];
 
-      // Generar todas las fechas entre inicio y fin
       let actual = new Date(
         parseInt(inicio.slice(0,4)),
         parseInt(inicio.slice(4,6)) - 1,
@@ -138,7 +137,10 @@ async function sincronizarIcalExterno(cabana) {
   const urls = ICAL_SOURCES[cabana];
   if (!urls || urls.length === 0) return;
 
-  const reservas = await leerReservas();
+  // ✅ Protección si JSONBin devuelve datos incompletos
+  let reservas = await leerReservas();
+  if (!reservas) reservas = { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
+
   const campo = `bloqueados_${cabana}`;
   if (!reservas[campo]) reservas[campo] = [];
 
