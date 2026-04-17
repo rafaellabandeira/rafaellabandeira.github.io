@@ -22,7 +22,6 @@
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-/* WhatsApp abajo derecha */
 #whatsappButton {
   position: fixed;
   bottom: 20px;
@@ -39,7 +38,6 @@
 }
 #whatsappButton img { width: 35px; height: 35px; }
 
-/* Candado abajo izquierda */
 #adminButton {
   position: fixed;
   bottom: 20px;
@@ -57,16 +55,78 @@
   align-items: center;
   cursor: pointer;
 }
-  
+
 @media (max-width: 600px) {
   .flatpickr-calendar.inline {
     width: 100% !important;
+  }
 }
-/* Días bloqueados (para más adelante) */
+
 .flatpickr-day.bloqueado {
   background: #e53935 !important;
   color: white !important;
   cursor: not-allowed !important;
+}
+
+/* ===== SECCIÓN TURISMO ===== */
+.turismo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.turismo-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  background: white;
+  border: 2px solid #4caf50;
+  transition: transform 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.turismo-card:hover {
+  transform: translateY(-5px);
+}
+
+.turismo-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.turismo-card-body {
+  padding: 12px 14px;
+}
+
+.turismo-card-body h3 {
+  font-size: 0.95rem;
+  color: #2e7d32;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.turismo-card-body span {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .turismo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .turismo-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 
@@ -168,7 +228,6 @@
 
     <label for="fechas">Selecciona tus fechas</label>
 
-    <!-- CALENDARIO INLINE -->
     <div id="calendarioVisible"></div>
 
     <p id="avisoFechas" class="aviso-fechas" style="display:none;">
@@ -202,12 +261,63 @@
   </div>
 </section>
 
+<!-- ===== RESERVAS PERSONALIZADAS ===== -->
 <section id="contacto">
   <h2>Reservas personalizadas</h2>
   <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
   <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
 </section>
 
+<!-- ===== QUÉ HACER EN LA ZONA ===== -->
+<section>
+  <h2>Qué hacer en la zona</h2>
+  <p>Riópar y sus alrededores ofrecen una gran variedad de actividades y lugares que visitar durante tu estancia.</p>
+  <div class="turismo-grid">
+
+    <a class="turismo-card" href="https://share.google/LPTmToMKy8A3dSUTu" target="_blank" rel="noopener">
+      <img src="images/Riomundo1.jpg" alt="Nacimiento del Río Mundo">
+      <div class="turismo-card-body">
+        <h3>Nacimiento del Río Mundo</h3>
+        <span>Web oficial de Turismo de Castilla-La Mancha →</span>
+      </div>
+    </a>
+
+    <a class="turismo-card" href="https://share.google/ChmfJ2ZYkqmcmZguJ" target="_blank" rel="noopener">
+      <img src="images/Riomundo2.jpg" alt="Chorros o nacimiento del Río Mundo">
+      <div class="turismo-card-body">
+        <h3>Chorros o nacimiento del Río Mundo</h3>
+        <span>turismosierradelsegura.es →</span>
+      </div>
+    </a>
+
+    <a class="turismo-card" href="https://share.google/CG31ycy6HsSaIO1gV" target="_blank" rel="noopener">
+      <img src="images/Otoñal3.jpg" alt="Riópar">
+      <div class="turismo-card-body">
+        <h3>Riópar</h3>
+        <span>Descubre el municipio →</span>
+      </div>
+    </a>
+
+    <a class="turismo-card" href="https://www.turismocastillalamancha.es/es/destinos/encanto-rural/albacete/riopar-viejo" target="_blank" rel="noopener">
+      <img src="images/Riopar4.jpg" alt="Visita Riópar Viejo">
+      <div class="turismo-card-body">
+        <h3>Visita Riópar Viejo</h3>
+        <span>turismocastillalamancha.es →</span>
+      </div>
+    </a>
+
+    <a class="turismo-card" href="https://es.wikiloc.com/waypoints/EpgSt3/nacimiento-rio-mundo" target="_blank" rel="noopener">
+      <img src="images/Riomundo5.jpg" alt="Rutas alrededor del Nacimiento del Río Mundo">
+      <div class="turismo-card-body">
+        <h3>Rutas alrededor del Nacimiento del Río Mundo</h3>
+        <span>wikiloc.com →</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ===== UBICACIÓN ===== -->
 <section>
   <h2>Ubicación</h2>
   <p>📍 Complejo EL Lagunazo, Riópar</p>
@@ -226,16 +336,9 @@
 
 <div id="adminButton">🔒</div>
 
-<!-- =============================== -->
-<!--     FLATPICKR EN ESPAÑOL       -->
-<!-- =============================== -->
-  <!-- =============================== -->
-<!--     FLATPICKR EN ESPAÑOL       -->
-<!-- =============================== -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
-<!-- Scripts existentes -->
 <script src="js/main.js"></script>
 <script src="js/index-carousel.js"></script>
 
