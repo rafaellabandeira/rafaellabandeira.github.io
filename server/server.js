@@ -72,21 +72,19 @@ function parsearFechasIcal(icalText) {
       const inicio = dtstart[1];
       const fin = dtend[1];
 
-      let actual = new Date(
-        parseInt(inicio.slice(0,4)),
-        parseInt(inicio.slice(4,6)) - 1,
-        parseInt(inicio.slice(6,8))
-      );
-      const fechaFin = new Date(
-        parseInt(fin.slice(0,4)),
-        parseInt(fin.slice(4,6)) - 1,
-        parseInt(fin.slice(6,8))
-      );
+      // ✅ Comparar como strings YYYYMMDD, sin problemas de zona horaria UTC
+      let actualStr = inicio;
 
-      while (actual < fechaFin) {
-        const iso = actual.toISOString().slice(0, 10);
+      while (actualStr < fin) {
+        const y = parseInt(actualStr.slice(0,4));
+        const m = parseInt(actualStr.slice(4,6)) - 1;
+        const d = parseInt(actualStr.slice(6,8));
+        const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         if (!fechas.includes(iso)) fechas.push(iso);
-        actual.setDate(actual.getDate() + 1);
+
+        // Avanzar un día
+        const next = new Date(y, m, d + 1);
+        actualStr = `${next.getFullYear()}${String(next.getMonth()+1).padStart(2,'0')}${String(next.getDate()).padStart(2,'0')}`;
       }
     }
   }
@@ -137,7 +135,6 @@ async function sincronizarIcalExterno(cabana) {
   const urls = ICAL_SOURCES[cabana];
   if (!urls || urls.length === 0) return;
 
-  // ✅ Protección si JSONBin devuelve datos incompletos
   let reservas = await leerReservas();
   if (!reservas) reservas = { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
 
