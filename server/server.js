@@ -74,20 +74,27 @@ function parsearFechasIcal(icalText) {
     const dtend = evento.match(/DTEND[^:]*:(\d{8})/);
 
     if (dtstart && dtend) {
-      const inicio = dtstart[1];
-      const fin = dtend[1];
+      let actualStr = dtstart[1];
+      const finStr = dtend[1];
 
-      let actualStr = inicio;
-
-      while (actualStr < fin) {
-        const y = parseInt(actualStr.slice(0,4));
-        const m = parseInt(actualStr.slice(4,6)) - 1;
-        const d = parseInt(actualStr.slice(6,8));
-        const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      while (actualStr < finStr) {
+        const iso = `${actualStr.slice(0,4)}-${actualStr.slice(4,6)}-${actualStr.slice(6,8)}`;
         if (!fechas.includes(iso)) fechas.push(iso);
 
-        const next = new Date(y, m, d + 1);
-        actualStr = `${next.getFullYear()}${String(next.getMonth()+1).padStart(2,'0')}${String(next.getDate()).padStart(2,'0')}`;
+        // Avanzar un día sin usar Date para evitar problemas de zona horaria
+        const y = parseInt(actualStr.slice(0,4));
+        const m = parseInt(actualStr.slice(4,6));
+        const d = parseInt(actualStr.slice(6,8));
+
+        const diasPorMes = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+        const esBisiesto = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+        if (esBisiesto) diasPorMes[2] = 29;
+
+        let nd = d + 1, nm = m, ny = y;
+        if (nd > diasPorMes[m]) { nd = 1; nm++; }
+        if (nm > 12) { nm = 1; ny++; }
+
+        actualStr = `${ny}${String(nm).padStart(2,'0')}${String(nd).padStart(2,'0')}`;
       }
     }
   }
@@ -111,9 +118,19 @@ function generarIcal(cabana, bloqueos) {
 
   for (const fecha of bloqueos) {
     const dtstart = fecha.replace(/-/g, "");
-    const fechaFin = new Date(fecha);
-    fechaFin.setDate(fechaFin.getDate() + 1);
-    const dtend = fechaFin.toISOString().slice(0,10).replace(/-/g, "");
+    const y = parseInt(fecha.slice(0,4));
+    const m = parseInt(fecha.slice(5,7));
+    const d = parseInt(fecha.slice(8,10));
+
+    const diasPorMes = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+    const esBisiesto = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    if (esBisiesto) diasPorMes[2] = 29;
+
+    let nd = d + 1, nm = m, ny = y;
+    if (nd > diasPorMes[m]) { nd = 1; nm++; }
+    if (nm > 12) { nm = 1; ny++; }
+
+    const dtend = `${ny}${String(nm).padStart(2,'0')}${String(nd).padStart(2,'0')}`;
     const uid = `${dtstart}-${cabana}@casaruralriomundo.es`;
 
     ical = ical.concat([
@@ -158,7 +175,7 @@ async function sincronizarIcalExterno(cabana) {
     }
   }
 
-  // ✅ Sobreescribir en lugar de acumular — evita días de salida repetidos
+  // ✅ Sobreescribir en lugar de acumular
   reservas[`ical_${cabana}`] = nuevasFechas;
   await guardarReservas(reservas);
   console.log(`Sincronizados ${nuevasFechas.length} días para ${cabana}`);
@@ -176,11 +193,8 @@ setInterval(sincronizarTodo, 6 * 60 * 60 * 1000);
 // ENDPOINTS
 // ================================
 
-// GET reservas — combina manuales + iCal para el frontend
 app.get("/reservas", async (req, res) => {
   const reservas = await leerReservas();
-
-  // El frontend recibe los bloqueos manuales e iCal combinados
   const resultado = {
     campanilla: reservas.campanilla || [],
     tejo: reservas.tejo || [],
@@ -193,11 +207,9 @@ app.get("/reservas", async (req, res) => {
       ...(reservas.ical_tejo || [])
     ]
   };
-
   res.json(resultado);
 });
 
-// POST bloquear día (por cabaña)
 app.post("/reservas", async (req, res) => {
   const { fecha, cabana, cabaña } = req.body;
   const cab = cabana || cabaña;
@@ -214,7 +226,6 @@ app.post("/reservas", async (req, res) => {
   res.json({ ok: true });
 });
 
-// DELETE desbloquear día (por cabaña)
 app.delete("/reservas", async (req, res) => {
   const { fecha, cabana, cabaña } = req.body;
   const cab = cabana || cabaña;
@@ -230,7 +241,6 @@ app.delete("/reservas", async (req, res) => {
   res.json({ ok: true });
 });
 
-// GET exportar iCal por cabaña
 app.get("/calendario/:cabana.ics", async (req, res) => {
   const cabana = req.params.cabana;
   if (!["campanilla", "tejo"].includes(cabana)) {
@@ -250,13 +260,11 @@ app.get("/calendario/:cabana.ics", async (req, res) => {
   res.send(ical);
 });
 
-// POST sincronizar manualmente
 app.post("/sincronizar", async (req, res) => {
   await sincronizarTodo();
   res.json({ ok: true, msg: "Sincronización completada" });
 });
 
-// Verificar contraseña de administrador
 app.post("/admin/verificar", (req, res) => {
   const { password } = req.body;
   if (password === process.env.ADMIN_PASSWORD) {
