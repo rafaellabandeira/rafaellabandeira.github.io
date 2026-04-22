@@ -13,15 +13,12 @@ const JSONBIN_ID = process.env.JSONBIN_ID;
 const JSONBIN_KEY = process.env.JSONBIN_KEY;
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
 
-// URLs iCal externas por cabaña
 const ICAL_SOURCES = {
   campanilla: [
     "https://ical.booking.com/v1/export?t=e18611c6-57d5-4898-8671-b7af52ce0260",
     "https://www.airbnb.com/calendar/ical/1500686530638824022.ics?t=ce47e05e2dff41f19ba27d97a8e448d3&locale=es"
   ],
-  tejo: [
-    // Añadir URLs cuando estén disponibles
-  ]
+  tejo: []
 };
 
 // ================================
@@ -34,10 +31,18 @@ async function leerReservas() {
       headers: { "X-Master-Key": JSONBIN_KEY }
     });
     const data = await res.json();
-    return data.record || { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
+    return data.record || {
+      campanilla: [], tejo: [],
+      bloqueados_campanilla: [], bloqueados_tejo: [],
+      ical_campanilla: [], ical_tejo: []
+    };
   } catch(e) {
     console.error("Error leyendo reservas:", e);
-    return { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
+    return {
+      campanilla: [], tejo: [],
+      bloqueados_campanilla: [], bloqueados_tejo: [],
+      ical_campanilla: [], ical_tejo: []
+    };
   }
 }
 
@@ -72,7 +77,6 @@ function parsearFechasIcal(icalText) {
       const inicio = dtstart[1];
       const fin = dtend[1];
 
-      // ✅ Comparar como strings YYYYMMDD, sin problemas de zona horaria UTC
       let actualStr = inicio;
 
       while (actualStr < fin) {
@@ -82,7 +86,6 @@ function parsearFechasIcal(icalText) {
         const iso = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         if (!fechas.includes(iso)) fechas.push(iso);
 
-        // Avanzar un día
         const next = new Date(y, m, d + 1);
         actualStr = `${next.getFullYear()}${String(next.getMonth()+1).padStart(2,'0')}${String(next.getDate()).padStart(2,'0')}`;
       }
@@ -136,10 +139,11 @@ async function sincronizarIcalExterno(cabana) {
   if (!urls || urls.length === 0) return;
 
   let reservas = await leerReservas();
-  if (!reservas) reservas = { campanilla: [], tejo: [], bloqueados_campanilla: [], bloqueados_tejo: [] };
-
-  const campo = `bloqueados_${cabana}`;
-  if (!reservas[campo]) reservas[campo] = [];
+  if (!reservas) reservas = {
+    campanilla: [], tejo: [],
+    bloqueados_campanilla: [], bloqueados_tejo: [],
+    ical_campanilla: [], ical_tejo: []
+  };
 
   let nuevasFechas = [];
 
@@ -154,21 +158,12 @@ async function sincronizarIcalExterno(cabana) {
     }
   }
 
-  let cambios = false;
-  for (const fecha of nuevasFechas) {
-    if (!reservas[campo].includes(fecha)) {
-      reservas[campo].push(fecha);
-      cambios = true;
-    }
-  }
-
-  if (cambios) {
-    await guardarReservas(reservas);
-    console.log(`Sincronizados ${nuevasFechas.length} días para ${cabana}`);
-  }
+  // ✅ Sobreescribir en lugar de acumular — evita días de salida repetidos
+  reservas[`ical_${cabana}`] = nuevasFechas;
+  await guardarReservas(reservas);
+  console.log(`Sincronizados ${nuevasFechas.length} días para ${cabana}`);
 }
 
-// Sincronizar al arrancar y cada 6 horas
 async function sincronizarTodo() {
   await sincronizarIcalExterno("campanilla");
   await sincronizarIcalExterno("tejo");
@@ -181,10 +176,25 @@ setInterval(sincronizarTodo, 6 * 60 * 60 * 1000);
 // ENDPOINTS
 // ================================
 
-// GET reservas
+// GET reservas — combina manuales + iCal para el frontend
 app.get("/reservas", async (req, res) => {
   const reservas = await leerReservas();
-  res.json(reservas);
+
+  // El frontend recibe los bloqueos manuales e iCal combinados
+  const resultado = {
+    campanilla: reservas.campanilla || [],
+    tejo: reservas.tejo || [],
+    bloqueados_campanilla: [
+      ...(reservas.bloqueados_campanilla || []),
+      ...(reservas.ical_campanilla || [])
+    ],
+    bloqueados_tejo: [
+      ...(reservas.bloqueados_tejo || []),
+      ...(reservas.ical_tejo || [])
+    ]
+  };
+
+  res.json(resultado);
 });
 
 // POST bloquear día (por cabaña)
@@ -230,10 +240,11 @@ app.get("/calendario/:cabana.ics", async (req, res) => {
   const reservas = await leerReservas();
   const bloqueos = [
     ...(reservas[cabana] || []),
-    ...(reservas[`bloqueados_${cabana}`] || [])
+    ...(reservas[`bloqueados_${cabana}`] || []),
+    ...(reservas[`ical_${cabana}`] || [])
   ];
 
-  const ical = generarIcal(cabana, bloqueos);
+  const ical = generarIcal(cabana, [...new Set(bloqueos)]);
   res.setHeader("Content-Type", "text/calendar; charset=utf-8");
   res.setHeader("Content-Disposition", `attachment; filename="${cabana}.ics"`);
   res.send(ical);
