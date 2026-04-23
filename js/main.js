@@ -1,16 +1,10 @@
 // ================= MAIN.JS COMPLETO =================
-
-// ===== HELPER: fecha local sin problemas UTC =====
-function fechaLocal(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
 // ===== FORMATEO FECHA LOCAL (Y-m-d) =====
 function formatearLocal(fecha) {
-  return fechaLocal(fecha);
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 // ===== CARGAR RESERVAS DESDE BACKEND =====
@@ -30,10 +24,12 @@ async function cargarReservasBackend() {
       bloqueos_tejo: []
     };
 
+    // Cargar las fechas ocupadas de cada cabaña
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
     }
 
+    // ✅ Bloqueos independientes por cabaña
     reservas.bloqueos_campanilla = data.bloqueados_campanilla || [];
     reservas.bloqueos_tejo = data.bloqueados_tejo || [];
 
@@ -52,7 +48,7 @@ let bloqueosFlatpickr = [];
 let flatpickrInstance;
 let arrastreActivo = false;
 let rangoSeleccionado = [];
-let adminActivo = false;
+let adminActivo = false; // 🔒 modo administrador
 
 // ================================
 // 🎯 CALENDARIO FLATPICKR
@@ -60,7 +56,7 @@ let adminActivo = false;
 
 function colorearDias(date) {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const fechaISO = fechaLocal(date); // ✅ sin UTC
+  const fechaISO = date.toISOString().slice(0, 10);
 
   if (date < hoy) return "dia-pasado";
   if (fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO)) return "dia-bloqueado";
@@ -81,7 +77,7 @@ document.addEventListener("mouseup", async () => {
       await guardarBloqueoEnBackend(fecha, true, cabaña);
 
       flatpickrInstance.days.childNodes.forEach(d => {
-        if (d.dateObj && fechaLocal(d.dateObj) === fecha) { // ✅ sin UTC
+        if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
           d.classList.remove("dia-libre");
           d.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
@@ -90,10 +86,8 @@ document.addEventListener("mouseup", async () => {
   }
 
   flatpickrInstance.set("disable", [
-    date => {
-      const iso = fechaLocal(date); // ✅ sin UTC
-      return fechasOcupadasFlatpickr.includes(iso) || bloqueosFlatpickr.includes(iso);
-    }
+    date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+            bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
   ]);
   flatpickrInstance.redraw();
   rangoSeleccionado = [];
@@ -109,10 +103,8 @@ function inicializarFlatpickr() {
     dateFormat: "d-m-Y",
 
     disable: [
-      date => {
-        const iso = fechaLocal(date); // ✅ sin UTC
-        return fechasOcupadasFlatpickr.includes(iso) || bloqueosFlatpickr.includes(iso);
-      }
+      date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+              bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -127,29 +119,31 @@ function inicializarFlatpickr() {
       // ===== DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj); // ✅ sin UTC
+        const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj < hoy) return;
 
         const cabaña = document.getElementById("cabaña").value;
 
         if (bloqueosFlatpickr.includes(fechaISO)) {
+          // 🔓 Desbloquear
           bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
           guardarBloqueoEnBackend(fechaISO, false, cabaña);
+
           dayElem.classList.remove("dia-bloqueado", "flatpickr-disabled");
           dayElem.classList.add("dia-libre");
         } else {
+          // 🔒 Bloquear
           bloqueosFlatpickr.push(fechaISO);
           guardarBloqueoEnBackend(fechaISO, true, cabaña);
+
           dayElem.classList.remove("dia-libre");
           dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
 
         flatpickrInstance.set('disable', [
-          date => {
-            const iso = fechaLocal(date); // ✅ sin UTC
-            return fechasOcupadasFlatpickr.includes(iso) || bloqueosFlatpickr.includes(iso);
-          }
+          date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+                  bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
         ]);
         flatpickrInstance.redraw();
       });
@@ -163,7 +157,7 @@ function inicializarFlatpickr() {
 
       dayElem.addEventListener("mouseenter", () => {
         if (!arrastreActivo || !adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj); // ✅ sin UTC
+        const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj >= hoy && !bloqueosFlatpickr.includes(fechaISO)) {
           rangoSeleccionado.push(fechaISO);
@@ -193,6 +187,7 @@ async function prepararFlatpickr() {
   const cabaña = document.getElementById("cabaña").value;
   fechasOcupadasFlatpickr = reservas[cabaña] || [];
 
+  // ✅ Bloqueos por cabaña
   bloqueosFlatpickr = cabaña === "campanilla"
     ? reservas.bloqueos_campanilla
     : reservas.bloqueos_tejo;
@@ -323,6 +318,7 @@ async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
     await fetch(BACKEND_URL, {
       method: bloquear ? "POST" : "DELETE",
       headers: { "Content-Type": "application/json" },
+      // ✅ Enviamos también la cabaña para bloqueos independientes
       body: JSON.stringify({ fecha, cabaña })
     });
   } catch(err) {
@@ -418,6 +414,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
 
+  // ✅ Al cambiar de cabaña, recargar el calendario con sus bloqueos
   document.getElementById("cabaña")?.addEventListener("change", prepararFlatpickr);
 
   setInterval(async () => {
