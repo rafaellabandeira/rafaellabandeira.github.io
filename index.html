@@ -243,6 +243,19 @@
 }
 
 .cabin-cta:hover { background: var(--green-deep); }
+
+/* ===== RESPONSIVE ESCRITORIO ===== */
+@media (min-width: 768px) {
+  .cabanas-nuevas {
+    flex-direction: row;
+  }
+  .cabin-card-nueva {
+    flex: 1;
+  }
+  .cabin-card-photo {
+    height: 280px;
+  }
+}
 </style>
 
 </head>
@@ -409,8 +422,14 @@
 <!-- ===== RESERVAS PERSONALIZADAS ===== -->
 <section id="contacto">
   <h2>Reservas personalizadas</h2>
-  <p>A través del WhatsApp las reservas se gestionan directamente para una atención personalizada y sin intermediarios.</p>
-  <p>📱 <a href="https://wa.me/34620419157">WhatsApp 620 419 157</a></p>
+  <div style="background:#1a3d2b; border-radius:16px; padding:20px; margin-top:16px; text-align:center;">
+    <p style="color:#a8c9b5; font-size:14px; line-height:1.6; margin-bottom:16px;">
+      Las reservas se gestionan directamente por WhatsApp para una atención personalizada y sin intermediarios.
+    </p>
+    <a href="https://wa.me/34620419157" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#fff; text-decoration:none; border-radius:12px; padding:13px 22px; font-size:14px; font-weight:500;">
+      📱 WhatsApp 620 419 157
+    </a>
+  </div>
 </section>
 
 <!-- ===== QUÉ HACER EN LA ZONA ===== -->
