@@ -14,247 +14,371 @@
 <link rel="apple-touch-icon" href="images/favicon.svg">
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/index.css">
 <link rel="stylesheet" href="css/style.css">
 
 <style>
-#whatsappButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1000;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  background-color: #25D366;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#whatsappButton img { width: 35px; height: 35px; }
 
-#adminButton {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  z-index: 1000;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  background-color: #444;
-  color: #fff;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
+body { font-family: 'DM Sans', sans-serif !important; }
+
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #1a3d2b !important;
+  padding: 0 18px !important;
+  height: 58px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: none !important;
 }
 
-@media (max-width: 600px) {
-  .flatpickr-calendar.inline {
-    width: 100% !important;
-  }
+.nav-logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  text-decoration: none !important;
+  font-size: unset !important;
+  color: unset !important;
+  text-shadow: none !important;
 }
 
-.flatpickr-day.bloqueado {
-  background: #e53935 !important;
-  color: white !important;
-  cursor: not-allowed !important;
+.nav-logo::before { content: none !important; }
+
+.nav-logo-icon {
+  width: 34px; height: 34px;
+  background: #2e6b47;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
 }
 
-/* ===== SECCIÓN TURISMO ===== */
-.turismo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 20px;
+.nav-logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+
+.nav-logo-text span:first-child {
+  font-size: 13px; font-weight: 600; color: #fff; letter-spacing: 0.01em;
 }
 
-.turismo-card {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  background: white;
-  border: 2px solid #4caf50;
-  transition: transform 0.3s ease;
-  text-decoration: none;
-  color: inherit;
-  display: block;
+.nav-logo-text span:last-child {
+  font-size: 10px; color: #7dd3a8; font-weight: 300;
+  letter-spacing: 0.06em; text-transform: uppercase;
 }
 
-.turismo-card:hover { transform: translateY(-5px); }
+.hamburger span { background: #fff !important; }
+.nav-menu { list-style: none !important; }
+.nav-menu li { list-style: none !important; }
 
-.turismo-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
+/* ===== NAV PILLS ===== */
+.nav-pills {
+  background: #fff;
+  border-bottom: 1px solid #e8e1d4;
+  display: flex; gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.nav-pills::-webkit-scrollbar { display: none; }
+
+.pill {
+  white-space: nowrap; padding: 6px 14px;
+  border-radius: 20px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid #e8e1d4; color: #6b7f71;
+  background: #fff; cursor: pointer; flex-shrink: 0;
+  text-decoration: none; display: inline-block;
+}
+.pill.active, .pill:hover {
+  background: #2e6b47; border-color: #2e6b47; color: #fff;
 }
 
-.turismo-card-body { padding: 12px 14px; }
-
-.turismo-card-body h3 {
-  font-size: 0.95rem;
-  color: #2e7d32;
-  margin: 0;
-  line-height: 1.3;
+/* ===== HERO ===== */
+.hero {
+  position: relative !important;
+  height: 420px !important;
+  min-height: unset !important;
+  background-image: url('/images/1000173073.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  display: block !important;
+  overflow: hidden !important;
 }
 
-.turismo-card-body span {
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 4px;
-  display: block;
+.hero::before {
+  content: '' !important;
+  position: absolute !important; inset: 0 !important;
+  background: linear-gradient(to bottom,
+    rgba(20,50,30,.3) 0%, rgba(20,50,30,.0) 25%,
+    rgba(20,50,30,.0) 40%, rgba(10,30,18,.85) 100%
+  ) !important;
+  z-index: 1 !important;
 }
 
-@media (max-width: 768px) {
-  .turismo-grid { grid-template-columns: repeat(2, 1fr); }
+.header-inner { display: none !important; }
+
+.hero-content {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  z-index: 2; padding: 24px 20px 28px;
 }
 
-@media (max-width: 480px) {
-  .turismo-grid { grid-template-columns: 1fr; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(125,211,168,.18);
+  border: 1px solid rgba(125,211,168,.4);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11px; font-weight: 500; color: #7dd3a8;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px;
 }
 
-/* ===== NUEVAS CABIN CARDS ===== */
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: #7dd3a8; border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(1.4); }
+}
+
+.hero-content h1 {
+  font-family: 'Fraunces', serif !important;
+  font-size: 36px !important; color: #fff !important;
+  line-height: 1.1 !important; margin-bottom: 10px !important;
+  text-shadow: none !important;
+}
+
+.hero-content h1 em { font-style: italic; color: #7dd3a8; }
+
+.hero-content .hero-sub {
+  font-size: 13.5px !important;
+  color: rgba(255,255,255,.75) !important;
+  font-weight: 300 !important; line-height: 1.55 !important;
+  margin-bottom: 18px !important; text-shadow: none !important;
+  max-width: 320px;
+}
+
+.hero-actions { display: flex; gap: 10px; margin-bottom: 14px; }
+
+.btn-hero-main {
+  flex: 1; background: #2e6b47; color: #fff; border: none;
+  border-radius: 12px; padding: 13px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 500; cursor: pointer; text-align: center;
+  text-decoration: none; display: block;
+}
+
+.btn-hero-outline {
+  background: rgba(255,255,255,.12);
+  border: 1.5px solid rgba(255,255,255,.3);
+  color: #fff; border-radius: 12px; padding: 13px 16px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 500; cursor: pointer; white-space: nowrap;
+  text-decoration: none; display: block;
+}
+
+.hero-stats {
+  display: flex; gap: 1px;
+  background: rgba(255,255,255,.1);
+  border-radius: 12px; overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.stat {
+  flex: 1; padding: 10px 8px; text-align: center;
+  background: rgba(255,255,255,.08);
+}
+
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 17px; color: #fff; font-weight: 600; line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px; color: rgba(255,255,255,.6);
+  text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px;
+}
+
+/* ===== BIENVENIDA ===== */
+.bienvenida-nueva {
+  padding: 28px 20px; border-bottom: 1px solid #e8e1d4;
+  max-width: 1200px; margin: auto;
+}
+
+.section-label {
+  font-size: 10px; font-weight: 600; color: #2e6b47;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+}
+
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: #d4edda;
+}
+
+.bienvenida-nueva h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; color: #1a3d2b; line-height: 1.2; margin-bottom: 12px;
+}
+
+.bienvenida-nueva h2 em { font-style: italic; color: #2e6b47; }
+
+.bienvenida-nueva > p {
+  font-size: 14px; color: #6b7f71; line-height: 1.7;
+  font-weight: 300; margin-bottom: 20px;
+}
+
+.features-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+
+.feat-pill {
+  display: flex; align-items: center; gap: 6px;
+  background: #d4edda; color: #1a3d2b;
+  border-radius: 10px; padding: 8px 13px;
+  font-size: 12.5px; font-weight: 500;
+}
+
+.rating-strip {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border-radius: 12px; padding: 12px 14px;
+  box-shadow: 0 1px 8px rgba(26,61,43,.07);
+}
+
+.rating-avatars { display: flex; }
+
+.avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid #fff; background: #2e6b47; color: #fff;
+  font-size: 11px; display: flex; align-items: center;
+  justify-content: center; margin-left: -8px; font-weight: 600;
+}
+
+.avatar:first-child { margin-left: 0; }
+.rating-text { flex: 1; }
+.rating-stars { color: #f5a623; font-size: 12px; letter-spacing: 1px; }
+
+.rating-text p {
+  font-size: 11.5px; color: #6b7f71; margin: 0; line-height: 1.3;
+}
+
+.rating-text p strong { color: #1a3d2b; }
+
+/* ===== CABIN CARDS ===== */
 :root {
-  --green-deep:  #1a3d2b;
-  --green-mid:   #2e6b47;
-  --green-light: #d4edda;
-  --muted-green: #6b7f71;
+  --green-deep: #1a3d2b; --green-mid: #2e6b47;
+  --green-light: #d4edda; --muted-green: #6b7f71;
 }
 
-.cabanas-nuevas {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 20px;
-}
+.cabanas-nuevas { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
 
 .cabin-card-nueva {
-  background: #fff;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 2px 16px rgba(26,61,43,.10);
-  transition: transform .2s, box-shadow .2s;
+  background: #fff; border-radius: 20px; overflow: hidden;
+  box-shadow: 0 2px 16px rgba(26,61,43,.10); transition: transform .2s;
 }
 
 .cabin-card-nueva:active { transform: scale(0.98); }
 
-.cabin-card-photo {
-  height: 210px;
-  position: relative;
-  overflow: hidden;
-}
+.cabin-card-photo { height: 210px; position: relative; overflow: hidden; }
 
 .cabin-card-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .5s ease;
-  display: block;
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s ease; display: block;
 }
 
 .cabin-card-nueva:hover .cabin-card-photo img { transform: scale(1.05); }
 
 .cabin-card-photo::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: linear-gradient(to bottom, transparent 45%, rgba(26,61,43,.65) 100%);
 }
 
 .cabin-tag {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  z-index: 2;
-  background: rgba(255,255,255,.92);
-  color: var(--green-mid);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 5px 11px;
-  border-radius: 20px;
+  position: absolute; top: 14px; left: 14px; z-index: 2;
+  background: rgba(255,255,255,.92); color: var(--green-mid);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 5px 11px; border-radius: 20px;
 }
 
 .cabin-capacity {
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  z-index: 2;
-  color: #fff;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  position: absolute; bottom: 14px; left: 14px; z-index: 2;
+  color: #fff; font-size: 13px; display: flex; align-items: center; gap: 5px;
 }
 
 .cabin-body { padding: 18px 18px 20px; }
 
 .cabin-body h3 {
-  font-size: 22px;
-  color: var(--green-deep);
-  margin: 0 0 6px;
+  font-family: 'Fraunces', serif; font-size: 22px;
+  color: var(--green-deep); margin: 0 0 6px;
 }
 
 .cabin-body p {
-  font-size: 13.5px;
-  color: var(--muted-green);
-  line-height: 1.65;
-  margin: 0 0 16px;
+  font-size: 13.5px; color: var(--muted-green);
+  line-height: 1.65; margin: 0 0 16px;
 }
 
-.cabin-feats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-bottom: 18px;
-}
+.cabin-feats { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
 
 .cabin-feat {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--green-light);
-  color: var(--green-deep);
-  border-radius: 8px;
-  padding: 6px 11px;
-  font-size: 12px;
-  font-weight: 500;
+  display: flex; align-items: center; gap: 5px;
+  background: var(--green-light); color: var(--green-deep);
+  border-radius: 8px; padding: 6px 11px; font-size: 12px; font-weight: 500;
 }
 
 .cabin-cta {
-  display: block;
-  text-align: center;
-  background: var(--green-mid);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 12px;
-  padding: 13px;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  transition: background .2s;
+  display: block; text-align: center; background: var(--green-mid);
+  color: #fff; text-decoration: none; border-radius: 12px; padding: 13px;
+  font-size: 14px; font-weight: 500; letter-spacing: 0.02em; transition: background .2s;
 }
 
 .cabin-cta:hover { background: var(--green-deep); }
 
-/* ===== RESPONSIVE ESCRITORIO ===== */
 @media (min-width: 768px) {
-  .cabanas-nuevas {
-    flex-direction: row;
-  }
-  .cabin-card-nueva {
-    flex: 1;
-  }
-  .cabin-card-photo {
-    height: 280px;
-  }
+  .cabanas-nuevas { flex-direction: row; }
+  .cabin-card-nueva { flex: 1; }
+  .cabin-card-photo { height: 280px; }
+}
+
+/* ===== TURISMO ===== */
+.turismo-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; margin-top: 20px;
+}
+
+.turismo-card {
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  background: white; border: 2px solid #4caf50;
+  transition: transform 0.3s ease; text-decoration: none;
+  color: inherit; display: block;
+}
+
+.turismo-card:hover { transform: translateY(-5px); }
+.turismo-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.turismo-card-body { padding: 12px 14px; }
+.turismo-card-body h3 { font-size: 0.95rem; color: #2e7d32; margin: 0; line-height: 1.3; }
+.turismo-card-body span { font-size: 0.8rem; color: #888; margin-top: 4px; display: block; }
+
+@media (max-width: 768px) { .turismo-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .turismo-grid { grid-template-columns: 1fr; } }
+
+/* ===== BOTONES FLOTANTES ===== */
+#whatsappButton {
+  position: fixed; bottom: 20px; right: 20px;
+  width: 60px; height: 60px; z-index: 1000; border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); background-color: #25D366;
+  display: flex; justify-content: center; align-items: center;
+}
+#whatsappButton img { width: 35px; height: 35px; }
+
+#adminButton {
+  position: fixed; bottom: 20px; left: 20px;
+  width: 50px; height: 50px; z-index: 1000; border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); background-color: #444;
+  color: #fff; font-size: 24px; display: flex;
+  justify-content: center; align-items: center; cursor: pointer;
+}
+
+@media (max-width: 600px) { .flatpickr-calendar.inline { width: 100% !important; } }
+
+.flatpickr-day.bloqueado {
+  background: #e53935 !important; color: white !important; cursor: not-allowed !important;
 }
 </style>
 
@@ -265,41 +389,77 @@
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar">
   <div class="nav-container">
-    <a href="index.html" class="nav-logo">🏡 Cabañas Río Mundo</a>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🌿</div>
+      <div class="nav-logo-text">
+        <span>Cabañas Río Mundo</span>
+        <span>Complejo El Lagunazo</span>
+      </div>
+    </a>
     <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
-    <ul class="nav-menu" id="navMenu">
-      <li><a href="cabana-campanilla.html" class="nav-link">Campanilla</a></li>
-      <li><a href="cabana-el-tejo.html" class="nav-link">El Tejo</a></li>
-      <li><a href="https://casaruralriomundo.wordpress.com/" class="nav-link" target="_blank" rel="noopener">Experiencias</a></li>
-      <li><a href="#contacto" class="nav-link">Contacto</a></li>
-    </ul>
   </div>
 </nav>
+
+<!-- ===== NAV PILLS ===== -->
+<div class="nav-pills">
+  <a class="pill active" href="index.html">Inicio</a>
+  <a class="pill" href="cabana-campanilla.html">Campanilla</a>
+  <a class="pill" href="cabana-el-tejo.html">El Tejo</a>
+  <a class="pill" href="https://casaruralriomundo.wordpress.com/" target="_blank" rel="noopener">Experiencias</a>
+  <a class="pill" href="#contacto">Contacto</a>
+</div>
 
 <!-- ===== HERO ===== -->
 <header class="hero">
   <div class="header-inner">
     <div class="hero-title-top">Cabañas en Riopar</div>
     <div class="hero-title-bottom">Complejo El Lagunazo</div>
-    <p class="hero-sub">
-      Escapadas, naturaleza y tranquilidad junto al espectacular
-      Nacimiento del Río Mundo, dentro del Parque Natural
-    </p>
+    <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al espectacular Nacimiento del Río Mundo, dentro del Parque Natural</p>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">Riópar · Parque Natural</div>
+    <h1>Cabañas en<br><em>Riópar</em></h1>
+    <p class="hero-sub">Escapadas, naturaleza y tranquilidad junto al Nacimiento del Río Mundo</p>
+    <div class="hero-actions">
+      <a href="#cabanas" class="btn-hero-main">Ver cabañas</a>
+      <a href="#contacto" class="btn-hero-outline">📱 Contacto</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">2</div><div class="stat-label">Cabañas</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Personas max</div></div>
+      <div class="stat"><div class="stat-num">⭐ 4.9</div><div class="stat-label">Valoración</div></div>
+    </div>
   </div>
 </header>
 
-<!-- ===== SECCIONES INFORMATIVAS ===== -->
-<section>
-  <h2>Tu escapada rural en Riópar</h2>
-  <p>Bienvenido a Cabañas Río Mundo, disponemos de dos acogedoras cabañas rurales, con todas las comodidades, situadas en el
-     exclusivo complejo El Lagunazo de Riópar, con un lago privado, a muy pocos minutos del Nacimiento del Río Mundo.
-     Un entorno natural ideal para descansar, disfrutar en familia o realizar escapadas románticas durante todo el año.</p>
-</section>
+<!-- ===== BIENVENIDA ===== -->
+<div class="bienvenida-nueva">
+  <div class="section-label">Bienvenidos</div>
+  <h2>Tu escapada rural<br>en <em>Riópar</em></h2>
+  <p>Dos acogedoras cabañas rurales en el exclusivo complejo El Lagunazo, con lago privado, a pocos minutos del Nacimiento del Río Mundo. El entorno perfecto para descansar, disfrutar en familia o una escapada romántica.</p>
+  <div class="features-row">
+    <div class="feat-pill">🌊 Lago privado</div>
+    <div class="feat-pill">🏊 Piscina en verano</div>
+    <div class="feat-pill">🌲 Parque Natural</div>
+    <div class="feat-pill">🦌 Fauna salvaje</div>
+  </div>
+  <div class="rating-strip">
+    <div class="rating-avatars">
+      <div class="avatar">M</div>
+      <div class="avatar">A</div>
+      <div class="avatar">R</div>
+      <div class="avatar">+</div>
+    </div>
+    <div class="rating-text">
+      <div class="rating-stars">★★★★★</div>
+      <p><strong>+50 familias</strong> han disfrutado este año</p>
+    </div>
+  </div>
+</div>
 
 <!-- ===== CABIN CARDS ===== -->
-<section>
+<section id="cabanas">
   <h2>Nuestras exclusivas Cabañas</h2>
-
   <div class="cabanas-nuevas">
 
     <div class="cabin-card-nueva">
@@ -493,7 +653,6 @@
   <p>© Cabañas Río Mundo · Riópar</p>
 </footer>
 
-<!-- BOTONES FLOTANTES -->
 <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
 </a>
