@@ -55,16 +55,47 @@ let rangoSeleccionado = [];
 let adminActivo = false;
 
 // ================================
+// 🎯 HELPERS DE FECHAS
+// ================================
+
+// Comprueba si una fecha ISO está bloqueada
+function esBloqueada(fechaISO) {
+  return fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO);
+}
+
+// Devuelve la fecha ISO del día anterior
+function diaAnterior(fechaISO) {
+  const d = new Date(fechaISO + "T12:00:00");
+  d.setDate(d.getDate() - 1);
+  return fechaLocal(d);
+}
+
+// Devuelve la fecha ISO del día siguiente
+function diaSiguiente(fechaISO) {
+  const d = new Date(fechaISO + "T12:00:00");
+  d.setDate(d.getDate() + 1);
+  return fechaLocal(d);
+}
+
+// ✅ Un día bloqueado es seleccionable solo si es el primero o último de un bloque
+// es decir, si el día anterior o siguiente está libre
+function esSeleccionable(fechaISO) {
+  if (!esBloqueada(fechaISO)) return true; // día libre, siempre seleccionable
+  const anteriorLibre = !esBloqueada(diaAnterior(fechaISO));
+  const siguienteLibre = !esBloqueada(diaSiguiente(fechaISO));
+  return anteriorLibre || siguienteLibre;
+}
+
+// ================================
 // 🎯 CALENDARIO FLATPICKR
 // ================================
 
 function colorearDias(date) {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  // ✅ fechaLocal para colorear correctamente sin desplazamiento UTC
   const fechaISO = fechaLocal(date);
 
   if (date < hoy) return "dia-pasado";
-  if (fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO)) return "dia-bloqueado";
+  if (esBloqueada(fechaISO)) return "dia-bloqueado";
   return "dia-libre";
 }
 
@@ -91,8 +122,7 @@ document.addEventListener("mouseup", async () => {
   }
 
   flatpickrInstance.set("disable", [
-    date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
-            bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
+    date => !esSeleccionable(date.toISOString().slice(0,10))
   ]);
   flatpickrInstance.redraw();
   rangoSeleccionado = [];
@@ -107,10 +137,9 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
-    // ✅ toISOString para disable — Flatpickr lo maneja correctamente
+    // ✅ Solo bloquea días que no son ni entrada ni salida de un bloque
     disable: [
-      date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
-              bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
+      date => !esSeleccionable(date.toISOString().slice(0,10))
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -118,14 +147,15 @@ function inicializarFlatpickr() {
       const clase = colorearDias(fecha);
       dayElem.classList.add(clase);
 
-      if (clase === "dia-bloqueado") {
+      // Solo añade flatpickr-disabled si no es seleccionable
+      if (clase === "dia-bloqueado" && !esSeleccionable(fechaLocal(fecha))) {
         dayElem.classList.add("flatpickr-disabled");
       }
 
       // ===== DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj); // ✅ fechaLocal para admin
+        const fechaISO = fechaLocal(dayElem.dateObj);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj < hoy) return;
 
@@ -144,8 +174,7 @@ function inicializarFlatpickr() {
         }
 
         flatpickrInstance.set('disable', [
-          date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
-                  bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
+          date => !esSeleccionable(date.toISOString().slice(0,10))
         ]);
         flatpickrInstance.redraw();
       });
@@ -159,7 +188,7 @@ function inicializarFlatpickr() {
 
       dayElem.addEventListener("mouseenter", () => {
         if (!arrastreActivo || !adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj); // ✅ fechaLocal para admin
+        const fechaISO = fechaLocal(dayElem.dateObj);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj >= hoy && !bloqueosFlatpickr.includes(fechaISO)) {
           rangoSeleccionado.push(fechaISO);
