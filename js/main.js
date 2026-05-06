@@ -55,39 +55,31 @@ let rangoSeleccionado = [];
 let adminActivo = false;
 
 // ================================
-// 🎯 HELPERS DE FECHAS
+// HELPERS DE FECHAS
 // ================================
 
-// Comprueba si una fecha ISO está bloqueada
 function esBloqueada(fechaISO) {
   return fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO);
 }
 
-// Devuelve la fecha ISO del día anterior
-function diaAnterior(fechaISO) {
+function sumarDias(fechaISO, dias) {
   const d = new Date(fechaISO + "T12:00:00");
-  d.setDate(d.getDate() - 1);
+  d.setDate(d.getDate() + dias);
   return fechaLocal(d);
 }
 
-// Devuelve la fecha ISO del día siguiente
-function diaSiguiente(fechaISO) {
-  const d = new Date(fechaISO + "T12:00:00");
-  d.setDate(d.getDate() + 1);
-  return fechaLocal(d);
+// Primer día de un bloque: bloqueado y el anterior libre → seleccionable como salida
+function esPrimerDiaBloque(fechaISO) {
+  return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, -1));
 }
 
-// ✅ Un día bloqueado es seleccionable solo si es el primero o último de un bloque
-// es decir, si el día anterior o siguiente está libre
-function esSeleccionable(fechaISO) {
-  if (!esBloqueada(fechaISO)) return true; // día libre, siempre seleccionable
-  const anteriorLibre = !esBloqueada(diaAnterior(fechaISO));
-  const siguienteLibre = !esBloqueada(diaSiguiente(fechaISO));
-  return anteriorLibre || siguienteLibre;
+// Último día de un bloque: bloqueado y el siguiente libre → se pinta verde, seleccionable como entrada
+function esUltimoDiaBloque(fechaISO) {
+  return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, 1));
 }
 
 // ================================
-// 🎯 CALENDARIO FLATPICKR
+// CALENDARIO FLATPICKR
 // ================================
 
 function colorearDias(date) {
@@ -95,11 +87,13 @@ function colorearDias(date) {
   const fechaISO = fechaLocal(date);
 
   if (date < hoy) return "dia-pasado";
-  if (esBloqueada(fechaISO)) return "dia-bloqueado";
-  return "dia-libre";
+  if (!esBloqueada(fechaISO)) return "dia-libre";
+  if (esUltimoDiaBloque(fechaISO)) return "dia-salida";       // verde, entrada posible
+  if (esPrimerDiaBloque(fechaISO)) return "dia-entrada-ocupada"; // rojo, salida posible
+  return "dia-bloqueado";                                      // rojo, no seleccionable
 }
 
-// ✅ Un solo listener global para mouseup
+// Un solo listener global para mouseup
 document.addEventListener("mouseup", async () => {
   if (!arrastreActivo) return;
   arrastreActivo = false;
@@ -122,7 +116,11 @@ document.addEventListener("mouseup", async () => {
   }
 
   flatpickrInstance.set("disable", [
-    date => !esSeleccionable(date.toISOString().slice(0,10))
+    date => {
+      const iso = date.toISOString().slice(0,10);
+      if (!esBloqueada(iso)) return false;
+      return !esPrimerDiaBloque(iso) && !esUltimoDiaBloque(iso);
+    }
   ]);
   flatpickrInstance.redraw();
   rangoSeleccionado = [];
@@ -137,9 +135,12 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
-    // ✅ Solo bloquea días que no son ni entrada ni salida de un bloque
     disable: [
-      date => !esSeleccionable(date.toISOString().slice(0,10))
+      date => {
+        const iso = date.toISOString().slice(0,10);
+        if (!esBloqueada(iso)) return false;
+        return !esPrimerDiaBloque(iso) && !esUltimoDiaBloque(iso);
+      }
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -147,12 +148,12 @@ function inicializarFlatpickr() {
       const clase = colorearDias(fecha);
       dayElem.classList.add(clase);
 
-      // Solo añade flatpickr-disabled si no es seleccionable
-      if (clase === "dia-bloqueado" && !esSeleccionable(fechaLocal(fecha))) {
+      // Solo bloquear visualmente los días intermedios
+      if (clase === "dia-bloqueado") {
         dayElem.classList.add("flatpickr-disabled");
       }
 
-      // ===== DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin) =====
+      // DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin)
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
         const fechaISO = fechaLocal(dayElem.dateObj);
@@ -164,7 +165,7 @@ function inicializarFlatpickr() {
         if (bloqueosFlatpickr.includes(fechaISO)) {
           bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
           guardarBloqueoEnBackend(fechaISO, false, cabaña);
-          dayElem.classList.remove("dia-bloqueado", "flatpickr-disabled");
+          dayElem.classList.remove("dia-bloqueado", "dia-entrada-ocupada", "dia-salida", "flatpickr-disabled");
           dayElem.classList.add("dia-libre");
         } else {
           bloqueosFlatpickr.push(fechaISO);
@@ -174,12 +175,16 @@ function inicializarFlatpickr() {
         }
 
         flatpickrInstance.set('disable', [
-          date => !esSeleccionable(date.toISOString().slice(0,10))
+          date => {
+            const iso = date.toISOString().slice(0,10);
+            if (!esBloqueada(iso)) return false;
+            return !esPrimerDiaBloque(iso) && !esUltimoDiaBloque(iso);
+          }
         ]);
         flatpickrInstance.redraw();
       });
 
-      // ===== ARRASTRAR PARA BLOQUEAR RANGO (solo admin) =====
+      // ARRASTRAR PARA BLOQUEAR RANGO (solo admin)
       dayElem.addEventListener("mousedown", () => {
         if (!adminActivo) return;
         arrastreActivo = true;
@@ -201,6 +206,22 @@ function inicializarFlatpickr() {
       if (selectedDates.length === 2) {
         const inicio = selectedDates[0];
         const fin = selectedDates[1];
+
+        // Validar que no hay días bloqueados intermedios en el rango
+        let fechaCheck = new Date(inicio);
+        fechaCheck.setDate(fechaCheck.getDate() + 1);
+        while (fechaCheck < fin) {
+          const iso = fechaLocal(fechaCheck);
+          if (esBloqueada(iso)) {
+            // Hay días bloqueados en medio — cancelar selección
+            flatpickrInstance.clear();
+            document.getElementById("fechasSeleccionadas").textContent = "";
+            alert("No puedes seleccionar un rango que incluye fechas ya reservadas.");
+            return;
+          }
+          fechaCheck.setDate(fechaCheck.getDate() + 1);
+        }
+
         const opciones = { year: "numeric", month: "long", day: "numeric" };
         const inicioTxt = inicio.toLocaleDateString("es-ES", opciones);
         const finTxt = fin.toLocaleDateString("es-ES", opciones);
@@ -227,7 +248,7 @@ async function prepararFlatpickr() {
 
 
 // ================================
-// 🎯 CÁLCULO DE RESERVA
+// CÁLCULO DE RESERVA
 // ================================
 
 function calcularReserva() {
@@ -356,7 +377,7 @@ async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
 }
 
 // ================================
-// 🔒 FUNCIONALIDAD DEL CANDADO
+// FUNCIONALIDAD DEL CANDADO
 // ================================
 const adminButton = document.getElementById("adminButton");
 adminButton?.addEventListener("click", async () => {
@@ -430,7 +451,7 @@ function initHamburger() {
 }
 
 // ================================
-// 🚀 INICIALIZACIÓN GENERAL
+// INICIALIZACIÓN GENERAL
 // ================================
 document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
