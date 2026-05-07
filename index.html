@@ -336,8 +336,49 @@ body { font-family: 'DM Sans', sans-serif !important; }
 
 @media (max-width: 600px) { .flatpickr-calendar.inline { width: 100% !important; } }
 
-.flatpickr-day.bloqueado {
-  background: #e53935 !important; color: white !important; cursor: not-allowed !important;
+/* ===== COLORES CALENDARIO MÁXIMA PRIORIDAD ===== */
+.flatpickr-day.dia-bloqueado {
+  background: #c62828 !important;
+  color: white !important;
+  text-decoration: line-through !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+.flatpickr-day.dia-entrada-ocupada {
+  background: #ffb74d !important;
+  color: #4a2800 !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.flatpickr-day.dia-salida {
+  background: #e8f5e9 !important;
+  color: #1b5e20 !important;
+  border: 2px solid #2e7d32 !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.flatpickr-day.dia-libre {
+  background: #e8f5e9 !important;
+  color: #1b5e20 !important;
+  opacity: 1 !important;
+}
+
+.flatpickr-day.dia-pasado {
+  background: #ffc1c1 !important;
+  color: #b71c1c !important;
+  text-decoration: line-through !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+.flatpickr-day.flatpickr-disabled {
+  opacity: 1 !important;
 }
 
 /* ===== LEYENDA CALENDARIO ===== */
