@@ -1,15 +1,10 @@
 // ================= MAIN.JS COMPLETO =================
-
-// ===== HELPER: fecha local sin problemas UTC =====
-function fechaLocal(date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
+// ===== FORMATEO FECHA LOCAL (Y-m-d) =====
 function formatearLocal(fecha) {
-  return fechaLocal(fecha);
+  const y = fecha.getFullYear();
+  const m = String(fecha.getMonth() + 1).padStart(2, "0");
+  const d = String(fecha.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 // ===== CARGAR RESERVAS DESDE BACKEND =====
@@ -19,19 +14,27 @@ async function cargarReservasBackend() {
   try {
     const res = await fetch(BACKEND_URL);
     if (!res.ok) throw new Error("No se pudo cargar las reservas desde el backend");
+
     const data = await res.json();
+
     const reservas = {
       campanilla: [],
       tejo: [],
       bloqueos_campanilla: [],
       bloqueos_tejo: []
     };
+
+    // Cargar las fechas ocupadas de cada cabaña
     for (let cabana of ["campanilla", "tejo"]) {
       reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
     }
+
+    // ✅ Bloqueos independientes por cabaña
     reservas.bloqueos_campanilla = data.bloqueados_campanilla || [];
     reservas.bloqueos_tejo = data.bloqueados_tejo || [];
+
     return reservas;
+
   } catch (err) {
     console.error(err);
     return { campanilla: [], tejo: [], bloqueos_campanilla: [], bloqueos_tejo: [] };
@@ -45,53 +48,22 @@ let bloqueosFlatpickr = [];
 let flatpickrInstance;
 let arrastreActivo = false;
 let rangoSeleccionado = [];
-let adminActivo = false;
+let adminActivo = false; // 🔒 modo administrador
 
 // ================================
-// HELPERS DE FECHAS
-// ================================
-
-function esBloqueada(fechaISO) {
-  return fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO);
-}
-
-function sumarDias(fechaISO, dias) {
-  const d = new Date(fechaISO + "T12:00:00");
-  d.setDate(d.getDate() + dias);
-  return fechaLocal(d);
-}
-
-// Primer día de un bloque: bloqueado y el anterior libre → seleccionable como salida
-function esPrimerDiaBloque(fechaISO) {
-  return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, -1));
-}
-
-// Último día de un bloque: bloqueado y el siguiente libre → seleccionable como entrada, se pinta verde
-function esUltimoDiaBloque(fechaISO) {
-  return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, 1));
-}
-
-// Día intermedio: bloqueado, con bloqueados a ambos lados → NO seleccionable
-function esDiaIntermedio(fechaISO) {
-  return esBloqueada(fechaISO) && esBloqueada(sumarDias(fechaISO, -1)) && esBloqueada(sumarDias(fechaISO, 1));
-}
-
-// ================================
-// CALENDARIO FLATPICKR
+// 🎯 CALENDARIO FLATPICKR
 // ================================
 
 function colorearDias(date) {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const fechaISO = fechaLocal(date);
+  const fechaISO = date.toISOString().slice(0, 10);
 
   if (date < hoy) return "dia-pasado";
-  if (!esBloqueada(fechaISO)) return "dia-libre";
-  if (esUltimoDiaBloque(fechaISO)) return "dia-salida";          // verde, entrada posible
-  if (esPrimerDiaBloque(fechaISO)) return "dia-entrada-ocupada"; // rojo, salida posible
-  return "dia-bloqueado";                                         // rojo, no seleccionable
+  if (fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO)) return "dia-bloqueado";
+  return "dia-libre";
 }
 
-// Un solo listener global para mouseup
+// ✅ Un solo listener global para mouseup
 document.addEventListener("mouseup", async () => {
   if (!arrastreActivo) return;
   arrastreActivo = false;
@@ -103,6 +75,7 @@ document.addEventListener("mouseup", async () => {
     if (!bloqueosFlatpickr.includes(fecha)) {
       bloqueosFlatpickr.push(fecha);
       await guardarBloqueoEnBackend(fecha, true, cabaña);
+
       flatpickrInstance.days.childNodes.forEach(d => {
         if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
           d.classList.remove("dia-libre");
@@ -113,7 +86,8 @@ document.addEventListener("mouseup", async () => {
   }
 
   flatpickrInstance.set("disable", [
-    date => esDiaIntermedio(date.toISOString().slice(0,10))
+    date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+            bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
   ]);
   flatpickrInstance.redraw();
   rangoSeleccionado = [];
@@ -128,9 +102,9 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
-    // ✅ Solo bloquea días intermedios — primero y último son seleccionables
     disable: [
-      date => esDiaIntermedio(date.toISOString().slice(0,10))
+      date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+              bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -138,39 +112,43 @@ function inicializarFlatpickr() {
       const clase = colorearDias(fecha);
       dayElem.classList.add(clase);
 
-      // Solo deshabilitar visualmente los días intermedios
       if (clase === "dia-bloqueado") {
         dayElem.classList.add("flatpickr-disabled");
       }
 
-      // DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin)
+      // ===== DOBLE CLICK PARA BLOQUEAR/DESBLOQUEAR (solo admin) =====
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj);
+        const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj < hoy) return;
 
         const cabaña = document.getElementById("cabaña").value;
 
         if (bloqueosFlatpickr.includes(fechaISO)) {
+          // 🔓 Desbloquear
           bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
           guardarBloqueoEnBackend(fechaISO, false, cabaña);
-          dayElem.classList.remove("dia-bloqueado", "dia-entrada-ocupada", "dia-salida", "flatpickr-disabled");
+
+          dayElem.classList.remove("dia-bloqueado", "flatpickr-disabled");
           dayElem.classList.add("dia-libre");
         } else {
+          // 🔒 Bloquear
           bloqueosFlatpickr.push(fechaISO);
           guardarBloqueoEnBackend(fechaISO, true, cabaña);
+
           dayElem.classList.remove("dia-libre");
           dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
 
         flatpickrInstance.set('disable', [
-          date => esDiaIntermedio(date.toISOString().slice(0,10))
+          date => fechasOcupadasFlatpickr.includes(date.toISOString().slice(0,10)) ||
+                  bloqueosFlatpickr.includes(date.toISOString().slice(0,10))
         ]);
         flatpickrInstance.redraw();
       });
 
-      // ARRASTRAR PARA BLOQUEAR RANGO (solo admin)
+      // ===== ARRASTRAR PARA BLOQUEAR RANGO (solo admin) =====
       dayElem.addEventListener("mousedown", () => {
         if (!adminActivo) return;
         arrastreActivo = true;
@@ -179,7 +157,7 @@ function inicializarFlatpickr() {
 
       dayElem.addEventListener("mouseenter", () => {
         if (!arrastreActivo || !adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj);
+        const fechaISO = dayElem.dateObj.toISOString().slice(0, 10);
         const hoy = new Date(); hoy.setHours(0,0,0,0);
         if (dayElem.dateObj >= hoy && !bloqueosFlatpickr.includes(fechaISO)) {
           rangoSeleccionado.push(fechaISO);
@@ -192,24 +170,11 @@ function inicializarFlatpickr() {
       if (selectedDates.length === 2) {
         const inicio = selectedDates[0];
         const fin = selectedDates[1];
-
-        // Validar que no hay días bloqueados intermedios en el rango
-        let check = new Date(inicio);
-        check.setDate(check.getDate() + 1);
-        while (check < fin) {
-          const iso = fechaLocal(check);
-          if (esBloqueada(iso) && !esUltimoDiaBloque(iso) && !esPrimerDiaBloque(iso)) {
-            flatpickrInstance.clear();
-            document.getElementById("fechasSeleccionadas").textContent = "";
-            alert("No puedes seleccionar un rango que incluye fechas ya reservadas.");
-            return;
-          }
-          check.setDate(check.getDate() + 1);
-        }
-
         const opciones = { year: "numeric", month: "long", day: "numeric" };
+        const inicioTxt = inicio.toLocaleDateString("es-ES", opciones);
+        const finTxt = fin.toLocaleDateString("es-ES", opciones);
         document.getElementById("fechasSeleccionadas").textContent =
-          `${inicio.toLocaleDateString("es-ES", opciones)} → ${fin.toLocaleDateString("es-ES", opciones)}`;
+          `${inicioTxt} → ${finTxt}`;
       }
     }
   });
@@ -222,6 +187,7 @@ async function prepararFlatpickr() {
   const cabaña = document.getElementById("cabaña").value;
   fechasOcupadasFlatpickr = reservas[cabaña] || [];
 
+  // ✅ Bloqueos por cabaña
   bloqueosFlatpickr = cabaña === "campanilla"
     ? reservas.bloqueos_campanilla
     : reservas.bloqueos_tejo;
@@ -229,8 +195,9 @@ async function prepararFlatpickr() {
   inicializarFlatpickr();
 }
 
+
 // ================================
-// CÁLCULO DE RESERVA
+// 🎯 CÁLCULO DE RESERVA
 // ================================
 
 function calcularReserva() {
@@ -351,6 +318,7 @@ async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
     await fetch(BACKEND_URL, {
       method: bloquear ? "POST" : "DELETE",
       headers: { "Content-Type": "application/json" },
+      // ✅ Enviamos también la cabaña para bloqueos independientes
       body: JSON.stringify({ fecha, cabaña })
     });
   } catch(err) {
@@ -359,7 +327,7 @@ async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
 }
 
 // ================================
-// FUNCIONALIDAD DEL CANDADO
+// 🔒 FUNCIONALIDAD DEL CANDADO
 // ================================
 const adminButton = document.getElementById("adminButton");
 adminButton?.addEventListener("click", async () => {
@@ -433,7 +401,7 @@ function initHamburger() {
 }
 
 // ================================
-// INICIALIZACIÓN GENERAL
+// 🚀 INICIALIZACIÓN GENERAL
 // ================================
 document.addEventListener("DOMContentLoaded", async () => {
   initHamburger();
@@ -446,6 +414,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
 
+  // ✅ Al cambiar de cabaña, recargar el calendario con sus bloqueos
   document.getElementById("cabaña")?.addEventListener("change", prepararFlatpickr);
 
   setInterval(async () => {
