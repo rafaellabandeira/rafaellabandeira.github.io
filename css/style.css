@@ -189,15 +189,6 @@ body {
   cursor: not-allowed;
 }
 
-.flatpickr-day.dia-bloqueado,
-.flatpickr-day.dia-bloqueado.flatpickr-disabled {
-  background: #ffc1c1 !important;
-  color: #b71c1c !important;
-  text-decoration: line-through;
-  cursor: not-allowed !important;
-  opacity: 1 !important;
-}
-
 .dia-libre {
   background: #e8f5e9 !important;
   color: #1b5e20 !important;
@@ -263,31 +254,12 @@ body {
 /* ====================== HERO Y CARRUSELES 16:9 ====================== */
 
 .hero,
+.carousel-general-slides img,
 .carousel-slide img {
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-}
-
-/* ====================== CARRUSEL GENERAL ====================== */
-
-.carousel-container-general {
-  max-width: 800px !important;
-  margin: 20px auto !important;
-}
-
-.carousel-slide-general img {
-  width: 100% !important;
-  height: 450px !important;
-  object-fit: cover !important;
-  display: block;
-}
-
-@media (max-width: 767px) {
-  .carousel-slide-general img {
-    height: 250px !important;
-  }
 }
 
 /* ====================== LOGO HERO ====================== */
