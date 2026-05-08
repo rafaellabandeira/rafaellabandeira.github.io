@@ -61,6 +61,7 @@ function sumarDias(fechaISO, dias) {
   return fechaLocal(d);
 }
 
+// ✅ Todos usan fechaLocal para evitar desplazamiento UTC
 function esPrimerDiaBloque(fechaISO) {
   return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, -1));
 }
@@ -79,7 +80,7 @@ function esDiaIntermedio(fechaISO) {
 
 function colorearDias(date) {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const fechaISO = fechaLocal(date);
+  const fechaISO = fechaLocal(date); // ✅ fechaLocal
 
   if (date < hoy) return "dia-pasado";
   if (!esBloqueada(fechaISO)) return "dia-libre";
@@ -100,7 +101,7 @@ document.addEventListener("mouseup", async () => {
       bloqueosFlatpickr.push(fecha);
       await guardarBloqueoEnBackend(fecha, true, cabaña);
       flatpickrInstance.days.childNodes.forEach(d => {
-        if (d.dateObj && d.dateObj.toISOString().slice(0,10) === fecha) {
+        if (d.dateObj && fechaLocal(d.dateObj) === fecha) {
           d.classList.remove("dia-libre");
           d.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
@@ -108,8 +109,9 @@ document.addEventListener("mouseup", async () => {
     }
   }
 
+  // ✅ fechaLocal en disable
   flatpickrInstance.set("disable", [
-    date => esDiaIntermedio(date.toISOString().slice(0,10))
+    date => esDiaIntermedio(fechaLocal(date))
   ]);
   flatpickrInstance.redraw();
   rangoSeleccionado = [];
@@ -124,8 +126,9 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
+    // ✅ fechaLocal en disable
     disable: [
-      date => esDiaIntermedio(date.toISOString().slice(0,10))
+      date => esDiaIntermedio(fechaLocal(date))
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -157,8 +160,9 @@ function inicializarFlatpickr() {
           dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
 
+        // ✅ fechaLocal en disable
         flatpickrInstance.set('disable', [
-          date => esDiaIntermedio(date.toISOString().slice(0,10))
+          date => esDiaIntermedio(fechaLocal(date))
         ]);
         flatpickrInstance.redraw();
       });
