@@ -81,22 +81,18 @@ function colorearDias(date) {
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const fechaISO = fechaLocal(date);
   const fechaAyer = sumarDias(fechaISO, -1);
-  const fechaManana = sumarDias(fechaISO, 1);
 
   if (date < hoy) return "dia-pasado";
 
-  // Día libre cuyo día anterior estaba bloqueado → verde (posible check-in)
+  // Día libre cuyo día anterior estaba bloqueado → es día de salida/posible entrada
   if (!esBloqueada(fechaISO) && esBloqueada(fechaAyer)) return "dia-salida";
-
-  // Día libre cuyo día siguiente está bloqueado → naranja (posible checkout en hueco)
-  if (!esBloqueada(fechaISO) && esBloqueada(fechaManana)) return "dia-entrada-ocupada";
 
   if (!esBloqueada(fechaISO)) return "dia-libre";
 
-  // Primer día del bloque → naranja
+  // Primer día del bloque → naranja (entrada ocupada, no reservable)
   if (esPrimerDiaBloque(fechaISO)) return "dia-entrada-ocupada";
 
-  // Resto bloqueados → rojo fuerte
+  // Todos los demás días bloqueados (incluyendo el último) → rojo fuerte
   return "dia-bloqueado";
 }
 
@@ -121,10 +117,7 @@ document.addEventListener("mouseup", async () => {
   }
 
   flatpickrInstance.set("disable", [
-    date => {
-      const iso = fechaLocal(date);
-      return esBloqueada(iso) && !esPrimerDiaBloque(iso);
-    }
+    date => esDiaIntermedio(fechaLocal(date))
   ]);
   flatpickrInstance.redraw();
   rangoSeleccionado = [];
@@ -140,12 +133,7 @@ function inicializarFlatpickr() {
     dateFormat: "d-m-Y",
 
     disable: [
-      // Solo bloquear días rojos intermedios y días rojos que no son primero ni último
-      // El naranja (primer día del bloque) queda habilitado para poder usarse como checkout
-      date => {
-        const iso = fechaLocal(date);
-        return esBloqueada(iso) && !esPrimerDiaBloque(iso);
-      }
+      date => esDiaIntermedio(fechaLocal(date))
     ],
 
     onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -153,9 +141,7 @@ function inicializarFlatpickr() {
       const clase = colorearDias(fecha);
       dayElem.classList.add(clase);
 
-      // Solo los rojos se deshabilitan completamente.
-      // El naranja puede usarse como checkout → NO se deshabilita.
-      if (clase === "dia-bloqueado") {
+      if (clase === "dia-bloqueado" || clase === "dia-entrada-ocupada") {
         dayElem.classList.add("flatpickr-disabled");
       }
 
@@ -180,10 +166,7 @@ function inicializarFlatpickr() {
         }
 
         flatpickrInstance.set('disable', [
-          date => {
-            const iso = fechaLocal(date);
-            return esBloqueada(iso) && !esPrimerDiaBloque(iso);
-          }
+          date => esDiaIntermedio(fechaLocal(date))
         ]);
         flatpickrInstance.redraw();
       });
@@ -209,22 +192,14 @@ function inicializarFlatpickr() {
       if (selectedDates.length === 2) {
         const inicio = selectedDates[0];
         const fin = selectedDates[1];
-        const isoInicio = fechaLocal(inicio);
-        const isoFin = fechaLocal(fin);
 
-        // El naranja bloqueado (primer día de un bloque real) NO puede ser check-in
-        if (esBloqueada(isoInicio) && esPrimerDiaBloque(isoInicio)) {
-          flatpickrInstance.clear();
-          document.getElementById("fechasSeleccionadas").textContent = "";
-          alert("No puedes iniciar la reserva en ese día. Elige otro día de entrada.");
-          return;
-        }
-
-        // Verificar días intermedios: ninguno puede estar bloqueado
+        // Verificar que ningún día intermedio esté bloqueado
         let check = new Date(inicio);
         check.setDate(check.getDate() + 1);
         while (check < fin) {
           const iso = fechaLocal(check);
+          // Permitir pasar por días de salida (primer libre tras bloque)
+          // pero no por días bloqueados intermedios ni entradas ocupadas
           if (esBloqueada(iso)) {
             flatpickrInstance.clear();
             document.getElementById("fechasSeleccionadas").textContent = "";
@@ -232,18 +207,6 @@ function inicializarFlatpickr() {
             return;
           }
           check.setDate(check.getDate() + 1);
-        }
-
-        // El día final puede ser:
-        // - Verde (dia-salida): libre tras bloque → válido
-        // - Naranja libre (día antes de un bloque): válido como checkout de hueco
-        // - Naranja bloqueado (primer día de bloque real): válido como checkout
-        // - Rojo o bloqueado interior: NO válido
-        if (esBloqueada(isoFin) && !esPrimerDiaBloque(isoFin)) {
-          flatpickrInstance.clear();
-          document.getElementById("fechasSeleccionadas").textContent = "";
-          alert("No puedes terminar la reserva en ese día. Elige otro día de salida.");
-          return;
         }
 
         const opciones = { year: "numeric", month: "long", day: "numeric" };
