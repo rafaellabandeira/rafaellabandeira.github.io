@@ -61,7 +61,6 @@ function sumarDias(fechaISO, dias) {
   return fechaLocal(d);
 }
 
-// ✅ Todos usan fechaLocal para evitar desplazamiento UTC
 function esPrimerDiaBloque(fechaISO) {
   return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, -1));
 }
@@ -79,13 +78,21 @@ function esDiaIntermedio(fechaISO) {
 // ================================
 
 function colorearDias(date) {
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const fechaISO = fechaLocal(date); // ✅ fechaLocal
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const fechaISO = fechaLocal(date);
+  const fechaAyer = sumarDias(fechaISO, -1);
 
   if (date < hoy) return "dia-pasado";
+
+  // Día libre cuyo día anterior estaba bloqueado → es día de salida/posible entrada
+  if (!esBloqueada(fechaISO) && esBloqueada(fechaAyer)) return "dia-salida";
+
   if (!esBloqueada(fechaISO)) return "dia-libre";
-  if (esUltimoDiaBloque(fechaISO)) return "dia-salida";
+
+  // Primer día del bloque → naranja (entrada ocupada, no reservable)
   if (esPrimerDiaBloque(fechaISO)) return "dia-entrada-ocupada";
+
+  // Todos los demás días bloqueados (incluyendo el último) → rojo fuerte
   return "dia-bloqueado";
 }
 
@@ -109,7 +116,6 @@ document.addEventListener("mouseup", async () => {
     }
   }
 
-  // ✅ fechaLocal en disable
   flatpickrInstance.set("disable", [
     date => esDiaIntermedio(fechaLocal(date))
   ]);
@@ -126,7 +132,6 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
-    // ✅ fechaLocal en disable
     disable: [
       date => esDiaIntermedio(fechaLocal(date))
     ],
@@ -136,14 +141,14 @@ function inicializarFlatpickr() {
       const clase = colorearDias(fecha);
       dayElem.classList.add(clase);
 
-      if (clase === "dia-bloqueado") {
+      if (clase === "dia-bloqueado" || clase === "dia-entrada-ocupada") {
         dayElem.classList.add("flatpickr-disabled");
       }
 
       dayElem.addEventListener("dblclick", () => {
         if (!adminActivo) return;
         const fechaISO = fechaLocal(dayElem.dateObj);
-        const hoy = new Date(); hoy.setHours(0,0,0,0);
+        const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
         if (dayElem.dateObj < hoy) return;
 
         const cabaña = document.getElementById("cabaña").value;
@@ -156,11 +161,10 @@ function inicializarFlatpickr() {
         } else {
           bloqueosFlatpickr.push(fechaISO);
           guardarBloqueoEnBackend(fechaISO, true, cabaña);
-          dayElem.classList.remove("dia-libre");
+          dayElem.classList.remove("dia-libre", "dia-salida");
           dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
         }
 
-        // ✅ fechaLocal en disable
         flatpickrInstance.set('disable', [
           date => esDiaIntermedio(fechaLocal(date))
         ]);
@@ -176,7 +180,7 @@ function inicializarFlatpickr() {
       dayElem.addEventListener("mouseenter", () => {
         if (!arrastreActivo || !adminActivo) return;
         const fechaISO = fechaLocal(dayElem.dateObj);
-        const hoy = new Date(); hoy.setHours(0,0,0,0);
+        const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
         if (dayElem.dateObj >= hoy && !bloqueosFlatpickr.includes(fechaISO)) {
           rangoSeleccionado.push(fechaISO);
           dayElem.style.background = "rgba(0,123,255,0.4)";
@@ -189,11 +193,14 @@ function inicializarFlatpickr() {
         const inicio = selectedDates[0];
         const fin = selectedDates[1];
 
+        // Verificar que ningún día intermedio esté bloqueado
         let check = new Date(inicio);
         check.setDate(check.getDate() + 1);
         while (check < fin) {
           const iso = fechaLocal(check);
-          if (esBloqueada(iso) && !esUltimoDiaBloque(iso) && !esPrimerDiaBloque(iso)) {
+          // Permitir pasar por días de salida (primer libre tras bloque)
+          // pero no por días bloqueados intermedios ni entradas ocupadas
+          if (esBloqueada(iso)) {
             flatpickrInstance.clear();
             document.getElementById("fechasSeleccionadas").textContent = "";
             alert("No puedes seleccionar un rango que incluye fechas ya reservadas.");
@@ -236,7 +243,7 @@ function calcularReserva() {
   }
   const inicio = flatpickrInstance.selectedDates[0];
   const fin = flatpickrInstance.selectedDates[1];
-  const noches = Math.round((fin - inicio) / (1000*60*60*24));
+  const noches = Math.round((fin - inicio) / (1000 * 60 * 60 * 24));
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -324,16 +331,16 @@ function reservar() {
 // URGENCIA
 // ================================
 
-function actualizarUrgencia(fechasOcupadas){
+function actualizarUrgencia(fechasOcupadas) {
   const mensaje = document.getElementById("mensajeUrgencia");
-  if(!mensaje) return;
+  if (!mensaje) return;
   const hoy = new Date();
-  const mesActual = hoy.getMonth()+1;
+  const mesActual = hoy.getMonth() + 1;
   const ocupadas = fechasOcupadas.campanilla.length;
   let texto = "";
-  if(mesActual === 7 || mesActual === 8) texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
-  else if(ocupadas > 20) texto = "⚡ Quedan pocas fechas disponibles este mes.";
-  else if(ocupadas > 10) texto = "📅 Este alojamiento suele reservarse rápido.";
+  if (mesActual === 7 || mesActual === 8) texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
+  else if (ocupadas > 20) texto = "⚡ Quedan pocas fechas disponibles este mes.";
+  else if (ocupadas > 10) texto = "📅 Este alojamiento suele reservarse rápido.";
   else texto = "✨ Reserva ahora para asegurar tus fechas.";
   mensaje.innerText = texto;
 }
@@ -348,7 +355,7 @@ async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fecha, cabaña })
     });
-  } catch(err) {
+  } catch (err) {
     console.error(err);
   }
 }
@@ -382,7 +389,7 @@ adminButton?.addEventListener("click", async () => {
     } else {
       alert("Contraseña incorrecta");
     }
-  } catch(err) {
+  } catch (err) {
     alert("Error al conectar con el servidor");
   }
 });
@@ -401,19 +408,21 @@ function initCarousel(containerSelector, slideSelector, prevSelector, nextSelect
     if (!slides.length) return;
 
     function showSlide(index) {
-      slides.forEach((slide,i)=>{ slide.style.display = i===index?"block":"none"; });
-      indicators.forEach((ind,i)=>{ ind.classList.toggle("active", i===index); });
+      slides.forEach((slide, i) => { slide.style.display = i === index ? "block" : "none"; });
+      indicators.forEach((ind, i) => { ind.classList.toggle("active", i === index); });
     }
 
-    nextBtn?.addEventListener("click", ()=>{
+    nextBtn?.addEventListener("click", () => {
       currentIndex = (currentIndex + 1) % slides.length;
       showSlide(currentIndex);
     });
-    prevBtn?.addEventListener("click", ()=>{
+    prevBtn?.addEventListener("click", () => {
       currentIndex = (currentIndex - 1 + slides.length) % slides.length;
       showSlide(currentIndex);
     });
-    indicators.forEach((ind,i)=>{ ind.addEventListener("click", ()=>{ currentIndex=i; showSlide(currentIndex); }); });
+    indicators.forEach((ind, i) => {
+      ind.addEventListener("click", () => { currentIndex = i; showSlide(currentIndex); });
+    });
     showSlide(currentIndex);
   });
 }
@@ -421,7 +430,7 @@ function initCarousel(containerSelector, slideSelector, prevSelector, nextSelect
 function initHamburger() {
   const hamburger = document.getElementById("hamburger");
   const navMenu = document.getElementById("navMenu");
-  hamburger?.addEventListener("click", ()=>{
+  hamburger?.addEventListener("click", () => {
     navMenu?.classList.toggle("active");
     hamburger.classList.toggle("active");
   });
@@ -446,5 +455,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   setInterval(async () => {
     const reservas = await cargarReservasBackend();
     actualizarUrgencia(reservas);
-  }, 2*60*60*1000);
+  }, 2 * 60 * 60 * 1000);
 });
