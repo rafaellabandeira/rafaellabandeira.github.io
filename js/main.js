@@ -81,11 +81,16 @@ function colorearDias(date) {
   const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
   const fechaISO = fechaLocal(date);
   const fechaAyer = sumarDias(fechaISO, -1);
+  const fechaManana = sumarDias(fechaISO, 1);
 
   if (date < hoy) return "dia-pasado";
 
   // Día libre cuyo día anterior estaba bloqueado → verde (posible check-in)
   if (!esBloqueada(fechaISO) && esBloqueada(fechaAyer)) return "dia-salida";
+
+  // Día libre cuyo día siguiente está bloqueado → verde también (checkout disponible)
+  // Se pinta verde para no confundir, pero Flatpickr lo trata como seleccionable
+  if (!esBloqueada(fechaISO) && esBloqueada(fechaManana)) return "dia-libre";
 
   if (!esBloqueada(fechaISO)) return "dia-libre";
 
@@ -153,19 +158,6 @@ function inicializarFlatpickr() {
       // El naranja puede usarse como checkout → NO se deshabilita.
       if (clase === "dia-bloqueado") {
         dayElem.classList.add("flatpickr-disabled");
-      }
-
-      // Naranja bloqueado: forzar selección como checkout al hacer click
-      if (clase === "dia-entrada-ocupada" && esBloqueada(fechaLocal(fecha))) {
-        dayElem.addEventListener("mousedown", (e) => {
-          if (adminActivo) return;
-          const selected = flatpickrInstance.selectedDates;
-          if (selected.length === 1 && fecha > selected[0]) {
-            e.stopPropagation();
-            e.preventDefault();
-            flatpickrInstance.setDate([selected[0], fecha], true);
-          }
-        });
       }
 
       dayElem.addEventListener("dblclick", () => {
