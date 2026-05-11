@@ -43,88 +43,149 @@ let reservasGlobal = {};
 let fechasOcupadasFlatpickr = [];
 let bloqueosFlatpickr = [];
 let flatpickrInstance;
-let arrastreActivo = false;
-let rangoSeleccionado = [];
 let adminActivo = false;
+let rangoInicio = null;
+let rangoFin = null;
 
 // ================================
 // HELPERS DE FECHAS
 // ================================
-
 function esBloqueada(fechaISO) {
   return fechasOcupadasFlatpickr.includes(fechaISO) || bloqueosFlatpickr.includes(fechaISO);
 }
-
 function sumarDias(fechaISO, dias) {
   const d = new Date(fechaISO + "T12:00:00");
   d.setDate(d.getDate() + dias);
   return fechaLocal(d);
 }
-
 function esPrimerDiaBloque(fechaISO) {
   return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, -1));
 }
-
 function esUltimoDiaBloque(fechaISO) {
   return esBloqueada(fechaISO) && !esBloqueada(sumarDias(fechaISO, 1));
 }
-
 function esDiaIntermedio(fechaISO) {
   return esBloqueada(fechaISO) && esBloqueada(sumarDias(fechaISO, -1)) && esBloqueada(sumarDias(fechaISO, 1));
 }
 
 // ================================
-// CALENDARIO FLATPICKR
+// COLORES CALENDARIO
 // ================================
-
 function colorearDias(date) {
-  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
   const fechaISO = fechaLocal(date);
   const fechaAyer = sumarDias(fechaISO, -1);
-
+  const fechaManana = sumarDias(fechaISO, 1);
   if (date < hoy) return "dia-pasado";
-
-  // Día libre cuyo día anterior estaba bloqueado → es día de salida/posible entrada
   if (!esBloqueada(fechaISO) && esBloqueada(fechaAyer)) return "dia-salida";
-
+  if (!esBloqueada(fechaISO) && esBloqueada(fechaManana)) return "dia-libre";
   if (!esBloqueada(fechaISO)) return "dia-libre";
-
-  // Primer día del bloque → naranja (entrada ocupada, no reservable)
   if (esPrimerDiaBloque(fechaISO)) return "dia-entrada-ocupada";
-
-  // Todos los demás días bloqueados (incluyendo el último) → rojo fuerte
   return "dia-bloqueado";
 }
 
-document.addEventListener("mouseup", async () => {
-  if (!arrastreActivo) return;
-  arrastreActivo = false;
-  if (rangoSeleccionado.length === 0) return;
+// ================================
+// GESTIÓN MANUAL DEL RANGO
+// ================================
+function limpiarSeleccionVisual() {
+  document.querySelectorAll(".flatpickr-day").forEach(d => {
+    d.classList.remove("startRange", "inRange", "endRange", "selected");
+  });
+}
 
-  const cabaña = document.getElementById("cabaña").value;
-
-  for (const fecha of rangoSeleccionado) {
-    if (!bloqueosFlatpickr.includes(fecha)) {
-      bloqueosFlatpickr.push(fecha);
-      await guardarBloqueoEnBackend(fecha, true, cabaña);
-      flatpickrInstance.days.childNodes.forEach(d => {
-        if (d.dateObj && fechaLocal(d.dateObj) === fecha) {
-          d.classList.remove("dia-libre");
-          d.classList.add("dia-bloqueado", "flatpickr-disabled");
-        }
-      });
+function pintarRangoVisual() {
+  limpiarSeleccionVisual();
+  if (!rangoInicio) return;
+  document.querySelectorAll(".flatpickr-day").forEach(d => {
+    if (!d.dateObj) return;
+    const f = new Date(d.dateObj); f.setHours(0,0,0,0);
+    const i = new Date(rangoInicio); i.setHours(0,0,0,0);
+    if (f.getTime() === i.getTime()) d.classList.add("startRange", "selected");
+    if (rangoFin) {
+      const e = new Date(rangoFin); e.setHours(0,0,0,0);
+      if (f.getTime() === e.getTime()) d.classList.add("endRange", "selected");
+      else if (f > i && f < e) d.classList.add("inRange");
     }
+  });
+}
+
+function validarRango(inicio, fin) {
+  const isoInicio = fechaLocal(inicio);
+  const isoFin = fechaLocal(fin);
+  if (esBloqueada(isoInicio) && esPrimerDiaBloque(isoInicio)) {
+    alert("No puedes iniciar la reserva en ese día. Elige otro día de entrada.");
+    return false;
+  }
+  let check = new Date(inicio); check.setDate(check.getDate() + 1);
+  while (check < fin) {
+    if (esBloqueada(fechaLocal(check))) {
+      alert("No puedes seleccionar un rango que incluye fechas ya reservadas.");
+      return false;
+    }
+    check.setDate(check.getDate() + 1);
+  }
+  if (esBloqueada(isoFin) && !esPrimerDiaBloque(isoFin)) {
+    alert("No puedes terminar la reserva en ese día. Elige otro día de salida.");
+    return false;
+  }
+  return true;
+}
+
+function manejarClickDia(dayElem) {
+  if (!dayElem || !dayElem.dateObj) return;
+  const fecha = new Date(dayElem.dateObj);
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const fechaISO = fechaLocal(fecha);
+  const clase = colorearDias(fecha);
+
+  if (adminActivo) {
+    if (fecha < hoy) return;
+    const cabaña = document.getElementById("cabaña").value;
+    if (bloqueosFlatpickr.includes(fechaISO)) {
+      bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
+      guardarBloqueoEnBackend(fechaISO, false, cabaña);
+    } else if (!fechasOcupadasFlatpickr.includes(fechaISO)) {
+      bloqueosFlatpickr.push(fechaISO);
+      guardarBloqueoEnBackend(fechaISO, true, cabaña);
+    }
+    inicializarFlatpickr();
+    return;
   }
 
-  flatpickrInstance.set("disable", [
-    date => esDiaIntermedio(fechaLocal(date))
-  ]);
-  flatpickrInstance.redraw();
-  rangoSeleccionado = [];
-});
+  if (fecha < hoy) return;
+  if (clase === "dia-bloqueado") return;
+
+  if (!rangoInicio) {
+    rangoInicio = new Date(fecha);
+    rangoFin = null;
+    pintarRangoVisual();
+  } else if (!rangoFin) {
+    if (fecha <= rangoInicio) {
+      rangoInicio = new Date(fecha);
+      pintarRangoVisual();
+      return;
+    }
+    if (!validarRango(rangoInicio, fecha)) {
+      rangoInicio = null; rangoFin = null;
+      limpiarSeleccionVisual();
+      return;
+    }
+    rangoFin = new Date(fecha);
+    pintarRangoVisual();
+    const opc = { year: "numeric", month: "long", day: "numeric" };
+    document.getElementById("fechasSeleccionadas").textContent =
+      `${rangoInicio.toLocaleDateString("es-ES", opc)} → ${rangoFin.toLocaleDateString("es-ES", opc)}`;
+  } else {
+    rangoInicio = null; rangoFin = null;
+    limpiarSeleccionVisual();
+    document.getElementById("fechasSeleccionadas").textContent = "";
+  }
+}
 
 function inicializarFlatpickr() {
   if (flatpickrInstance) flatpickrInstance.destroy();
+  rangoInicio = null;
+  rangoFin = null;
 
   flatpickrInstance = flatpickr("#calendarioVisible", {
     inline: true,
@@ -132,117 +193,55 @@ function inicializarFlatpickr() {
     locale: "es",
     dateFormat: "d-m-Y",
 
-    disable: [
-      date => esDiaIntermedio(fechaLocal(date))
-    ],
-
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-      const fecha = new Date(dayElem.dateObj);
-      const clase = colorearDias(fecha);
+      const clase = colorearDias(new Date(dayElem.dateObj));
       dayElem.classList.add(clase);
-
-      if (clase === "dia-bloqueado" || clase === "dia-entrada-ocupada") {
-        dayElem.classList.add("flatpickr-disabled");
-      }
-
-      dayElem.addEventListener("dblclick", () => {
-        if (!adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj);
-        const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-        if (dayElem.dateObj < hoy) return;
-
-        const cabaña = document.getElementById("cabaña").value;
-
-        if (bloqueosFlatpickr.includes(fechaISO)) {
-          bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
-          guardarBloqueoEnBackend(fechaISO, false, cabaña);
-          dayElem.classList.remove("dia-bloqueado", "dia-entrada-ocupada", "dia-salida", "flatpickr-disabled");
-          dayElem.classList.add("dia-libre");
-        } else {
-          bloqueosFlatpickr.push(fechaISO);
-          guardarBloqueoEnBackend(fechaISO, true, cabaña);
-          dayElem.classList.remove("dia-libre", "dia-salida");
-          dayElem.classList.add("dia-bloqueado", "flatpickr-disabled");
-        }
-
-        flatpickrInstance.set('disable', [
-          date => esDiaIntermedio(fechaLocal(date))
-        ]);
-        flatpickrInstance.redraw();
-      });
-
-      dayElem.addEventListener("mousedown", () => {
-        if (!adminActivo) return;
-        arrastreActivo = true;
-        rangoSeleccionado = [];
-      });
-
-      dayElem.addEventListener("mouseenter", () => {
-        if (!arrastreActivo || !adminActivo) return;
-        const fechaISO = fechaLocal(dayElem.dateObj);
-        const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-        if (dayElem.dateObj >= hoy && !bloqueosFlatpickr.includes(fechaISO)) {
-          rangoSeleccionado.push(fechaISO);
-          dayElem.style.background = "rgba(0,123,255,0.4)";
-        }
-      });
+      dayElem.style.pointerEvents = "auto";
     },
 
-    onChange: function(selectedDates) {
-      if (selectedDates.length === 2) {
-        const inicio = selectedDates[0];
-        const fin = selectedDates[1];
+    onMonthChange: function() {
+      setTimeout(() => pintarRangoVisual(), 10);
+    },
 
-        // Verificar que ningún día intermedio esté bloqueado
-        let check = new Date(inicio);
-        check.setDate(check.getDate() + 1);
-        while (check < fin) {
-          const iso = fechaLocal(check);
-          // Permitir pasar por días de salida (primer libre tras bloque)
-          // pero no por días bloqueados intermedios ni entradas ocupadas
-          if (esBloqueada(iso)) {
-            flatpickrInstance.clear();
-            document.getElementById("fechasSeleccionadas").textContent = "";
-            alert("No puedes seleccionar un rango que incluye fechas ya reservadas.");
-            return;
-          }
-          check.setDate(check.getDate() + 1);
-        }
-
-        const opciones = { year: "numeric", month: "long", day: "numeric" };
-        document.getElementById("fechasSeleccionadas").textContent =
-          `${inicio.toLocaleDateString("es-ES", opciones)} → ${fin.toLocaleDateString("es-ES", opciones)}`;
-      }
+    onChange: function() {
+      // No hacer nada — el rango se gestiona manualmente
     }
   });
+
+  // Listener delegado en calendarContainer — sobrevive a cambios de mes
+  const cal = flatpickrInstance.calendarContainer;
+  cal.addEventListener("click", function(e) {
+    const dayElem = e.target.closest(".flatpickr-day");
+    if (dayElem) {
+      e.stopPropagation();
+      e.preventDefault();
+      manejarClickDia(dayElem);
+    }
+  }, true);
 }
 
 async function prepararFlatpickr() {
   const reservas = await cargarReservasBackend();
   reservasGlobal = reservas;
-
   const cabaña = document.getElementById("cabaña").value;
   fechasOcupadasFlatpickr = reservas[cabaña] || [];
-
   bloqueosFlatpickr = cabaña === "campanilla"
     ? reservas.bloqueos_campanilla
     : reservas.bloqueos_tejo;
-
   inicializarFlatpickr();
 }
 
 // ================================
 // CÁLCULO DE RESERVA
 // ================================
-
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
-  if (!flatpickrInstance.selectedDates || flatpickrInstance.selectedDates.length < 2) {
+  if (!rangoInicio || !rangoFin) {
     alert("Selecciona un rango de fechas");
     return;
   }
-  const inicio = flatpickrInstance.selectedDates[0];
-  const fin = flatpickrInstance.selectedDates[1];
+  const inicio = rangoInicio;
+  const fin = rangoFin;
   const noches = Math.round((fin - inicio) / (1000 * 60 * 60 * 24));
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
@@ -256,7 +255,6 @@ function calcularReserva() {
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
-
   spinner.style.display = "block";
   resultado.style.display = "none";
 
@@ -298,17 +296,12 @@ function calcularReserva() {
 
     document.getElementById("cabañaSeleccionada").innerText =
       cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
-
     document.getElementById("total").innerText = total.toFixed(2);
     document.getElementById("descuento").innerText = descuento.toFixed(2);
-
-    const pagoInicial = 50;
-    document.getElementById("resto").innerText =
-      (total - pagoInicial).toFixed(2);
+    document.getElementById("resto").innerText = (total - 50).toFixed(2);
 
     spinner.style.display = "none";
     resultado.style.display = "block";
-
   }, 300);
 }
 
@@ -330,7 +323,6 @@ function reservar() {
 // ================================
 // URGENCIA
 // ================================
-
 function actualizarUrgencia(fechasOcupadas) {
   const mensaje = document.getElementById("mensajeUrgencia");
   if (!mensaje) return;
@@ -449,7 +441,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
-
   document.getElementById("cabaña")?.addEventListener("change", prepararFlatpickr);
 
   setInterval(async () => {
