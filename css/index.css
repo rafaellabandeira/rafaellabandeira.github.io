@@ -62,7 +62,11 @@ section { padding: 40px 20px; max-width: 1200px; margin: auto; }
 }
 
 .flatpickr-day.startRange,
-.flatpickr-day.endRange {
-  background: #4caf50 !important;
+.flatpickr-day.endRange,
+.flatpickr-day.endRange.dia-entrada-ocupada,
+.flatpickr-day.selected.dia-entrada-ocupada {
+  background: #1a73e8 !important;
   color: #fff !important;
+  border-color: #1a73e8 !important;
+  pointer-events: all !important;
 }
