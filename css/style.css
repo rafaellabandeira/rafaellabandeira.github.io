@@ -166,9 +166,9 @@ body {
 /* FIX: mantener invisibles pero con eventos activos */
 .flatpickr-day.prevMonthDay,
 .flatpickr-day.nextMonthDay {
-  opacity: 0 !important;
+  opacity: 0.3 !important;
   pointer-events: auto !important;
-  visibility: hidden !important;
+  visibility: visible !important;
 }
 
 .dia-pasado {
