@@ -1,11 +1,9 @@
-/* ================= INDEX.CSS - VERSIÓN LIMPIA + CALENDARIO FUERTE ================= */
+/* ================= INDEX.CSS ================= */
 
 * { box-sizing: border-box; }
 
-/* Básicos */
 body { font-family: Arial, sans-serif; }
 
-/* Navbar y Hero */
 .navbar {
   background: #fff;
   padding: 6px 20px;
@@ -36,7 +34,6 @@ body { font-family: Arial, sans-serif; }
   background: rgba(0,0,0,0.35);
 }
 
-/* Motor de reservas */
 .reserva-box {
   max-width: 720px;
   margin: 0 auto;
@@ -47,21 +44,11 @@ body { font-family: Arial, sans-serif; }
   box-shadow: 0 8px 28px rgba(76, 175, 80, 0.18);
 }
 
-
-/* Resto básico */
 section { padding: 40px 20px; max-width: 1200px; margin: auto; }
 .cabanias-grid { display: flex; gap: 20px; flex-wrap: wrap; }
 .cabin-card { flex: 1 1 300px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 
-/* Días pasados */
-.flatpickr-day.pasado,
-.flatpickr-day.prevMonthDay,
-.flatpickr-day.nextMonthDay {
-  background: #212121 !important;
-  color: #aaa !important;
-}
-
-/* Cabecera completa */
+/* Cabecera del calendario */
 .flatpickr-months .flatpickr-prev-month,
 .flatpickr-months .flatpickr-next-month {
   color: white !important;
