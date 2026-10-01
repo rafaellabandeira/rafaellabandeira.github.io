@@ -9,10 +9,39 @@ function fechaLocal(date) {
 
 const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
 
+// ---------- CONTRASEÑA DE ADMIN ----------
+// No está en el código: se escribe una vez y se recuerda en ESTE dispositivo.
+// Se envía al servidor en cada bloqueo/desbloqueo (cabecera x-admin-password).
+const CLAVE_STORAGE = "riomundo_admin_pw";
+let adminPassword = null;
+let cargaFallida = false;
+
+function leerClaveGuardada() {
+  try { return localStorage.getItem(CLAVE_STORAGE); } catch(e) { return null; }
+}
+function guardarClave(c) { try { localStorage.setItem(CLAVE_STORAGE, c); } catch(e) {} }
+function borrarClaveGuardada() { try { localStorage.removeItem(CLAVE_STORAGE); } catch(e) {} }
+
+// Devuelve "ok", "incorrecta" o "error" (servidor sin respuesta / bloqueado)
+async function verificarPassword(pw) {
+  try {
+    const res = await fetch(BACKEND_URL.replace("/reservas", "/admin/verificar"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pw })
+    });
+    if (res.ok) return "ok";
+    if (res.status === 401) return "incorrecta";
+    return "error";
+  } catch (err) { return "error"; }
+}
+
+// ---------- CARGA DE RESERVAS ----------
+// Devuelve null si falla (antes devolvía todo vacío = todo libre = riesgo de dobles reservas)
 async function cargarReservasBackend() {
   try {
     const res = await fetch(BACKEND_URL);
-    if (!res.ok) throw new Error("Error");
+    if (!res.ok) throw new Error("Error " + res.status);
     const data = await res.json();
     const reservas = { campanilla: [], tejo: [], bloqueos_campanilla: [], bloqueos_tejo: [] };
     for (let cabana of ["campanilla", "tejo"]) {
@@ -23,18 +52,40 @@ async function cargarReservasBackend() {
     return reservas;
   } catch (err) {
     console.error(err);
-    return { campanilla: [], tejo: [], bloqueos_campanilla: [], bloqueos_tejo: [] };
+    return null;
   }
 }
 
 async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
   try {
-    await fetch(BACKEND_URL, {
+    const res = await fetch(BACKEND_URL, {
       method: bloquear ? "POST" : "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-admin-password": adminPassword || "" },
       body: JSON.stringify({ fecha, cabaña })
     });
-  } catch (err) { console.error(err); }
+    if (res.status === 401) {
+      alert("Contraseña de administrador no válida. Modo administrador desactivado.");
+      desactivarAdmin(true);
+      return false;
+    }
+    if (!res.ok) {
+      alert("No se pudo guardar el cambio. Recarga la página e inténtalo de nuevo.");
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(err);
+    alert("Error al conectar con el servidor. El cambio no se ha guardado.");
+    return false;
+  }
+}
+
+function desactivarAdmin(borrarClave) {
+  adminActivo = false;
+  adminPassword = null;
+  if (borrarClave) borrarClaveGuardada();
+  const b = document.getElementById("adminButton");
+  if (b) b.style.backgroundColor = "#444";
 }
 
 let reservasGlobal = {};
@@ -111,7 +162,7 @@ function validarRango(inicio, fin) {
   return true;
 }
 
-function manejarClickDia(dayElem) {
+async function manejarClickDia(dayElem) {
   if (!dayElem || !dayElem.dateObj) return;
   const fecha = new Date(dayElem.dateObj);
   const hoy = new Date(); hoy.setHours(0,0,0,0);
@@ -120,18 +171,25 @@ function manejarClickDia(dayElem) {
 
   if (adminActivo) {
     if (fecha < hoy) return;
+    if (cargaFallida) { alert("No se han podido cargar las reservas. Recarga la página antes de editar."); return; }
     const cabaña = document.getElementById("cabaña").value;
-    if (bloqueosFlatpickr.includes(fechaISO)) {
+    const estabaBloqueada = bloqueosFlatpickr.includes(fechaISO);
+    if (estabaBloqueada) {
       bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
-      guardarBloqueoEnBackend(fechaISO, false, cabaña);
     } else if (!fechasOcupadasFlatpickr.includes(fechaISO)) {
       bloqueosFlatpickr.push(fechaISO);
-      guardarBloqueoEnBackend(fechaISO, true, cabaña);
+    } else { return; }
+    const guardado = await guardarBloqueoEnBackend(fechaISO, !estabaBloqueada, cabaña);
+    if (!guardado) {
+      // Deshacer el cambio visual si el servidor no lo aceptó
+      if (estabaBloqueada) bloqueosFlatpickr.push(fechaISO);
+      else bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
     }
     inicializarFlatpickr();
     return;
   }
 
+  if (cargaFallida) return;
   if (fecha < hoy) return;
   if (clase === "dia-bloqueado") return;
 
@@ -203,8 +261,39 @@ function inicializarFlatpickr() {
   }, true); // useCapture=true para interceptar antes que Flatpickr
 }
 
+// Aviso visible cuando no se pueden cargar las reservas
+function mostrarErrorCarga(mostrar) {
+  let aviso = document.getElementById("errorCargaReservas");
+  if (!aviso) {
+    const cal = document.getElementById("calendarioVisible");
+    if (!cal) return;
+    aviso = document.createElement("div");
+    aviso.id = "errorCargaReservas";
+    aviso.style.cssText = "display:none;background:#fff3cd;color:#664d03;border:1px solid #ffecb5;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:14px;";
+    aviso.textContent = "⏳ Cargando la disponibilidad, puede tardar hasta un minuto. Si no aparece, recarga la página.";
+    cal.parentNode.insertBefore(aviso, cal);
+  }
+  aviso.style.display = mostrar ? "block" : "none";
+}
+
+let reintentosCarga = 0;
 async function prepararFlatpickr() {
   const reservas = await cargarReservasBackend();
+
+  if (!reservas) {
+    // El servidor gratuito de Render puede tardar ~50 s en despertar: reintentamos
+    cargaFallida = true;
+    mostrarErrorCarga(true);
+    fechasOcupadasFlatpickr = [];
+    bloqueosFlatpickr = [];
+    inicializarFlatpickr();
+    if (reintentosCarga++ < 8) setTimeout(prepararFlatpickr, 15000);
+    return;
+  }
+
+  cargaFallida = false;
+  reintentosCarga = 0;
+  mostrarErrorCarga(false);
   reservasGlobal = reservas;
   const cabaña = document.getElementById("cabaña").value;
   fechasOcupadasFlatpickr = reservas[cabaña] || [];
@@ -212,10 +301,14 @@ async function prepararFlatpickr() {
     ? reservas.bloqueos_campanilla
     : reservas.bloqueos_tejo;
   inicializarFlatpickr();
+  actualizarUrgencia(reservas);
 }
 
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
+  if (cargaFallida) {
+    alert("No se ha podido cargar la disponibilidad. Espera unos segundos y recarga la página."); return;
+  }
   if (!rangoInicio || !rangoFin) {
     alert("Selecciona un rango de fechas"); return;
   }
@@ -283,9 +376,9 @@ function reservar() { alert("Aquí se conectará el pago de 50 €."); }
 
 function actualizarUrgencia(fechasOcupadas) {
   const mensaje = document.getElementById("mensajeUrgencia");
-  if (!mensaje) return;
+  if (!mensaje || !fechasOcupadas) return;
   const mes = new Date().getMonth()+1;
-  const ocupadas = fechasOcupadas.campanilla.length;
+  const ocupadas = (fechasOcupadas.campanilla?.length || 0) + (fechasOcupadas.tejo?.length || 0);
   let texto = "";
   if (mes===7||mes===8) texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
   else if (ocupadas>20) texto = "⚡ Quedan pocas fechas disponibles este mes.";
@@ -327,9 +420,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container",".carousel-slide",".prev",".next",".indicator");
   initCarousel(".carousel-container-general",".carousel-slide-general",".prev-general",".next-general",".indicator-general");
 
-  await prepararFlatpickr();
-  actualizarUrgencia(reservasGlobal);
-
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
   document.getElementById("cabaña")?.addEventListener("change", prepararFlatpickr);
@@ -337,28 +427,46 @@ document.addEventListener("DOMContentLoaded", async () => {
   const adminButton = document.getElementById("adminButton");
   adminButton?.addEventListener("click", async () => {
     if (adminActivo) {
-      adminActivo = false;
-      adminButton.style.backgroundColor = "#444";
-      alert("Modo administrador desactivado"); return;
+      desactivarAdmin(false);
+      if (confirm("Modo administrador desactivado.\n\n¿Quieres también borrar la contraseña guardada en este dispositivo?")) {
+        borrarClaveGuardada();
+      }
+      return;
     }
+
+    // 1) Contraseña guardada en este dispositivo
+    const guardada = leerClaveGuardada();
+    if (guardada) {
+      const r = await verificarPassword(guardada);
+      if (r === "ok") {
+        adminPassword = guardada; adminActivo = true;
+        adminButton.style.backgroundColor = "#4caf50";
+        alert("Modo administrador activado"); return;
+      }
+      if (r === "error") { alert("Error al conectar con el servidor. Inténtalo de nuevo en unos segundos."); return; }
+      borrarClaveGuardada(); // la guardada ya no vale
+    }
+
+    // 2) Pedirla
     const clave = prompt("Introduce la contraseña de administrador:");
     if (!clave) return;
-    try {
-      const res = await fetch(BACKEND_URL.replace("/reservas", "/admin/verificar"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: clave })
-      });
-      if (res.ok) {
-        adminActivo = true;
-        adminButton.style.backgroundColor = "#4caf50";
-        alert("Modo administrador activado");
-      } else { alert("Contraseña incorrecta"); }
-    } catch (err) { alert("Error al conectar con el servidor"); }
+    const r = await verificarPassword(clave);
+    if (r === "ok") {
+      adminPassword = clave; adminActivo = true;
+      guardarClave(clave);
+      adminButton.style.backgroundColor = "#4caf50";
+      alert("Modo administrador activado");
+    } else if (r === "incorrecta") {
+      alert("Contraseña incorrecta (o demasiados intentos; espera unos minutos).");
+    } else {
+      alert("Error al conectar con el servidor");
+    }
   });
 
+  await prepararFlatpickr();
+
   setInterval(async()=>{
-    const reservas=await cargarReservasBackend();
-    actualizarUrgencia(reservas);
+    const reservas = await cargarReservasBackend();
+    if (reservas) actualizarUrgencia(reservas);
   }, 2*60*60*1000);
 });
