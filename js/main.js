@@ -40,7 +40,10 @@ async function verificarPassword(pw) {
 // Devuelve null si falla (antes devolvía todo vacío = todo libre = riesgo de dobles reservas)
 async function cargarReservasBackend() {
   try {
-    const res = await fetch(BACKEND_URL);
+    const control = new AbortController();
+    const temporizador = setTimeout(() => control.abort(), 30000);
+    const res = await fetch(BACKEND_URL, { signal: control.signal });
+    clearTimeout(temporizador);
     if (!res.ok) throw new Error("Error " + res.status);
     const data = await res.json();
     const reservas = { campanilla: [], tejo: [], bloqueos_campanilla: [], bloqueos_tejo: [] };
@@ -278,6 +281,9 @@ function mostrarErrorCarga(mostrar) {
 
 let reintentosCarga = 0;
 async function prepararFlatpickr() {
+  // Aviso inmediato: mientras el servidor responde (puede tardar si estaba dormido)
+  cargaFallida = true;
+  mostrarErrorCarga(true);
   const reservas = await cargarReservasBackend();
 
   if (!reservas) {
