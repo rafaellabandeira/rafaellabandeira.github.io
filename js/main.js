@@ -146,22 +146,29 @@ function pintarRangoVisual() {
   });
 }
 
-function validarRango(inicio, fin) {
+// Devuelve el motivo por el que el rango no es válido, o null si está libre
+function motivoRangoNoValido(inicio, fin) {
   const isoInicio = fechaLocal(inicio);
   const isoFin = fechaLocal(fin);
   if (esBloqueada(isoInicio) && esPrimerDiaBloque(isoInicio)) {
-    alert("No puedes iniciar la reserva en ese día."); return false;
+    return "No puedes iniciar la reserva en ese día.";
   }
   let check = new Date(inicio); check.setDate(check.getDate() + 1);
   while (check < fin) {
     if (esBloqueada(fechaLocal(check))) {
-      alert("No puedes seleccionar un rango que incluye fechas ya reservadas."); return false;
+      return "No puedes seleccionar un rango que incluye fechas ya reservadas.";
     }
     check.setDate(check.getDate() + 1);
   }
   if (esBloqueada(isoFin) && !esPrimerDiaBloque(isoFin)) {
-    alert("No puedes terminar la reserva en ese día."); return false;
+    return "No puedes terminar la reserva en ese día.";
   }
+  return null;
+}
+
+function validarRango(inicio, fin) {
+  const motivo = motivoRangoNoValido(inicio, fin);
+  if (motivo) { alert(motivo); return false; }
   return true;
 }
 
@@ -310,6 +317,7 @@ async function prepararFlatpickr() {
   actualizarUrgencia(reservas);
 }
 
+// PASO 1: calcula el precio (ya NO pide nombre, teléfono ni email)
 function calcularReserva() {
   const cabaña = document.getElementById("cabaña").value;
   if (cargaFallida) {
@@ -320,15 +328,6 @@ function calcularReserva() {
   }
   const inicio = rangoInicio, fin = rangoFin;
   const noches = Math.round((fin - inicio) / (1000*60*60*24));
-  const nombre = document.getElementById("nombre").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const email = document.getElementById("email").value.trim();
-
-  if (!nombre || !telefono || !email) {
-    if (!/\S+@\S+\.\S+/.test(email)) alert("Introduce un email válido.");
-    else alert("Completa todos los datos personales");
-    return;
-  }
 
   const spinner = document.getElementById("spinner");
   const resultado = document.getElementById("resultado");
@@ -378,7 +377,64 @@ function esTemporadaAlta(fecha) {
   return (mes === 7 || mes === 8 || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7));
 }
 
-function reservar() { alert("Aquí se conectará el pago de 50 €."); }
+// PASO 2: aquí se validan los datos personales antes de pagar
+async function reservar() {
+  const campoNombre = document.getElementById("nombre");
+  const campoTelefono = document.getElementById("telefono");
+  const campoEmail = document.getElementById("email");
+  const campoPrivacidad = document.getElementById("aceptoPrivacidad");
+  const btnPagar = document.getElementById("btnPagar");
+
+  if (!campoNombre.value.trim()) {
+    alert("Introduce tu nombre completo.");
+    campoNombre.focus(); return;
+  }
+  if (!campoTelefono.value.trim()) {
+    alert("Introduce tu teléfono.");
+    campoTelefono.focus(); return;
+  }
+  if (!/\S+@\S+\.\S+/.test(campoEmail.value.trim())) {
+    alert("Introduce un email válido.");
+    campoEmail.focus(); return;
+  }
+  if (campoPrivacidad && !campoPrivacidad.checked) {
+    alert("Para continuar debes aceptar la política de privacidad.");
+    return;
+  }
+
+  // Volver a comprobar la disponibilidad justo antes de cobrar,
+  // por si alguien ha reservado esas fechas mientras tanto
+  const textoBoton = btnPagar.textContent;
+  btnPagar.disabled = true;
+  btnPagar.textContent = "Comprobando disponibilidad...";
+
+  try {
+    const cabaña = document.getElementById("cabaña").value;
+    const reservas = await cargarReservasBackend();
+
+    if (!reservas) {
+      alert("No hemos podido comprobar la disponibilidad ahora mismo. Inténtalo de nuevo en unos segundos.");
+      return;
+    }
+
+    fechasOcupadasFlatpickr = reservas[cabaña] || [];
+    bloqueosFlatpickr = cabaña === "campanilla"
+      ? reservas.bloqueos_campanilla
+      : reservas.bloqueos_tejo;
+
+    if (!rangoInicio || !rangoFin || motivoRangoNoValido(rangoInicio, rangoFin)) {
+      alert("Lo sentimos, esas fechas ya no están disponibles. Por favor, elige otras.");
+      document.getElementById("resultado").style.display = "none";
+      await prepararFlatpickr();
+      return;
+    }
+
+    alert("Aquí se conectará el pago de 50 €.");
+  } finally {
+    btnPagar.disabled = false;
+    btnPagar.textContent = textoBoton;
+  }
+}
 
 function actualizarUrgencia(fechasOcupadas) {
   const mensaje = document.getElementById("mensajeUrgencia");
