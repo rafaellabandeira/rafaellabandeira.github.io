@@ -31,6 +31,32 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 body { font-family: 'DM Sans', sans-serif !important; }
 
+/* ===== CABECERA FIJA (siempre visible al hacer scroll) ===== */
+html { scroll-behavior: smooth; }
+
+.navbar {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+}
+
+.nav-pills {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 64px; /* misma altura que la navbar */
+  z-index: 999;
+}
+
+/* Al pulsar un enlace, la sección no queda tapada por la cabecera */
+#reserva-online,
+#cabanas,
+#contacto,
+#resultado,
+#pasoDatos {
+  scroll-margin-top: 130px;
+}
+
 .navbar {
   background: #1a3d2b !important;
   padding: 0 16px !important;
@@ -337,7 +363,7 @@ body { font-family: 'DM Sans', sans-serif !important; }
   position: fixed; bottom: 20px; left: 20px;
   width: 50px; height: 50px; z-index: 1000; border-radius: 50%;
   box-shadow: 0 2px 8px rgba(0,0,0,0.3); background-color: #444;
-  color: #fff; font-size: 24px; display: flex;
+  color: #fff; font-size: 24px; display: none;
   justify-content: center; align-items: center; cursor: pointer;
 }
 
@@ -435,6 +461,151 @@ body { font-family: 'DM Sans', sans-serif !important; }
   border-radius: 4px;
   flex-shrink: 0;
 }
+
+/* ===== AVISO 50 € Y BOTÓN CALCULAR DESTACADO ===== */
+.aviso-50 {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #e8f5e9;
+  border: 2px solid #2e6b47;
+  border-radius: 10px;
+  text-align: center;
+  color: #1a3d2b;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* Una sola línea: el tamaño se adapta al ancho de la pantalla */
+.aviso-50 { white-space: nowrap; }
+.aviso-50 strong { font-size: clamp(12px, 3.9vw, 18px); }
+
+.reserva-box #btnCalcular {
+  margin-top: 12px;
+  padding: 16px 12px;
+  background: #f57c00;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(245, 124, 0, 0.45);
+}
+
+.reserva-box #btnCalcular:hover,
+.reserva-box #btnCalcular:active {
+  background: #e65100;
+}
+
+/* ===== MES Y AÑO DEL CALENDARIO: bien visibles sobre el fondo oscuro ===== */
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month,
+.flatpickr-current-month span.cur-month,
+.flatpickr-current-month input.cur-year,
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  color: #fff !important;
+  fill: #fff !important;
+  font-weight: 700 !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  font-size: 1.15rem !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+  background-color: #1a3d2b !important;
+  color: #fff !important;
+}
+
+/* ===== RESERVA EN DOS PASOS ===== */
+.reserva-box #btnContinuar,
+.reserva-box #btnPagar {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 16px 12px;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(46, 125, 50, 0.4);
+}
+
+.reserva-box #btnContinuar:hover,
+.reserva-box #btnContinuar:active,
+.reserva-box #btnPagar:hover,
+.reserva-box #btnPagar:active {
+  background: #1b5e20;
+}
+
+/* ===== BOTÓN "RESERVAR ESTA CABAÑA" EN LAS TARJETAS ===== */
+.cabin-reservar {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  background: #f57c00;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cabin-reservar:hover { background: #e65100; }
+
+/* ===== CONDICIONES Y CASILLA DE PRIVACIDAD (paso 2) ===== */
+.condiciones-reserva {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #f3f6f7;
+  border-radius: 8px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.condiciones-reserva p + p { margin-top: 6px; }
+
+.check-privacidad {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #333;
+}
+
+.reserva-box .check-privacidad input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  padding: 0;
+  flex-shrink: 0;
+  accent-color: #2e6b47;
+}
+
+.check-privacidad a {
+  color: #2e6b47;
+  text-decoration: underline;
+}
+
+/* ===== CANDADO ADMIN: oculto salvo en tu dispositivo ===== */
+#adminButton.visible { display: flex; }
+
+#pasoDatos {
+  display: none;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #e0e0e0;
+}
+
+#pasoDatos h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  color: #1a3d2b;
+  margin: 0 0 8px;
+}
 </style>
 
 </head>
@@ -528,6 +699,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="cabin-feat">💧 Cascada y Nacimiento del Río Mundo</span>
         </div>
         <a class="cabin-cta" href="cabana-campanilla.html">Ver Cabaña Campanilla</a>
+        <a class="cabin-reservar" href="#reserva-online" data-chalet="campanilla">Reservar esta cabaña</a>
       </div>
     </div>
 
@@ -548,6 +720,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="cabin-feat">💧 Cascada y Nacimiento del Río Mundo</span>
         </div>
         <a class="cabin-cta" href="cabana-el-tejo.html">Ver Cabaña El Tejo</a>
+        <a class="cabin-reservar" href="#reserva-online" data-chalet="tejo">Reservar esta cabaña</a>
       </div>
     </div>
 
@@ -606,6 +779,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <h2>Reserva Online</h2>
   <div class="reserva-box">
 
+    <!-- ===== PASO 1: cabaña, fechas y precio ===== -->
     <label for="cabaña">Selecciona cabaña</label>
     <select id="cabaña">
       <option value="campanilla">Cabaña Campanilla</option>
@@ -641,16 +815,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="mensajeUrgencia" class="mensaje-urgencia"></div>
 
-    <label for="nombre">Nombre completo</label>
-    <input type="text" id="nombre" placeholder="Nombre">
+    <div class="aviso-50">
+      💶 <strong>Reserva desde solo 50 €</strong><br>
+      Resto a pagar en destino
+    </div>
 
-    <label for="telefono">Teléfono</label>
-    <input type="tel" id="telefono" placeholder="Teléfono">
-
-    <label for="email">Email</label>
-    <input type="email" id="email" placeholder="Email">
-
-    <button id="btnCalcular">Calcular precio</button>
+    <button id="btnCalcular" type="button">Calcular precio</button>
     <div class="spinner" id="spinner"></div>
 
     <div id="resultado" class="resumen-reserva" style="display:none;">
@@ -659,8 +829,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p><strong>Total estancia:</strong> <span id="total"></span> €</p>
       <p><strong>Descuento aplicado:</strong> <span id="descuento" class="descuento">0</span> €</p>
       <p><strong>Reserva ahora:</strong> 50 €</p>
-      <p><strong>Resto a pagar en alojamiento:</strong> <span id="resto"></span> €</p>
-      <button id="btnPagar">Pagar</button>
+      <p><strong>Resto a pagar en destino:</strong> <span id="resto"></span> €</p>
+
+      <button id="btnContinuar" type="button">Continuar con la reserva</button>
+
+      <!-- ===== PASO 2: datos del cliente y pago ===== -->
+      <div id="pasoDatos">
+        <h3>Tus datos</h3>
+
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Nombre">
+
+        <label for="telefono">Teléfono</label>
+        <input type="tel" id="telefono" placeholder="Teléfono">
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Email">
+
+        <div class="condiciones-reserva">
+          <p>✅ Con los <strong>50 €</strong> confirmas tu reserva. El resto se paga en destino.</p>
+          <p>🔄 Cancelación gratis hasta 15 días antes de la llegada.</p>
+          <p>🕒 Entrada desde las 15:00 · Salida antes de las 11:00</p>
+        </div>
+
+        <label class="check-privacidad" for="aceptoPrivacidad">
+          <input type="checkbox" id="aceptoPrivacidad">
+          <span>He leído y acepto la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a> y el <a href="aviso-legal.html" target="_blank" rel="noopener">aviso legal</a>.</span>
+        </label>
+
+        <button id="btnPagar" type="button">Pagar 50 € y reservar</button>
+      </div>
     </div>
 
   </div>
@@ -737,7 +935,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <footer>
   <p><a href="aviso-legal.html">Aviso Legal</a> | <a href="privacidad.html">Política de Privacidad</a> | <a href="cookies.html">Política de Cookies</a></p>
-  <p>© Cabañas Río Mundo · Riópar</p>
+  <p id="secretoAdmin">© Cabañas Río Mundo · Riópar</p>
 </footer>
 
 <a href="https://wa.me/34620419157" target="_blank" id="whatsappButton" title="Chatea con nosotros">
@@ -750,6 +948,85 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 <script src="js/main.js"></script>
 <script src="js/index-carousel.js"></script>
+
+<!-- ===== RESERVA EN DOS PASOS: mostrar los datos solo al continuar ===== -->
+<script>
+(function () {
+  var btnCalcular  = document.getElementById('btnCalcular');
+  var btnContinuar = document.getElementById('btnContinuar');
+  var pasoDatos    = document.getElementById('pasoDatos');
+  if (!btnCalcular || !btnContinuar || !pasoDatos) return;
+
+  // Paso 2: aparecen nombre, teléfono y email
+  btnContinuar.addEventListener('click', function () {
+    pasoDatos.style.display = 'block';
+    btnContinuar.style.display = 'none';
+    pasoDatos.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Si recalculan el precio (otras fechas u otra cabaña), vuelven al paso 1
+  btnCalcular.addEventListener('click', function () {
+    pasoDatos.style.display = 'none';
+    btnContinuar.style.display = 'block';
+
+    // Al terminar el cálculo, bajar hasta el resumen del precio
+    setTimeout(function () {
+      var resultado = document.getElementById('resultado');
+      if (resultado && resultado.style.display === 'block') {
+        resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 500);
+  });
+
+  // Al cambiar de cabaña se oculta el precio anterior
+  var selector = document.getElementById('cabaña');
+  selector.addEventListener('change', function () {
+    document.getElementById('resultado').style.display = 'none';
+    pasoDatos.style.display = 'none';
+    btnContinuar.style.display = 'block';
+  });
+
+  // Botones "Reservar esta cabaña" de las tarjetas
+  document.querySelectorAll('[data-chalet]').forEach(function (enlace) {
+    enlace.addEventListener('click', function () {
+      selector.value = enlace.getAttribute('data-chalet');
+      selector.dispatchEvent(new Event('change'));
+    });
+  });
+})();
+
+// ===== CANDADO DE ADMINISTRADOR: oculto para los visitantes =====
+// Se muestra solo en tu dispositivo: pulsando 5 veces seguidas el texto © del
+// pie de página. Después se recuerda en ese dispositivo.
+(function () {
+  var boton = document.getElementById('adminButton');
+  if (!boton) return;
+
+  // Visible si ya lo activaste antes en este dispositivo
+  // o si ya hay una clave de administrador guardada.
+  try {
+    if (localStorage.getItem('riomundo_admin_visible') ||
+        localStorage.getItem('riomundo_admin_pw')) {
+      boton.classList.add('visible');
+    }
+  } catch (e) {}
+
+  var texto = document.getElementById('secretoAdmin');
+  var toques = 0, temporizador;
+  if (texto) {
+    texto.addEventListener('click', function () {
+      toques++;
+      clearTimeout(temporizador);
+      temporizador = setTimeout(function () { toques = 0; }, 2000);
+      if (toques >= 5) {
+        boton.classList.add('visible');
+        try { localStorage.setItem('riomundo_admin_visible', '1'); } catch (e) {}
+        toques = 0;
+      }
+    });
+  }
+})();
+</script>
 
 </body>
 </html>
