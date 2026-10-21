@@ -1,4 +1,4 @@
-// ================= MAIN.JS - CHALETS BORES (casasenpicosdeeuropa.es) =================
+// ================= MAIN.JS COMPLETO - RÍO MUNDO =================
 
 function fechaLocal(date) {
   const y = date.getFullYear();
@@ -7,61 +7,88 @@ function fechaLocal(date) {
   return `${y}-${m}-${d}`;
 }
 
-// ---------- BACKEND (JSONBin) ----------
-// La lectura usa una Access Key de SOLO LECTURA (no permite modificar nada).
-// La escritura (modo administrador) usa la Master Key, que se pide por pantalla
-// y se recuerda en ESTE dispositivo (localStorage) para no tener que escribirla cada vez.
-// Úsalo solo en tu móvil u ordenador personal.
-const CLAVE_STORAGE = "chalets_admin_key";
+const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
+
+// ---------- CONTRASEÑA DE ADMIN ----------
+// No está en el código: se escribe una vez y se recuerda en ESTE dispositivo.
+// Se envía al servidor en cada bloqueo/desbloqueo (cabecera x-admin-password).
+const CLAVE_STORAGE = "riomundo_admin_pw";
+let adminPassword = null;
+let cargaFallida = false;
+
 function leerClaveGuardada() {
   try { return localStorage.getItem(CLAVE_STORAGE); } catch(e) { return null; }
 }
-function guardarClave(clave) {
-  try { localStorage.setItem(CLAVE_STORAGE, clave); } catch(e) {}
-}
-function borrarClaveGuardada() {
-  try { localStorage.removeItem(CLAVE_STORAGE); } catch(e) {}
-}
-const BIN_ID = "69eefe35aaba882197405520";
-const BACKEND_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-const READ_KEY = "$2a$10$yTI7T9DU2v5K1mOvm8EeLen5plPKiEZeVbXMPCOHXZldLXC1jxb.e";
-let adminKey = null;
+function guardarClave(c) { try { localStorage.setItem(CLAVE_STORAGE, c); } catch(e) {} }
+function borrarClaveGuardada() { try { localStorage.removeItem(CLAVE_STORAGE); } catch(e) {} }
 
+// Devuelve "ok", "incorrecta" o "error" (servidor sin respuesta / bloqueado)
+async function verificarPassword(pw) {
+  try {
+    const res = await fetch(BACKEND_URL.replace("/reservas", "/admin/verificar"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pw })
+    });
+    if (res.ok) return "ok";
+    if (res.status === 401) return "incorrecta";
+    return "error";
+  } catch (err) { return "error"; }
+}
+
+// ---------- CARGA DE RESERVAS ----------
+// Devuelve null si falla (antes devolvía todo vacío = todo libre = riesgo de dobles reservas)
 async function cargarReservasBackend() {
   try {
-    const res = await fetch(BACKEND_URL + "/latest", { headers: { "X-Access-Key": READ_KEY } });
-    if (!res.ok) throw new Error("Error");
-    const data = (await res.json()).record;
-    return {
-      rebeco:            data.rebeco?.map(f => f.slice(0,10))   || [],
-      urogallo:          data.urogallo?.map(f => f.slice(0,10)) || [],
-      armino:            data.armino?.map(f => f.slice(0,10))   || [],
-      bloqueos_rebeco:   data.bloqueados_rebeco   || [],
-      bloqueos_urogallo: data.bloqueados_urogallo || [],
-      bloqueos_armino:   data.bloqueados_armino   || []
-    };
-  } catch(err) {
+    const control = new AbortController();
+    const temporizador = setTimeout(() => control.abort(), 30000);
+    const res = await fetch(BACKEND_URL, { signal: control.signal });
+    clearTimeout(temporizador);
+    if (!res.ok) throw new Error("Error " + res.status);
+    const data = await res.json();
+    const reservas = { campanilla: [], tejo: [], bloqueos_campanilla: [], bloqueos_tejo: [] };
+    for (let cabana of ["campanilla", "tejo"]) {
+      reservas[cabana] = data[cabana]?.map(f => f.slice(0, 10)) || [];
+    }
+    reservas.bloqueos_campanilla = data.bloqueados_campanilla || [];
+    reservas.bloqueos_tejo = data.bloqueados_tejo || [];
+    return reservas;
+  } catch (err) {
     console.error(err);
-    return { rebeco:[], urogallo:[], armino:[], bloqueos_rebeco:[], bloqueos_urogallo:[], bloqueos_armino:[] };
+    return null;
   }
 }
 
-async function guardarDatosBackend(datos) {
-  if (!adminKey) return;
+async function guardarBloqueoEnBackend(fecha, bloquear, cabaña) {
   try {
-    await fetch(BACKEND_URL, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json", "X-Master-Key": adminKey },
-      body: JSON.stringify(datos)
+    const res = await fetch(BACKEND_URL, {
+      method: bloquear ? "POST" : "DELETE",
+      headers: { "Content-Type": "application/json", "x-admin-password": adminPassword || "" },
+      body: JSON.stringify({ fecha, cabaña })
     });
-  } catch(err) { console.error(err); }
+    if (res.status === 401) {
+      alert("Contraseña de administrador no válida. Modo administrador desactivado.");
+      desactivarAdmin(true);
+      return false;
+    }
+    if (!res.ok) {
+      alert("No se pudo guardar el cambio. Recarga la página e inténtalo de nuevo.");
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(err);
+    alert("Error al conectar con el servidor. El cambio no se ha guardado.");
+    return false;
+  }
 }
 
-async function validarClaveAdmin(clave) {
-  try {
-    const res = await fetch(BACKEND_URL + "/latest", { headers: { "X-Master-Key": clave } });
-    return res.ok;
-  } catch(err) { return false; }
+function desactivarAdmin(borrarClave) {
+  adminActivo = false;
+  adminPassword = null;
+  if (borrarClave) borrarClaveGuardada();
+  const b = document.getElementById("adminButton");
+  if (b) b.style.backgroundColor = "#444";
 }
 
 let reservasGlobal = {};
@@ -69,7 +96,6 @@ let fechasOcupadasFlatpickr = [];
 let bloqueosFlatpickr = [];
 let flatpickrInstance;
 let adminActivo = false;
-let datosCompletos = {};
 let rangoInicio = null;
 let rangoFin = null;
 
@@ -139,7 +165,7 @@ function validarRango(inicio, fin) {
   return true;
 }
 
-function manejarClickDia(dayElem) {
+async function manejarClickDia(dayElem) {
   if (!dayElem || !dayElem.dateObj) return;
   const fecha = new Date(dayElem.dateObj);
   const hoy = new Date(); hoy.setHours(0,0,0,0);
@@ -148,20 +174,30 @@ function manejarClickDia(dayElem) {
 
   if (adminActivo) {
     if (fecha < hoy) return;
-    const chalet = document.getElementById("cabaña").value;
-    if (bloqueosFlatpickr.includes(fechaISO)) {
+    if (cargaFallida) { alert("No se han podido cargar las reservas. Recarga la página antes de editar."); return; }
+    const cabaña = document.getElementById("cabaña").value;
+    const estabaBloqueada = bloqueosFlatpickr.includes(fechaISO);
+    if (estabaBloqueada) {
       bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
     } else if (!fechasOcupadasFlatpickr.includes(fechaISO)) {
       bloqueosFlatpickr.push(fechaISO);
+    } else { return; }
+    const guardado = await guardarBloqueoEnBackend(fechaISO, !estabaBloqueada, cabaña);
+    if (!guardado) {
+      // Deshacer el cambio visual si el servidor no lo aceptó
+      if (estabaBloqueada) bloqueosFlatpickr.push(fechaISO);
+      else bloqueosFlatpickr = bloqueosFlatpickr.filter(f => f !== fechaISO);
     }
-    datosCompletos[`bloqueados_${chalet}`] = bloqueosFlatpickr;
-    guardarBloqueoEnBackend();
     inicializarFlatpickr();
     return;
   }
 
+  if (cargaFallida) return;
   if (fecha < hoy) return;
   if (clase === "dia-bloqueado") return;
+
+  // Naranja solo se bloquea como check-in, no como checkout
+  if (clase === "dia-entrada-ocupada" && !rangoInicio) return;
 
   if (!rangoInicio) {
     rangoInicio = new Date(fecha);
@@ -228,27 +264,105 @@ function inicializarFlatpickr() {
   }, true); // useCapture=true para interceptar antes que Flatpickr
 }
 
-async function prepararFlatpickr() {
-  const reservas = await cargarReservasBackend();
-  reservasGlobal = reservas;
-  datosCompletos = {
-    rebeco:              reservas.rebeco,
-    urogallo:            reservas.urogallo,
-    armino:              reservas.armino,
-    bloqueados_rebeco:   reservas.bloqueos_rebeco,
-    bloqueados_urogallo: reservas.bloqueos_urogallo,
-    bloqueados_armino:   reservas.bloqueos_armino
-  };
-  const chalet = document.getElementById("cabaña").value;
-  fechasOcupadasFlatpickr = reservas[chalet] || [];
-  bloqueosFlatpickr = reservas[`bloqueos_${chalet}`] || [];
-  inicializarFlatpickr();
+// Aviso visible cuando no se pueden cargar las reservas
+function mostrarErrorCarga(mostrar) {
+  let aviso = document.getElementById("errorCargaReservas");
+  if (!aviso) {
+    const cal = document.getElementById("calendarioVisible");
+    if (!cal) return;
+    aviso = document.createElement("div");
+    aviso.id = "errorCargaReservas";
+    aviso.style.cssText = "display:none;background:#fff3cd;color:#664d03;border:1px solid #ffecb5;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:14px;";
+    aviso.textContent = "⏳ Cargando la disponibilidad, puede tardar hasta un minuto. Si no aparece, recarga la página.";
+    cal.parentNode.insertBefore(aviso, cal);
+  }
+  aviso.style.display = mostrar ? "block" : "none";
 }
 
-async function guardarBloqueoEnBackend() {
-  const chalet = document.getElementById("cabaña").value;
-  datosCompletos[`bloqueados_${chalet}`] = bloqueosFlatpickr;
-  await guardarDatosBackend(datosCompletos);
+let reintentosCarga = 0;
+async function prepararFlatpickr() {
+  // Aviso inmediato: mientras el servidor responde (puede tardar si estaba dormido)
+  cargaFallida = true;
+  mostrarErrorCarga(true);
+  const reservas = await cargarReservasBackend();
+
+  if (!reservas) {
+    // El servidor gratuito de Render puede tardar ~50 s en despertar: reintentamos
+    cargaFallida = true;
+    mostrarErrorCarga(true);
+    fechasOcupadasFlatpickr = [];
+    bloqueosFlatpickr = [];
+    inicializarFlatpickr();
+    if (reintentosCarga++ < 8) setTimeout(prepararFlatpickr, 15000);
+    return;
+  }
+
+  cargaFallida = false;
+  reintentosCarga = 0;
+  mostrarErrorCarga(false);
+  reservasGlobal = reservas;
+  const cabaña = document.getElementById("cabaña").value;
+  fechasOcupadasFlatpickr = reservas[cabaña] || [];
+  bloqueosFlatpickr = cabaña === "campanilla"
+    ? reservas.bloqueos_campanilla
+    : reservas.bloqueos_tejo;
+  inicializarFlatpickr();
+  actualizarUrgencia(reservas);
+}
+
+function calcularReserva() {
+  const cabaña = document.getElementById("cabaña").value;
+  if (cargaFallida) {
+    alert("No se ha podido cargar la disponibilidad. Espera unos segundos y recarga la página."); return;
+  }
+  if (!rangoInicio || !rangoFin) {
+    alert("Selecciona un rango de fechas"); return;
+  }
+  const inicio = rangoInicio, fin = rangoFin;
+  const noches = Math.round((fin - inicio) / (1000*60*60*24));
+  const spinner = document.getElementById("spinner");
+  const resultado = document.getElementById("resultado");
+  spinner.style.display = "block";
+  resultado.style.display = "none";
+
+  setTimeout(() => {
+    const opc = { day: "numeric", month: "short" };
+    document.getElementById("fechasSeleccionadas").innerHTML =
+      `📅 ${inicio.toLocaleDateString("es-ES", opc)} - ${fin.toLocaleDateString("es-ES", opc)}<br>🛏 ${noches} ${noches===1?"noche":"noches"}`;
+
+    const minNoches = minimoNoches(inicio);
+    if (noches < minNoches) {
+      alert(`Mínimo ${minNoches} noches en estas fechas`);
+      spinner.style.display = "none"; return;
+    }
+
+    let total = 0;
+    for (let i = 0; i < noches; i++) {
+      const dia = new Date(inicio); dia.setDate(dia.getDate() + i);
+      let precio;
+      if (esTemporadaAlta(dia)) precio = 150;
+      else precio = esNocheFinde(dia)
+        ? (cabaña === "campanilla" ? 150 : 140)
+        : (cabaña === "campanilla" ? 115 : 110);
+      total += precio;
+    }
+
+    // Sin descuento si alguna noche cae en Semana Santa
+    let descuento = 0;
+    if (!estanciaEnSemanaSanta(inicio, noches)) {
+      if (noches>=6 && esTemporadaAlta(inicio)) descuento = total*0.10;
+      else if (noches>=3 && !esTemporadaAlta(inicio)) descuento = total*0.10;
+    }
+    total -= descuento;
+
+    document.getElementById("cabañaSeleccionada").innerText =
+      cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("descuento").innerText = descuento.toFixed(2);
+    document.getElementById("resto").innerText = (total-50).toFixed(2);
+    spinner.style.display = "none";
+    resultado.style.display = "block";
+  }, 300);
 }
 
 // ---------- FESTIVOS ----------
@@ -320,69 +434,19 @@ function esNocheFinde(dia) {
   return dow === 5 || dow === 6 || esNocheFestiva(dia);
 }
 
-// ---------- TEMPORADAS Y MÍNIMO DE NOCHES ----------
-// Temporada alta: julio, agosto y Navidad (22/12 - 7/01). El fin de semana y los festivos
-// tienen precio propio pero NO cuentan como temporada alta (ni para mínimo ni para descuentos).
-function esTemporadaAlta(fecha) {
-  const mes = fecha.getMonth()+1, dia = fecha.getDate();
-  return (mes===7||mes===8||(mes===12&&dia>=22)||(mes===1&&dia<=7));
-}
-
 // Mínimo de noches según la fecha de entrada:
 // - Temporada alta: 4 noches
 // - Semana Santa: 3 noches
-// - Resto (incluye viernes, sábado y festivos): 2 noches
+// - Resto: 2 noches
 function minimoNoches(inicio) {
   if (esTemporadaAlta(inicio)) return 4;
   if (esSemanaSanta(inicio)) return 3;
   return 2;
 }
 
-function calcularReserva() {
-  const chalet = document.getElementById("cabaña").value;
-  if (!rangoInicio || !rangoFin) {
-    alert("Selecciona un rango de fechas"); return;
-  }
-  const inicio = rangoInicio, fin = rangoFin;
-  const noches = Math.round((fin - inicio) / (1000*60*60*24));
-  const spinner = document.getElementById("spinner");
-  const resultado = document.getElementById("resultado");
-  spinner.style.display = "block";
-  resultado.style.display = "none";
-
-  setTimeout(() => {
-    const opc = { day: "numeric", month: "short" };
-    document.getElementById("fechasSeleccionadas").innerHTML =
-      `📅 ${inicio.toLocaleDateString("es-ES", opc)} - ${fin.toLocaleDateString("es-ES", opc)}<br>🛏 ${noches} ${noches===1?"noche":"noches"}`;
-
-    const minNoches = minimoNoches(inicio);
-    if (noches < minNoches) {
-      alert(`Mínimo ${minNoches} noches en estas fechas`);
-      spinner.style.display = "none"; return;
-    }
-
-    let total = 0;
-    for (let i = 0; i < noches; i++) {
-      const dia = new Date(inicio); dia.setDate(dia.getDate() + i);
-      total += (esTemporadaAlta(dia) || esNocheFinde(dia)) ? 130 : 85;
-    }
-
-    // Sin descuento si alguna noche cae en Semana Santa
-    let descuento = 0;
-    if (!estanciaEnSemanaSanta(inicio, noches)) {
-      if (noches>=6 && esTemporadaAlta(inicio)) descuento = total*0.10;
-      else if (noches>=3 && !esTemporadaAlta(inicio)) descuento = total*0.10;
-    }
-    total -= descuento;
-
-    const nombres = { rebeco:"Chalet El Rebeco", urogallo:"Chalet El Urogallo", armino:"Chalet El Armiño" };
-    document.getElementById("cabañaSeleccionada").innerText = nombres[chalet] || chalet;
-    document.getElementById("total").innerText = total.toFixed(2);
-    document.getElementById("descuento").innerText = descuento.toFixed(2);
-    document.getElementById("resto").innerText = (total-50).toFixed(2);
-    spinner.style.display = "none";
-    resultado.style.display = "block";
-  }, 300);
+function esTemporadaAlta(fecha) {
+  const mes = fecha.getMonth() + 1, dia = fecha.getDate();
+  return (mes === 7 || mes === 8 || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7));
 }
 
 // Paso 2: los datos personales se piden aquí, al pulsar "Pagar"
@@ -423,9 +487,9 @@ function prepararDatosCliente() {
 
 function actualizarUrgencia(fechasOcupadas) {
   const mensaje = document.getElementById("mensajeUrgencia");
-  if (!mensaje) return;
+  if (!mensaje || !fechasOcupadas) return;
   const mes = new Date().getMonth()+1;
-  const ocupadas = (fechasOcupadas.rebeco?.length||0)+(fechasOcupadas.urogallo?.length||0)+(fechasOcupadas.armino?.length||0);
+  const ocupadas = (fechasOcupadas.campanilla?.length || 0) + (fechasOcupadas.tejo?.length || 0);
   let texto = "";
   if (mes===7||mes===8) texto = "🔥 Verano es temporada alta. Te recomendamos reservar pronto.";
   else if (ocupadas>20) texto = "⚡ Quedan pocas fechas disponibles este mes.";
@@ -468,51 +532,53 @@ document.addEventListener("DOMContentLoaded", async () => {
   initCarousel(".carousel-container",".carousel-slide",".prev",".next",".indicator");
   initCarousel(".carousel-container-general",".carousel-slide-general",".prev-general",".next-general",".indicator-general");
 
-  await prepararFlatpickr();
-  actualizarUrgencia(reservasGlobal);
-
   document.getElementById("btnCalcular")?.addEventListener("click", calcularReserva);
   document.getElementById("btnPagar")?.addEventListener("click", reservar);
   document.getElementById("cabaña")?.addEventListener("change", prepararFlatpickr);
 
-  document.getElementById("adminButton")?.addEventListener("click", async () => {
-    const boton = document.getElementById("adminButton");
-
+  const adminButton = document.getElementById("adminButton");
+  adminButton?.addEventListener("click", async () => {
     if (adminActivo) {
-      adminActivo = false;
-      adminKey = null;
-      boton.style.backgroundColor = "#444";
-      if (confirm("Modo administrador desactivado.\n\n¿Quieres también borrar la clave guardada en este dispositivo?")) {
+      desactivarAdmin(false);
+      if (confirm("Modo administrador desactivado.\n\n¿Quieres también borrar la contraseña guardada en este dispositivo?")) {
         borrarClaveGuardada();
       }
       return;
     }
 
-    // 1) Intentar con la clave guardada en este dispositivo
+    // 1) Contraseña guardada en este dispositivo
     const guardada = leerClaveGuardada();
-    if (guardada && await validarClaveAdmin(guardada)) {
-      adminKey = guardada;
-      adminActivo = true;
-      boton.style.backgroundColor = "#2e5a6b";
-      alert("Modo administrador activado");
-      return;
+    if (guardada) {
+      const r = await verificarPassword(guardada);
+      if (r === "ok") {
+        adminPassword = guardada; adminActivo = true;
+        adminButton.style.backgroundColor = "#4caf50";
+        alert("Modo administrador activado"); return;
+      }
+      if (r === "error") { alert("Error al conectar con el servidor. Inténtalo de nuevo en unos segundos."); return; }
+      borrarClaveGuardada(); // la guardada ya no vale
     }
-    if (guardada) borrarClaveGuardada(); // la guardada ya no vale (p. ej. regenerada)
 
     // 2) Pedirla
-    const clave = prompt("Introduce la clave de administrador (Master Key de JSONBin):");
+    const clave = prompt("Introduce la contraseña de administrador:");
     if (!clave) return;
-    if (await validarClaveAdmin(clave.trim())) {
-      adminKey = clave.trim();
-      guardarClave(adminKey);
-      adminActivo = true;
-      boton.style.backgroundColor = "#2e5a6b";
+    const r = await verificarPassword(clave);
+    if (r === "ok") {
+      adminPassword = clave; adminActivo = true;
+      guardarClave(clave);
+      adminButton.style.backgroundColor = "#4caf50";
       alert("Modo administrador activado");
-    } else { alert("Clave incorrecta"); }
+    } else if (r === "incorrecta") {
+      alert("Contraseña incorrecta (o demasiados intentos; espera unos minutos).");
+    } else {
+      alert("Error al conectar con el servidor");
+    }
   });
 
+  await prepararFlatpickr();
+
   setInterval(async()=>{
-    const reservas=await cargarReservasBackend();
-    actualizarUrgencia(reservas);
+    const reservas = await cargarReservasBackend();
+    if (reservas) actualizarUrgencia(reservas);
   }, 2*60*60*1000);
 });
