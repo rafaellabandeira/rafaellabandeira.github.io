@@ -9,6 +9,9 @@ function fechaLocal(date) {
 
 const BACKEND_URL = "https://rafaellabandeira-github-io.onrender.com/reservas";
 
+// Importe que se paga ahora para reservar (el resto se paga en destino)
+const ANTICIPO = 100;
+
 // ---------- CONTRASEÑA DE ADMIN ----------
 // No está en el código: se escribe una vez y se recuerda en ESTE dispositivo.
 // Se envía al servidor en cada bloqueo/desbloqueo (cabecera x-admin-password).
@@ -324,7 +327,6 @@ function calcularReserva() {
   const resultado = document.getElementById("resultado");
   spinner.style.display = "block";
   resultado.style.display = "none";
-  reiniciarDatosCliente();
 
   setTimeout(() => {
     const opc = { day: "numeric", month: "short" };
@@ -360,7 +362,7 @@ function calcularReserva() {
       cabaña === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
     document.getElementById("total").innerText = total.toFixed(2);
     document.getElementById("descuento").innerText = descuento.toFixed(2);
-    document.getElementById("resto").innerText = (total-50).toFixed(2);
+    document.getElementById("resto").innerText = (total-ANTICIPO).toFixed(2);
     spinner.style.display = "none";
     resultado.style.display = "block";
   }, 300);
@@ -450,24 +452,13 @@ function esTemporadaAlta(fecha) {
   return (mes === 7 || mes === 8 || (mes === 12 && dia >= 22) || (mes === 1 && dia <= 7));
 }
 
-// Paso 2: al pulsar "Continuar con la reserva" aparecen los datos personales;
-// al pulsarlo otra vez se validan y se continúa con el pago.
+// Botón "Pagar y reservar" (paso 2). El HTML ya se encarga de mostrar los datos
+// al pulsar "Continuar con la reserva"; aquí solo se validan.
 function reservar() {
-  const contenedor = document.getElementById("datosCliente");
-  const btn = document.getElementById("btnPagar");
-
-  // Primer toque: mostrar los datos
-  if (contenedor && contenedor.style.display === "none") {
-    contenedor.style.display = "block";
-    if (btn) btn.textContent = "Confirmar y pagar 50 €";
-    contenedor.scrollIntoView({ behavior: "smooth", block: "center" });
-    return;
-  }
-
-  // Segundo toque: validar
   const nombre = document.getElementById("nombre")?.value.trim();
   const telefono = document.getElementById("telefono")?.value.trim();
   const email = document.getElementById("email")?.value.trim();
+  const acepto = document.getElementById("aceptoPrivacidad");
 
   if (!nombre || !telefono) {
     alert("Completa tu nombre y teléfono para confirmar la reserva."); return;
@@ -475,45 +466,31 @@ function reservar() {
   if (!/\S+@\S+\.\S+/.test(email || "")) {
     alert("Introduce un email válido."); return;
   }
-  alert("Aquí se conectará el pago de 50 €.");
+  if (acepto && !acepto.checked) {
+    alert("Debes aceptar la política de privacidad y el aviso legal."); return;
+  }
+  // Pago online todavía no activo
+  alert("El pago online todavía no está activo.\n\nPara reservar escríbenos por WhatsApp al 620 419 157 y te confirmamos la reserva.");
 }
 
-// Oculta de nuevo los datos si se vuelve a calcular el precio
-function reiniciarDatosCliente() {
-  const contenedor = document.getElementById("datosCliente");
-  const btn = document.getElementById("btnPagar");
-  if (contenedor) contenedor.style.display = "none";
-  if (btn && btn.dataset.textoOriginal) btn.textContent = btn.dataset.textoOriginal;
-}
-
-// Prepara el bloque de datos (oculto) justo encima del botón de continuar.
-// Está protegido: si algo falla, no se mueve nada y el resto de la página sigue funcionando.
-function prepararDatosCliente() {
+// Pone el importe del anticipo en los textos de la página (así solo hay que cambiar ANTICIPO)
+function aplicarAnticipoEnTextos() {
   try {
-    const btnPagar = document.getElementById("btnPagar");
-    if (!btnPagar || !btnPagar.parentNode) return;
-    btnPagar.dataset.textoOriginal = btnPagar.textContent;
-
-    const contenedor = document.createElement("div");
-    contenedor.id = "datosCliente";
-    contenedor.style.cssText = "display:none;margin-top:12px;";
-    const titulo = document.createElement("p");
-    titulo.innerHTML = "<strong>Tus datos para confirmar la reserva</strong>";
-    contenedor.appendChild(titulo);
-
-    // 1) Primero colocar el contenedor (si falla, los campos siguen en su sitio original)
-    btnPagar.parentNode.insertBefore(contenedor, btnPagar);
-
-    // 2) Después mover los campos
-    ["nombre", "telefono", "email"].forEach(id => {
-      const input = document.getElementById(id);
-      if (!input) return;
-      const label = document.querySelector(`label[for="${id}"]`);
-      if (label) contenedor.appendChild(label);
-      contenedor.appendChild(input);
+    const t = `${ANTICIPO} €`;
+    const aviso = document.querySelector(".aviso-50 strong");
+    if (aviso) aviso.textContent = `Reserva desde solo ${t}`;
+    document.querySelectorAll("#resultado p").forEach(p => {
+      const st = p.querySelector("strong");
+      if (st && st.textContent.trim().startsWith("Reserva ahora")) {
+        p.innerHTML = `<strong>Reserva ahora:</strong> ${t}`;
+      }
     });
+    const cond = document.querySelector(".condiciones-reserva p strong");
+    if (cond) cond.textContent = t;
+    const btn = document.getElementById("btnPagar");
+    if (btn) btn.textContent = `Pagar ${t} y reservar`;
   } catch (err) {
-    console.error("prepararDatosCliente:", err);
+    console.error("aplicarAnticipoEnTextos:", err);
   }
 }
 
@@ -559,7 +536,7 @@ function initHamburger() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  prepararDatosCliente();
+  aplicarAnticipoEnTextos();
   initHamburger();
   initCarousel(".carousel-container",".carousel-slide",".prev",".next",".indicator");
   initCarousel(".carousel-container-general",".carousel-slide-general",".prev-general",".next-general",".indicator-general");
