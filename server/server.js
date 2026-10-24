@@ -156,9 +156,29 @@ function parsearFechasIcal(icalText) {
 // ICAL - EXPORTAR
 // ================================
 
+function sumarUnDiaISO(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
+}
+
+// Calendario compatible con Airbnb/Booking: los días seguidos se agrupan en un solo
+// evento y cada evento lleva DTSTAMP (obligatorio en el estándar iCalendar).
 function generarIcal(cabana, bloqueos) {
   const nombre = cabana === "campanilla" ? "Cabaña Campanilla" : "Cabaña El Tejo";
-  let ical = [
+  const ahora = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+  const fechas = [...new Set(bloqueos)]
+    .filter(f => /^\d{4}-\d{2}-\d{2}$/.test(f))
+    .sort();
+
+  const rangos = [];
+  for (const f of fechas) {
+    const ultimo = rangos[rangos.length - 1];
+    if (ultimo && sumarUnDiaISO(ultimo.fin) === f) ultimo.fin = f;
+    else rangos.push({ inicio: f, fin: f });
+  }
+
+  const ical = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Cabañas Río Mundo//ES",
@@ -167,31 +187,18 @@ function generarIcal(cabana, bloqueos) {
     "METHOD:PUBLISH"
   ];
 
-  for (const fecha of bloqueos) {
-    const dtstart = fecha.replace(/-/g, "");
-    const y = parseInt(fecha.slice(0,4));
-    const m = parseInt(fecha.slice(5,7));
-    const d = parseInt(fecha.slice(8,10));
-
-    const diasPorMes = [0,31,28,31,30,31,30,31,31,30,31,30,31];
-    const esBisiesto = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
-    if (esBisiesto) diasPorMes[2] = 29;
-
-    let nd = d + 1, nm = m, ny = y;
-    if (nd > diasPorMes[m]) { nd = 1; nm++; }
-    if (nm > 12) { nm = 1; ny++; }
-
-    const dtend = `${ny}${String(nm).padStart(2,'0')}${String(nd).padStart(2,'0')}`;
-    const uid = `${dtstart}-${cabana}@casaruralriomundo.es`;
-
-    ical = ical.concat([
+  for (const r of rangos) {
+    const dtstart = r.inicio.replace(/-/g, "");
+    const dtend = sumarUnDiaISO(r.fin).replace(/-/g, "");
+    ical.push(
       "BEGIN:VEVENT",
-      `UID:${uid}`,
+      `UID:${dtstart}-${cabana}@casaruralriomundo.es`,
+      `DTSTAMP:${ahora}`,
       `DTSTART;VALUE=DATE:${dtstart}`,
       `DTEND;VALUE=DATE:${dtend}`,
       "SUMMARY:No disponible",
       "END:VEVENT"
-    ]);
+    );
   }
 
   ical.push("END:VCALENDAR");
@@ -323,7 +330,7 @@ app.get("/calendario/:cabana.ics", async (req, res) => {
 
     const ical = generarIcal(cabana, [...new Set(bloqueos)]);
     res.setHeader("Content-Type", "text/calendar; charset=utf-8");
-    res.setHeader("Content-Disposition", `attachment; filename="${cabana}.ics"`);
+    res.setHeader("Cache-Control", "no-cache");
     res.send(ical);
   } catch (e) {
     console.error(e.message);
