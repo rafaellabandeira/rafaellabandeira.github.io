@@ -227,6 +227,9 @@ async function sincronizarIcalExterno(cabana) {
 
   await enCola(async () => {
     const reservas = await leerReservas();
+    const antes = [...(reservas[`ical_${cabana}`] || [])].sort().join(",");
+    const ahora = [...nuevasFechas].sort().join(",");
+    if (antes === ahora) return;               // sin cambios: no se escribe en JSONBin
     reservas[`ical_${cabana}`] = nuevasFechas;
     await guardarReservas(reservas);
   });
@@ -244,7 +247,7 @@ async function sincronizarTodo() {
 }
 
 sincronizarTodo();
-setInterval(sincronizarTodo, 6 * 60 * 60 * 1000);
+setInterval(sincronizarTodo, 60 * 60 * 1000); // cada hora (solo corre mientras el servidor está despierto)
 
 // ================================
 // ENDPOINTS
@@ -322,10 +325,12 @@ app.get("/calendario/:cabana.ics", async (req, res) => {
 
   try {
     const reservas = await leerReservas();
+    // Se exportan SOLO las reservas y bloqueos propios de la web. Las fechas que vienen de
+    // Booking (ical_) NO se devuelven a Booking: así no se crea un bucle en el que una
+    // fecha rebota entre los dos calendarios y no se libera nunca.
     const bloqueos = [
       ...(reservas[cabana] || []),
-      ...(reservas[`bloqueados_${cabana}`] || []),
-      ...(reservas[`ical_${cabana}`] || [])
+      ...(reservas[`bloqueados_${cabana}`] || [])
     ];
 
     const ical = generarIcal(cabana, [...new Set(bloqueos)]);
