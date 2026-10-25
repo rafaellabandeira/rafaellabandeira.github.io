@@ -507,6 +507,17 @@ function actualizarUrgencia(fechasOcupadas) {
   mensaje.innerText = texto;
 }
 
+// Entrada de administrador: abre la web con ?admin=1 al final de la dirección y el candado
+// aparece (y se recuerda) en este dispositivo.
+function mostrarCandadoSiAdminEnURL() {
+  try {
+    if (new URLSearchParams(location.search).has("admin")) {
+      localStorage.setItem("riomundo_admin_visible", "1");
+      document.getElementById("adminButton")?.classList.add("visible");
+    }
+  } catch (e) {}
+}
+
 function initCarousel(containerSelector, slideSelector, prevSelector, nextSelector, indicatorSelector) {
   document.querySelectorAll(containerSelector).forEach(container => {
     const slides=container.querySelectorAll(slideSelector);
@@ -537,6 +548,7 @@ function initHamburger() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   aplicarAnticipoEnTextos();
+  mostrarCandadoSiAdminEnURL();
   initHamburger();
   initCarousel(".carousel-container",".carousel-slide",".prev",".next",".indicator");
   initCarousel(".carousel-container-general",".carousel-slide-general",".prev-general",".next-general",".indicator-general");
