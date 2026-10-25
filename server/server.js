@@ -209,6 +209,21 @@ function generarIcal(cabana, bloqueos) {
 // ICAL - IMPORTAR DESDE EXTERNOS
 // ================================
 
+// Resume una lista de fechas en rangos seguidos, solo para el registro (Logs de Render).
+function resumirRangos(fechas) {
+  const orden = [...new Set(fechas)].sort();
+  const rangos = [];
+  for (const f of orden) {
+    const ultimo = rangos[rangos.length - 1];
+    if (ultimo && sumarUnDiaISO(ultimo.fin) === f) ultimo.fin = f;
+    else rangos.push({ inicio: f, fin: f });
+  }
+  const texto = rangos.slice(0, 40)
+    .map(r => (r.inicio === r.fin ? r.inicio : `${r.inicio}→${r.fin}`))
+    .join(" | ");
+  return texto + (rangos.length > 40 ? ` | … (${rangos.length} rangos)` : "");
+}
+
 // Si CUALQUIER enlace falla, no se toca nada y se conservan las fechas anteriores
 // (antes un fallo de Booking/Airbnb dejaba el calendario vacío = todo libre).
 async function sincronizarIcalExterno(cabana) {
@@ -224,6 +239,7 @@ async function sincronizarIcalExterno(cabana) {
     nuevasFechas = nuevasFechas.concat(parsearFechasIcal(texto));
   }
   nuevasFechas = [...new Set(nuevasFechas)];
+  console.log(`Fechas recibidas de Booking (${cabana}): ${resumirRangos(nuevasFechas)}`);
 
   await enCola(async () => {
     const reservas = await leerReservas();
