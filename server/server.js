@@ -241,6 +241,16 @@ async function sincronizarIcalExterno(cabana) {
   nuevasFechas = [...new Set(nuevasFechas)];
   console.log(`Fechas recibidas de Booking (${cabana}): ${resumirRangos(nuevasFechas)}`);
 
+  // Opcional: ignorar las fechas recibidas a partir de un día (variable BOOKING_IGNORAR_DESDE,
+  // formato AAAA-MM-DD). Sirve para descartar bloques lejanos que la plataforma publica sola.
+  // Si no se define la variable, no se filtra nada.
+  const ignorarDesde = (process.env.BOOKING_IGNORAR_DESDE || "").trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(ignorarDesde)) {
+    const antes = nuevasFechas.length;
+    nuevasFechas = nuevasFechas.filter(f => f < ignorarDesde);
+    console.log(`Ignoradas ${antes - nuevasFechas.length} fechas desde ${ignorarDesde} (BOOKING_IGNORAR_DESDE)`);
+  }
+
   await enCola(async () => {
     const reservas = await leerReservas();
     const antes = [...(reservas[`ical_${cabana}`] || [])].sort().join(",");
